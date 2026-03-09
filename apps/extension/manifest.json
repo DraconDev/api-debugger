@@ -5,6 +5,7 @@
   "description": "Browser-native API request debugger",
   "permissions": [
     "webRequest",
+    "webRequestBlocking",
     "storage",
     "tabs"
   ],
