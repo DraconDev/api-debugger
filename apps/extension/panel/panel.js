@@ -79,6 +79,12 @@ function showDetail(r) {
   respNote.textContent = "Response body capture is coming soon (Chrome limits it).";
   d.appendChild(respNote);
 
+  // Add diagnostics section for failed requests
+  if (r.statusCode >= 400 || r.statusCode === 0) {
+    const diagnosticsBlock = renderDiagnostics(r);
+    if (diagnosticsBlock) d.appendChild(diagnosticsBlock);
+  }
+
   const replay = renderReplayBlock(r);
   if (replay) d.appendChild(replay);
 }
