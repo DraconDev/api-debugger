@@ -1,0 +1,14 @@
+{
+  "name": "api-debugger-ai-service",
+  "version": "0.1.0",
+  "description": "AI explanation service for API Debugger",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  }
+}
