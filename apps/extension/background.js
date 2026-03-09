@@ -13,9 +13,42 @@ async function addRecord(record) {
   await chrome.storage.local.set({ requests: list });
 }
 
+// Capture full request/response details
+const partial = new Map();
+
+chrome.webRequest.onBeforeRequest.addListener(
+  (details) => {
+    partial.set(details.requestId, { requestBody: details.requestBody?.formData || null });
+  },
+  { urls: ["<all_urls>"] },
+  ["requestBody"]
+);
+
+chrome.webRequest.onBeforeSendHeaders.addListener(
+  (details) => {
+    const p = partial.get(details.requestId) || {};
+    p.requestHeaders = details.requestHeaders;
+    partial.set(details.requestId, p);
+  },
+  { urls: ["<all_urls>"] },
+  ["requestHeaders"]
+);
+
+chrome.webRequest.onHeadersReceived.addListener(
+  (details) => {
+    const p = partial.get(details.requestId) || {};
+    p.responseHeaders = details.responseHeaders;
+    partial.set(details.requestId, p);
+  },
+  { urls: ["<all_urls>"] },
+  ["responseHeaders"]
+);
+
 chrome.webRequest.onCompleted.addListener(
   async (details) => {
     try {
+      const base = partial.get(details.requestId) || {};
+      partial.delete(details.requestId);
       const record = {
         id: details.requestId,
         url: details.url,
@@ -23,11 +56,14 @@ chrome.webRequest.onCompleted.addListener(
         statusCode: details.statusCode,
         type: details.type,
         tabId: details.tabId,
-        timeStamp: details.timeStamp
+        timeStamp: details.timeStamp,
+        requestHeaders: base.requestHeaders || [],
+        requestBody: base.requestBody || null,
+        responseHeaders: base.responseHeaders || []
       };
 
       await addRecord(record);
-      console.log("[api-debugger] request", record);
+      console.log("[api-debugger] record saved", record);
     } catch (err) {
       console.error("[api-debugger] capture error", err);
     }
