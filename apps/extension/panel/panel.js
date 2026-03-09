@@ -275,6 +275,10 @@ function showDetail(r) {
   // Add export section
   const exportBlock = renderExportBlock(r);
   if (exportBlock) d.appendChild(exportBlock);
+  
+  // Add save to collection section
+  const saveBlock = renderSaveToCollectionBlock(r);
+  if (saveBlock) d.appendChild(saveBlock);
 
   const replay = renderReplayBlock(r);
   if (replay) d.appendChild(replay);
