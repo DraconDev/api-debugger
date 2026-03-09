@@ -715,6 +715,110 @@ function renderExportBlock(record) {
   preview.style.padding = "6px";
   preview.textContent = window.exportHelpers.toCurl(record);
   container.appendChild(preview);
+
+  return container;
+}
+
+function renderSaveToCollectionBlock(record) {
+  if (!window.collectionsHelpers) return null;
+  
+  const container = document.createElement("div");
+  container.style.marginTop = "12px";
+  container.style.padding = "8px";
+  container.style.border = "1px solid #ddd";
+  container.style.borderRadius = "4px";
+  
+  const heading = document.createElement("h2");
+  heading.textContent = "Save to Collection";
+  container.appendChild(heading);
+  
+  const nameInput = document.createElement("input");
+  nameInput.placeholder = "Request name (optional)";
+  nameInput.style.width = "100%";
+  nameInput.style.marginBottom = "6px";
+  nameInput.style.padding = "4px";
+  nameInput.style.fontSize = "11px";
+  container.appendChild(nameInput);
+  
+  const tagsInput = document.createElement("input");
+  tagsInput.placeholder = "Tags (comma-separated)";
+  tagsInput.style.width = "100%";
+  tagsInput.style.marginBottom = "6px";
+  tagsInput.style.padding = "4px";
+  tagsInput.style.fontSize = "11px";
+  container.appendChild(tagsInput);
+  
+  const collectionSelect = document.createElement("select");
+  collectionSelect.style.width = "100%";
+  collectionSelect.style.marginBottom = "6px";
+  collectionSelect.style.padding = "4px";
+  collectionSelect.style.fontSize = "11px";
+  
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = "Select collection...";
+  collectionSelect.appendChild(defaultOption);
+  
+  // Populate collections asynchronously
+  window.collectionsHelpers.getAllCollections().then(collections => {
+    collections.forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c.id;
+      opt.textContent = c.name;
+      collectionSelect.appendChild(opt);
+    });
+  });
+  
+  container.appendChild(collectionSelect);
+  
+  const newCollectionGroup = document.createElement("div");
+  newCollectionGroup.style.marginBottom = "6px";
+  
+  const newCollectionInput = document.createElement("input");
+  newCollectionInput.placeholder = "Or create new collection";
+  newCollectionInput.style.width = "100%";
+  newCollectionInput.style.padding = "4px";
+  newCollectionInput.style.fontSize = "11px";
+  newCollectionGroup.appendChild(newCollectionInput);
+  
+  container.appendChild(newCollectionGroup);
+  
+  const saveBtn = document.createElement("button");
+  saveBtn.textContent = "Save Request";
+  saveBtn.onclick = async () => {
+    const name = nameInput.value.trim();
+    const tags = tagsInput.value.split(',').map(t => t.trim()).filter(Boolean);
+    const collectionId = collectionSelect.value;
+    const newCollectionName = newCollectionInput.value.trim();
+    
+    try {
+      let targetCollectionId = collectionId;
+      
+      if (!targetCollectionId && newCollectionName) {
+        const newCollection = await window.collectionsHelpers.createCollection(newCollectionName);
+        targetCollectionId = newCollection.id;
+      }
+      
+      if (!targetCollectionId) {
+        alert("Please select or create a collection");
+        return;
+      }
+      
+      await window.collectionsHelpers.saveRequestToCollection(
+        targetCollectionId,
+        record,
+        name,
+        tags
+      );
+      
+      saveBtn.textContent = "Saved!";
+      setTimeout(() => saveBtn.textContent = "Save Request", 1500);
+    } catch (err) {
+      console.error("Failed to save:", err);
+      alert("Failed to save request");
+    }
+  };
+  container.appendChild(saveBtn);
   
   return container;
 }
