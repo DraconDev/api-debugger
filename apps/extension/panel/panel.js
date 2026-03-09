@@ -351,3 +351,112 @@ function renderReplayResult(target, data, record) {
   }
   target.appendChild(diffBlock);
 }
+
+function renderDiagnostics(record) {
+  if (!window.analyzeRequest) return null;
+  
+  const diagnostics = window.analyzeRequest(record);
+  if (!diagnostics || !diagnostics.length) return null;
+  
+  const container = document.createElement("div");
+  container.style.marginTop = "12px";
+  container.style.padding = "8px";
+  container.style.border = "1px solid #ddd";
+  container.style.borderRadius = "4px";
+  
+  const heading = document.createElement("h2");
+  heading.textContent = "Diagnostics";
+  container.appendChild(heading);
+  
+  diagnostics.forEach(diag => {
+    const block = document.createElement("div");
+    block.style.marginTop = "8px";
+    block.style.padding = "6px";
+    block.style.borderLeft = `3px solid ${getSeverityColor(diag.severity)}`;
+    block.style.background = "#f9f9f9";
+    
+    const title = document.createElement("div");
+    title.style.fontWeight = "bold";
+    title.style.fontSize = "12px";
+    title.textContent = `${getSeverityIcon(diag.severity)} ${diag.title}`;
+    block.appendChild(title);
+    
+    const explanation = document.createElement("div");
+    explanation.style.marginTop = "4px";
+    explanation.style.fontSize = "11px";
+    explanation.style.color = "#333";
+    explanation.textContent = diag.explanation;
+    block.appendChild(explanation);
+    
+    if (diag.evidence && diag.evidence.length) {
+      const evidenceDiv = document.createElement("div");
+      evidenceDiv.style.marginTop = "6px";
+      evidenceDiv.style.fontSize = "10px";
+      evidenceDiv.style.color = "#666";
+      evidenceDiv.innerHTML = "<strong>Evidence:</strong>";
+      
+      const ul = document.createElement("ul");
+      ul.style.margin = "4px 0";
+      ul.style.paddingLeft = "16px";
+      
+      diag.evidence.forEach(e => {
+        const li = document.createElement("li");
+        li.textContent = `${e.description}: ${e.value}`;
+        ul.appendChild(li);
+      });
+      
+      evidenceDiv.appendChild(ul);
+      block.appendChild(evidenceDiv);
+    }
+    
+    if (diag.suggestions && diag.suggestions.length) {
+      const suggestionsDiv = document.createElement("div");
+      suggestionsDiv.style.marginTop = "6px";
+      suggestionsDiv.style.fontSize = "10px";
+      suggestionsDiv.style.color = "#555";
+      suggestionsDiv.innerHTML = "<strong>Suggestions:</strong>";
+      
+      const ul = document.createElement("ul");
+      ul.style.margin = "4px 0";
+      ul.style.paddingLeft = "16px";
+      
+      diag.suggestions.forEach(s => {
+        const li = document.createElement("li");
+        li.textContent = s;
+        ul.appendChild(li);
+      });
+      
+      suggestionsDiv.appendChild(ul);
+      block.appendChild(suggestionsDiv);
+    }
+    
+    const confidence = document.createElement("div");
+    confidence.style.marginTop = "4px";
+    confidence.style.fontSize = "9px";
+    confidence.style.color = "#888";
+    confidence.textContent = `Confidence: ${Math.round(diag.confidence * 100)}%`;
+    block.appendChild(confidence);
+    
+    container.appendChild(block);
+  });
+  
+  return container;
+}
+
+function getSeverityColor(severity) {
+  switch (severity) {
+    case 'error': return '#d32f2f';
+    case 'warning': return '#f57c00';
+    case 'info': return '#1976d2';
+    default: return '#888';
+  }
+}
+
+function getSeverityIcon(severity) {
+  switch (severity) {
+    case 'error': return '🔴';
+    case 'warning': return '🟠';
+    case 'info': return '🔵';
+    default: return '⚪';
+  }
+}
