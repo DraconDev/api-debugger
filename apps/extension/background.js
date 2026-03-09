@@ -114,11 +114,35 @@ chrome.webRequest.onCompleted.addListener(
   { urls: ["<all_urls>"] }
 );
 
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "GET_REQUESTS") {
     chrome.storage.local.get(["requests"]).then((res) => {
       sendResponse({ requests: res.requests || [] });
     });
     return true;
   }
+  if (msg.type === "REPLAY_REQUEST") {
+    handleReplay(msg.payload)
+      .then((res) => sendResponse({ success: true, ...res }))
+      .catch((err) => sendResponse({ success: false, error: err.message }));
+    return true;
+  }
 });
+
+/**
+ * Replay a modified request and return simplified result.
+ */
+async function handleReplay({ method, url, headers, body }) {
+  const start = performance.now();
+  const res = await fetch(url, { method, headers, body: body || undefined });
+  const duration = performance.now() - start;
+  const text = await res.text().catch(() => "");
+  const preview = text.slice(0, 2048);
+  return {
+    status: res.status,
+    statusText: res.statusText,
+    duration,
+    headers: Array.from(res.headers.entries()).map(([name, value]) => ({ name, value })),
+    bodyPreview: preview,
+  };
+}

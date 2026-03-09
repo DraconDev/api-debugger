@@ -1,7 +1,7 @@
 {
   "name": "api-debugger",
   "private": true,
-  "version": "0.0.10",
+  "version": "0.0.11",
   "workspaces": [
     "apps/*",
     "packages/*"
