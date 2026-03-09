@@ -85,6 +85,10 @@ function showDetail(r) {
     if (diagnosticsBlock) d.appendChild(diagnosticsBlock);
   }
 
+  // Add export section
+  const exportBlock = renderExportBlock(r);
+  if (exportBlock) d.appendChild(exportBlock);
+
   const replay = renderReplayBlock(r);
   if (replay) d.appendChild(replay);
 }
