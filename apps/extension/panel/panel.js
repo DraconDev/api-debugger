@@ -11,6 +11,15 @@ async function clearRequests() {
   render();
 }
 
+let currentView = 'history'; // 'history' | 'collections'
+let selectedCollectionId = null;
+
+function switchView(view) {
+  currentView = view;
+  selectedCollectionId = null;
+  render();
+}
+
 function row(r) {
   const div = document.createElement("div");
   div.style.borderBottom = "1px solid #eee";
