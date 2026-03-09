@@ -1,0 +1,13 @@
+{
+  "name": "api-debugger",
+  "private": true,
+  "version": "0.0.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "echo build not configured",
+    "dev": "echo dev not configured"
+  }
+}

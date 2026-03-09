@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "API Debugger",
+  "version": "0.1.0",
+  "description": "Browser-native API request debugger",
+  "permissions": [
+    "webRequest",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "panel/index.html"
+  }
+}
