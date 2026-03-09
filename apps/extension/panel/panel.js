@@ -248,6 +248,120 @@ function showSavedRequestDetail(saved) {
   if (replay) d.appendChild(replay);
 }
 
+async function renderSyncView(container) {
+  const syncDiv = document.createElement("div");
+  syncDiv.style.padding = "8px";
+  
+  const heading = document.createElement("h2");
+  heading.textContent = "Sync & Account";
+  heading.style.margin = "0 0 12px";
+  syncDiv.appendChild(heading);
+  
+  if (!window.syncService) {
+    const msg = document.createElement("div");
+    msg.textContent = "Sync service not loaded.";
+    msg.style.color = "#777";
+    syncDiv.appendChild(msg);
+    container.appendChild(syncDiv);
+    return;
+  }
+  
+  const user = await window.syncService.getUser();
+  
+  if (user) {
+    const userDiv = document.createElement("div");
+    userDiv.style.marginBottom = "12px";
+    userDiv.innerHTML = `<strong>Logged in as:</strong> ${user.email}`;
+    syncDiv.appendChild(userDiv);
+    
+    const syncBtn = document.createElement("button");
+    syncBtn.textContent = "Sync Now";
+    syncBtn.onclick = async () => {
+      syncBtn.disabled = true;
+      syncBtn.textContent = "Syncing...";
+      try {
+        if (window.collectionsHelpers) {
+          await window.syncService.syncCollections();
+          syncBtn.textContent = "Synced!";
+        } else {
+          syncBtn.textContent = "Collections not available";
+        }
+      } catch (err) {
+        syncBtn.textContent = `Error: ${err.message}`;
+      }
+      setTimeout(() => {
+        syncBtn.textContent = "Sync Now";
+        syncBtn.disabled = false;
+      }, 2000);
+    };
+    syncDiv.appendChild(syncBtn);
+    
+    const logoutBtn = document.createElement("button");
+    logoutBtn.textContent = "Logout";
+    logoutBtn.style.marginLeft = "6px";
+    logoutBtn.onclick = async () => {
+      await window.syncService.logout();
+      render();
+    };
+    syncDiv.appendChild(logoutBtn);
+  } else {
+    const loginForm = document.createElement("div");
+    loginForm.style.marginBottom = "12px";
+    
+    const emailInput = document.createElement("input");
+    emailInput.type = "email";
+    emailInput.placeholder = "Email";
+    emailInput.style.width = "100%";
+    emailInput.style.marginBottom = "6px";
+    emailInput.style.padding = "6px";
+    loginForm.appendChild(emailInput);
+    
+    const passwordInput = document.createElement("input");
+    passwordInput.type = "password";
+    passwordInput.placeholder = "Password";
+    passwordInput.style.width = "100%";
+    passwordInput.style.marginBottom = "6px";
+    passwordInput.style.padding = "6px";
+    loginForm.appendChild(passwordInput);
+    
+    const loginBtn = document.createElement("button");
+    loginBtn.textContent = "Login";
+    loginBtn.onclick = async () => {
+      try {
+        await window.syncService.login(emailInput.value, passwordInput.value);
+        render();
+      } catch (err) {
+        alert(`Login failed: ${err.message}`);
+      }
+    };
+    loginForm.appendChild(loginBtn);
+    
+    const registerBtn = document.createElement("button");
+    registerBtn.textContent = "Register";
+    registerBtn.style.marginLeft = "6px";
+    registerBtn.onclick = async () => {
+      try {
+        await window.syncService.register(emailInput.value, passwordInput.value);
+        render();
+      } catch (err) {
+        alert(`Registration failed: ${err.message}`);
+      }
+    };
+    loginForm.appendChild(registerBtn);
+    
+    syncDiv.appendChild(loginForm);
+  }
+  
+  const note = document.createElement("div");
+  note.style.marginTop = "12px";
+  note.style.fontSize = "10px";
+  note.style.color = "#888";
+  note.textContent = "Backend must be running on localhost:4321";
+  syncDiv.appendChild(note);
+  
+  container.appendChild(syncDiv);
+}
+
 document.getElementById("refresh").onclick = render;
 document.getElementById("clear").onclick = clearRequests;
 
