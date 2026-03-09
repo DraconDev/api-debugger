@@ -237,7 +237,7 @@ function renderReplayBlock(record) {
         headers: parseHeaders(headersArea.value),
         body: bodyArea.value || null,
       });
-      renderReplayResult(resultBox, response);
+      renderReplayResult(resultBox, response, record);
     } catch (err) {
       resultBox.textContent = `Replay failed: ${err.message}`;
     } finally {
