@@ -18,7 +18,11 @@ const partial = new Map();
 
 chrome.webRequest.onBeforeRequest.addListener(
   (details) => {
-    partial.set(details.requestId, { requestBody: details.requestBody?.formData || null });
+    // record start time and optional request body
+    partial.set(details.requestId, {
+      startTime: details.timeStamp,
+      requestBody: details.requestBody?.formData || null,
+    });
   },
   { urls: ["<all_urls>"] },
   ["requestBody"]
@@ -49,6 +53,10 @@ chrome.webRequest.onCompleted.addListener(
     try {
       const base = partial.get(details.requestId) || {};
       partial.delete(details.requestId);
+      const start = base.startTime || details.timeStamp;
+      const duration = typeof base.startTime === "number"
+        ? details.timeStamp - base.startTime
+        : undefined;
       const record = {
         id: details.requestId,
         url: details.url,
@@ -56,7 +64,9 @@ chrome.webRequest.onCompleted.addListener(
         statusCode: details.statusCode,
         type: details.type,
         tabId: details.tabId,
+        startTime: start,
         timeStamp: details.timeStamp,
+        duration,
         requestHeaders: base.requestHeaders || [],
         requestBody: base.requestBody || null,
         responseHeaders: base.responseHeaders || []
