@@ -277,7 +277,7 @@ async function sendReplay(payload) {
   });
 }
 
-function renderReplayResult(target, data) {
+function renderReplayResult(target, data, record) {
   target.innerHTML = `
     <div><strong>Status:</strong> ${data.status} ${data.statusText || ""}</div>
     <div><strong>Duration:</strong> ${data.duration?.toFixed(1) || "—"} ms</div>
@@ -305,4 +305,43 @@ function renderReplayResult(target, data) {
     pre.style.marginTop = "6px";
     target.appendChild(pre);
   }
+
+  // Diff section: compare original vs replay response
+  const diffBlock = document.createElement("div");
+  diffBlock.style.marginTop = "12px";
+  const diffHeader = document.createElement("h2");
+  diffHeader.textContent = "Diff";
+  diffBlock.appendChild(diffHeader);
+  // Status diff
+  const statusDiff = window.diffStatus(record.statusCode, data.status);
+  const sd = document.createElement("div");
+  sd.textContent = `Status: ${statusDiff.original} → ${statusDiff.replay}`;
+  diffBlock.appendChild(sd);
+  // Response headers diff
+  const hdrDiff = window.diffHeaders(record.responseHeaders, data.headers);
+  if (hdrDiff.added.length || hdrDiff.removed.length || hdrDiff.changed.length) {
+    const sub = document.createElement("div");
+    sub.style.marginTop = "6px";
+    sub.innerHTML = `<strong>Response headers changes:</strong>`;
+    hdrDiff.added.forEach(h => {
+      const row = document.createElement("div");
+      row.style.color = "green";
+      row.textContent = `+ ${h.name}: ${h.value}`;
+      sub.appendChild(row);
+    });
+    hdrDiff.removed.forEach(h => {
+      const row = document.createElement("div");
+      row.style.color = "red";
+      row.textContent = `- ${h.name}: ${h.value}`;
+      sub.appendChild(row);
+    });
+    hdrDiff.changed.forEach(h => {
+      const row = document.createElement("div");
+      row.style.color = "orange";
+      row.textContent = `~ ${h.name}: ${h.replayValue} (was ${h.originalValue})`;
+      sub.appendChild(row);
+    });
+    diffBlock.appendChild(sub);
+  }
+  target.appendChild(diffBlock);
 }
