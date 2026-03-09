@@ -50,15 +50,193 @@ function row(r) {
 async function render() {
   const list = document.getElementById("list");
   list.innerHTML = "";
+  
+  // Render view tabs
+  const tabs = document.createElement("div");
+  tabs.style.marginBottom = "8px";
+  tabs.style.display = "flex";
+  tabs.style.gap = "6px";
+  
+  const historyTab = document.createElement("button");
+  historyTab.textContent = "History";
+  historyTab.style.fontWeight = currentView === 'history' ? 'bold' : 'normal';
+  historyTab.onclick = () => switchView('history');
+  tabs.appendChild(historyTab);
+  
+  const collectionsTab = document.createElement("button");
+  collectionsTab.textContent = "Collections";
+  collectionsTab.style.fontWeight = currentView === 'collections' ? 'bold' : 'normal';
+  collectionsTab.onclick = () => switchView('collections');
+  tabs.appendChild(collectionsTab);
+  
+  list.appendChild(tabs);
+  
+  if (currentView === 'history') {
+    await renderHistoryView(list);
+  } else {
+    await renderCollectionsView(list);
+  }
+}
 
+async function renderHistoryView(container) {
   const requests = await getRequests();
-
+  
   if (!requests.length) {
-    list.textContent = "No requests captured yet.";
+    const msg = document.createElement("div");
+    msg.textContent = "No requests captured yet.";
+    msg.style.color = "#777";
+    msg.style.fontSize = "11px";
+    container.appendChild(msg);
     return;
   }
+  
+  requests.forEach((r) => container.appendChild(row(r)));
+}
 
-  requests.forEach((r) => list.appendChild(row(r)));
+async function renderCollectionsView(container) {
+  if (!window.collectionsHelpers) {
+    const msg = document.createElement("div");
+    msg.textContent = "Collections module not loaded.";
+    msg.style.color = "#777";
+    container.appendChild(msg);
+    return;
+  }
+  
+  const collections = await window.collectionsHelpers.getAllCollections();
+  
+  if (!collections.length) {
+    const msg = document.createElement("div");
+    msg.textContent = "No collections yet. Click 'Save to Collection' in request details to create one.";
+    msg.style.color = "#777";
+    msg.style.fontSize = "11px";
+    container.appendChild(msg);
+    return;
+  }
+  
+  collections.forEach(collection => {
+    container.appendChild(collectionRow(collection));
+  });
+}
+
+function collectionRow(collection) {
+  const div = document.createElement("div");
+  div.style.borderBottom = "1px solid #eee";
+  div.style.padding = "6px 0";
+  div.style.cursor = "pointer";
+  
+  const name = document.createElement("span");
+  name.textContent = collection.name;
+  name.style.fontWeight = "bold";
+  name.style.marginRight = "6px";
+  
+  const count = document.createElement("span");
+  count.textContent = `(${collection.requestCount || 0} requests)`;
+  count.style.color = "#777";
+  count.style.fontSize = "11px";
+  
+  div.appendChild(name);
+  div.appendChild(count);
+  
+  div.onclick = async () => {
+    const savedRequests = await window.collectionsHelpers.getRequestsByCollection(collection.id);
+    showCollectionDetail(collection, savedRequests);
+  };
+  
+  return div;
+}
+
+function showCollectionDetail(collection, savedRequests) {
+  const d = document.getElementById("detail");
+  d.style.display = "block";
+  d.innerHTML = "";
+  
+  const heading = document.createElement("h2");
+  heading.textContent = collection.name;
+  d.appendChild(heading);
+  
+  if (collection.description) {
+    const desc = document.createElement("div");
+    desc.style.fontSize = "11px";
+    desc.style.color = "#555";
+    desc.textContent = collection.description;
+    d.appendChild(desc);
+  }
+  
+  const backBtn = document.createElement("button");
+  backBtn.textContent = "Back to Collections";
+  backBtn.style.marginTop = "8px";
+  backBtn.onclick = () => {
+    d.style.display = "none";
+    render();
+  };
+  d.appendChild(backBtn);
+  
+  if (!savedRequests.length) {
+    const msg = document.createElement("div");
+    msg.style.marginTop = "8px";
+    msg.style.color = "#777";
+    msg.textContent = "No saved requests in this collection.";
+    d.appendChild(msg);
+    return;
+  }
+  
+  const list = document.createElement("div");
+  list.style.marginTop = "12px";
+  
+  savedRequests.forEach(saved => {
+    const item = document.createElement("div");
+    item.style.padding = "6px";
+    item.style.marginBottom = "4px";
+    item.style.border = "1px solid #ddd";
+    item.style.borderRadius = "4px";
+    item.style.cursor = "pointer";
+    
+    const nameDiv = document.createElement("div");
+    nameDiv.style.fontWeight = "bold";
+    nameDiv.style.fontSize = "12px";
+    nameDiv.textContent = saved.name;
+    item.appendChild(nameDiv);
+    
+    const urlDiv = document.createElement("div");
+    urlDiv.style.fontSize = "10px";
+    urlDiv.style.color = "#777";
+    urlDiv.textContent = `${saved.request.method} ${saved.request.url}`;
+    item.appendChild(urlDiv);
+    
+    item.onclick = () => showSavedRequestDetail(saved);
+    list.appendChild(item);
+  });
+  
+  d.appendChild(list);
+}
+
+function showSavedRequestDetail(saved) {
+  const r = saved.request;
+  const d = document.getElementById("detail");
+  d.style.display = "block";
+  d.innerHTML = "";
+  
+  const heading = document.createElement("h2");
+  heading.textContent = saved.name;
+  d.appendChild(heading);
+  
+  const meta = document.createElement("div");
+  meta.style.fontSize = "11px";
+  meta.style.color = "#555";
+  meta.style.marginBottom = "8px";
+  meta.textContent = `Saved on ${new Date(saved.createdAt).toLocaleString()}`;
+  d.appendChild(meta);
+  
+  // Render request details using existing function
+  d.appendChild(metadataBlock(r));
+  const headers = headerSection("Request headers", r.requestHeaders);
+  if (headers) d.appendChild(headers);
+  const body = bodySection("Request body", formatBody(r.requestBody));
+  if (body) d.appendChild(body);
+  
+  // Show replay block
+  const replay = renderReplayBlock(r);
+  if (replay) d.appendChild(replay);
 }
 
 document.getElementById("refresh").onclick = render;
