@@ -464,3 +464,66 @@ function getSeverityIcon(severity) {
     default: return '⚪';
   }
 }
+
+function renderExportBlock(record) {
+  if (!window.exportHelpers) return null;
+  
+  const container = document.createElement("div");
+  container.style.marginTop = "12px";
+  container.style.padding = "8px";
+  container.style.border = "1px solid #ddd";
+  container.style.borderRadius = "4px";
+  
+  const heading = document.createElement("h2");
+  heading.textContent = "Export";
+  container.appendChild(heading);
+  
+  const buttonGroup = document.createElement("div");
+  buttonGroup.style.display = "flex";
+  buttonGroup.style.gap = "6px";
+  buttonGroup.style.flexWrap = "wrap";
+  
+  const btnCurl = document.createElement("button");
+  btnCurl.textContent = "Copy as cURL";
+  btnCurl.onclick = async () => {
+    const curl = window.exportHelpers.toCurl(record);
+    const ok = await window.exportHelpers.copyToClipboard(curl);
+    btnCurl.textContent = ok ? "Copied!" : "Failed";
+    setTimeout(() => btnCurl.textContent = "Copy as cURL", 1500);
+  };
+  buttonGroup.appendChild(btnCurl);
+  
+  const btnFetch = document.createElement("button");
+  btnFetch.textContent = "Copy as Fetch";
+  btnFetch.onclick = async () => {
+    const fetch = window.exportHelpers.toFetch(record);
+    const ok = await window.exportHelpers.copyToClipboard(fetch);
+    btnFetch.textContent = ok ? "Copied!" : "Failed";
+    setTimeout(() => btnFetch.textContent = "Copy as Fetch", 1500);
+  };
+  buttonGroup.appendChild(btnFetch);
+  
+  const btnJson = document.createElement("button");
+  btnJson.textContent = "Copy as JSON";
+  btnJson.onclick = async () => {
+    const json = window.exportHelpers.toJson(record);
+    const ok = await window.exportHelpers.copyToClipboard(json);
+    btnJson.textContent = ok ? "Copied!" : "Failed";
+    setTimeout(() => btnJson.textContent = "Copy as JSON", 1500);
+  };
+  buttonGroup.appendChild(btnJson);
+  
+  container.appendChild(buttonGroup);
+  
+  const preview = document.createElement("pre");
+  preview.style.marginTop = "8px";
+  preview.style.maxHeight = "120px";
+  preview.style.overflow = "auto";
+  preview.style.fontSize = "10px";
+  preview.style.background = "#f5f5f5";
+  preview.style.padding = "6px";
+  preview.textContent = window.exportHelpers.toCurl(record);
+  container.appendChild(preview);
+  
+  return container;
+}
