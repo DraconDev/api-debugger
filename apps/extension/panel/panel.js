@@ -56,25 +56,34 @@ async function render() {
   tabs.style.marginBottom = "8px";
   tabs.style.display = "flex";
   tabs.style.gap = "6px";
-  
+
   const historyTab = document.createElement("button");
   historyTab.textContent = "History";
   historyTab.style.fontWeight = currentView === 'history' ? 'bold' : 'normal';
   historyTab.onclick = () => switchView('history');
   tabs.appendChild(historyTab);
-  
+
   const collectionsTab = document.createElement("button");
   collectionsTab.textContent = "Collections";
   collectionsTab.style.fontWeight = currentView === 'collections' ? 'bold' : 'normal';
   collectionsTab.onclick = () => switchView('collections');
   tabs.appendChild(collectionsTab);
   
+  // Add sync/auth tab
+  const syncTab = document.createElement("button");
+  syncTab.textContent = "Sync";
+  syncTab.style.fontWeight = currentView === 'sync' ? 'bold' : 'normal';
+  syncTab.onclick = () => switchView('sync');
+  tabs.appendChild(syncTab);
+
   list.appendChild(tabs);
-  
+
   if (currentView === 'history') {
     await renderHistoryView(list);
-  } else {
+  } else if (currentView === 'collections') {
     await renderCollectionsView(list);
+  } else {
+    await renderSyncView(list);
   }
 }
 
