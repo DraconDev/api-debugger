@@ -2,6 +2,38 @@
 // Logs completed requests to the service worker console
 
 const MAX_HISTORY = 200;
+const textDecoder = new TextDecoder("utf-8");
+
+function serializeRequestBody(details) {
+  const body = details.requestBody;
+  if (!body) return null;
+
+  if (Array.isArray(body.raw) && body.raw.length) {
+    return body.raw
+      .map((chunk) => {
+        if (chunk?.bytes) {
+          try {
+            return textDecoder.decode(chunk.bytes);
+          } catch (err) {
+            return "";
+          }
+        }
+        return "";
+      })
+      .join("");
+  }
+
+  if (body.formData) {
+    return Object.entries(body.formData)
+      .map(([key, value]) => {
+        const values = Array.isArray(value) ? value : [value];
+        return `${key}=${values.join(",")}`;
+      })
+      .join("&");
+  }
+
+  return null;
+}
 
 async function addRecord(record) {
   const res = await chrome.storage.local.get(["requests"]);
@@ -22,6 +54,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     partial.set(details.requestId, {
       startTime: details.timeStamp,
       requestBody: details.requestBody?.formData || null,
+      requestBodyText: serializeRequestBody(details),
     });
   },
   { urls: ["<all_urls>"] },
