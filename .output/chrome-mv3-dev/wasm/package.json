@@ -1,0 +1,16 @@
+{
+  "name": "dracon-wasm",
+  "type": "module",
+  "description": "Shared WASM module for Dracon browser extensions",
+  "version": "0.1.0",
+  "files": [
+    "dracon_wasm_bg.wasm",
+    "dracon_wasm.js",
+    "dracon_wasm.d.ts"
+  ],
+  "main": "dracon_wasm.js",
+  "types": "dracon_wasm.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
