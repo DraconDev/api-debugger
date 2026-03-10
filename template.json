@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "wxt-starter",
+  "description": "WXT Starter Template for Dracon Chrome Extensions",
+  "version": "1.0.0",
+  "variables": {
+    "slug": {
+      "description": "Directory name and npm package name (lowercase, hyphens)",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "example": "my-product"
+    },
+    "name": {
+      "description": "Human-readable extension name",
+      "example": "My Product"
+    },
+    "description": {
+      "description": "Short description of the extension",
+      "example": "AI-powered product description"
+    },
+    "appId": {
+      "description": "Momo product slug (auto-generated from slug, no hyphens)",
+      "example": "myproduct"
+    }
+  },
+  "files": {
+    "package.json": {
+      "replacements": ["name", "description"]
+    },
+    "wxt.config.ts": {
+      "replacements": ["name", "description"]
+    },
+    "utils/api.ts": {
+      "replacements": ["name", "appId"]
+    },
+    "README.md": {
+      "replacements": ["name", "description", "appId"]
+    }
+  },
+  "features": [
+    "React 19 + TypeScript",
+    "Tailwind CSS with shared design tokens",
+    "Momo OAuth authentication",
+    "OpenAI-compatible chat completions",
+    "Subscription management",
+    "Vitest testing setup",
+    "ESLint + Prettier"
+  ],
+  "dependencies": {
+    "required": [
+      "@dracon/wxt-shared",
+      "react",
+      "react-dom",
+      "tailwindcss"
+    ],
+    "optional": [
+      "@radix-ui/themes",
+      "lucide-react",
+      "clsx"
+    ]
+  }
+}

@@ -1,435 +1,290 @@
-# API Debugger - Complete Documentation
+# WXT Starter Template for Momo
 
-## Overview
-
-API Debugger is a browser-first API debugging tool that helps developers understand, fix, and replay broken requests faster than generic API clients.
+A modern, production-ready starter template for building Chrome extensions that integrate with **Momo** (the Dracon backend).
 
 ## Features
 
-### Core Features
-- **Request Capture**: Automatically captures HTTP/HTTPS requests from browser tabs
-- **Request History**: View and search through captured requests
-- **Request Details**: Inspect headers, body, timing, and response data
-- **Request Replay**: Edit and resend any captured request
-- **Diff Engine**: Compare original vs replayed request/response
-- **Diagnostics**: Automatic failure analysis for common issues
-- **Collections**: Save and organize important requests
-- **Export**: Copy as cURL, Fetch, or JSON
-- **Local Agent**: Access localhost and private network endpoints
+- ⚡ **WXT Framework** - Modern web extension toolkit with hot reload
+- ⚛️ **React 19** - Latest React with TypeScript
+- 🎨 **Tailwind CSS** - Utility-first styling
+- 🔐 **Momo Auth** - OAuth integration with Momo/Dracon
+- 📦 **Momo API Client** - Pre-configured for Momo's API structure
+- 🧪 **Testing Ready** - Vitest configured
+- 📱 **Type Safe** - Full TypeScript support
 
-### Advanced Features
-- AI-powered explanations (requires backend)
-- Cloud sync for collections (requires backend)
-- Multi-tab request filtering
-
-## Installation
-
-### Extension
-
-1. Open Chrome/Edge
-2. Navigate to `chrome://extensions` (or `edge://extensions`)
-3. Enable "Developer mode" (toggle in top-right)
-4. Click "Load unpacked"
-5. Select the `apps/extension` directory
-6. The extension icon should appear in your toolbar
-
-### Local Agent (Optional)
-
-Required for localhost/private network access:
+## Quick Start
 
 ```bash
-cd apps/agent
+# 1. Copy the starter template
+cp -r wxt-starter my-new-extension
+cd my-new-extension
+
+# 2. Install dependencies
 npm install
-npm start
+
+# 3. Configure environment
+cp .env.example .env
+# Edit .env with your Momo settings
+
+# 4. Start development
+npm run dev
 ```
 
-The agent runs on `http://localhost:47321` by default.
+## Extension Constraints
 
-### Backend API (Optional)
+Browser extensions have unique constraints. See [EXTENSION_CONSTRAINTS.md](./EXTENSION_CONSTRAINTS.md) for details.
 
-Required for cloud sync and AI features:
+Quick overview:
+- **Content scripts** (running on web pages) cannot make direct API calls - they proxy through background script
+- **OAuth** uses `chrome-extension://` URLs, not `https://`
+- **Storage** uses `chrome.storage`, not `localStorage`
 
-```bash
-cd apps/api
-npm install
-npm start
+## Momo Integration
+
+This starter is pre-configured to work with Momo:
+
+### OAuth Flow
+
+1. User clicks "Sign In" → calls `authFlow.openLogin()`
+2. Momo handles Google OAuth
+3. Momo redirects to extension with exchange code (`#code=xxx`)
+4. Extension exchanges code for tokens via `POST /api/v1/auth/exchange`
+
+### API Structure
+
+The starter uses the reusable starter layer from `@dracon/wxt-shared/starter`.
+That means your extension gets a prewired extension bundle plus starter-ready hooks.
+
+The `apiClient` provides methods for Momo's API:
+
+```typescript
+// User info (includes subscription status)
+const user = await apiClient.getUser();
+
+// AI Chat Completions (OpenAI-compatible)
+const response = await apiClient.chatCompletions({
+  messages: [
+    { role: 'system', content: 'You are helpful.' },
+    { role: 'user', content: 'Hello!' }
+  ],
+  project_id: 'my-project'
+});
+
+// Product-specific endpoints (if configured in Momo)
+const userInfo = await apiClient.getProductUser('myproduct');
+const chat = await apiClient.productChatCompletions('myproduct', { messages });
+const sub = await apiClient.productSubscribe('myproduct', 'price_xxx');
 ```
 
-The API runs on `http://localhost:4321` by default.
-
-### AI Service (Optional)
-
-Required for AI explanations:
-
-```bash
-cd apps/ai-service
-npm install
-npm start
-```
-
-The AI service runs on `http://localhost:3456` by default.
-
-## Usage Guide
-
-### Basic Workflow
-
-1. **Capture Requests**
-   - Browse any website
-   - Requests are automatically captured
-   - Click extension icon to view history
-
-2. **Inspect Requests**
-   - Click any request in the list
-   - View method, URL, headers, body, response
-   - See timing and status code
-
-3. **Analyze Failures**
-   - Failed requests (4xx, 5xx) show diagnostics
-   - View likely causes and suggestions
-   - Check evidence for root cause
-
-4. **Replay Requests**
-   - Click "Replay request" section
-   - Edit method, URL, headers, or body
-   - Click "Send replay"
-   - View results and diff
-
-5. **Save to Collections**
-   - Scroll to "Save to Collection" section
-   - Choose or create a collection
-   - Add name and tags
-   - Click "Save Request"
-
-6. **Export Requests**
-   - Scroll to "Export" section
-   - Click "Copy as cURL", "Copy as Fetch", or "Copy as JSON"
-   - Paste in your code or terminal
-
-### Using Collections
-
-1. Click "Collections" tab in main view
-2. View all saved collections
-3. Click a collection to view saved requests
-4. Click a saved request to view details
-5. Replay saved requests directly
-
-### Using Local Agent
-
-1. Start the agent: `npm start` in `apps/agent`
-2. Open extension, go to "Sync" tab
-3. Click "Check Agent Status" to verify connection
-4. In replay section, check "Use local agent"
-5. Replay requests to localhost or private IPs
-
-### Using Cloud Sync
-
-1. Start the backend API
-2. Go to "Sync" tab in extension
-3. Register or login
-4. Collections automatically sync when logged in
-5. Click "Sync Now" to force sync
-
-## Architecture
+## Project Structure
 
 ```
-┌─────────────────────────────────────────────┐
-│           Browser Extension                  │
-│  ┌─────────┐  ┌──────────┐  ┌───────────┐  │
-│  │ Capture │  │   UI     │  │  Replay   │  │
-│  └────┬────┘  └────┬─────┘  └─────┬─────┘  │
-│       │            │              │         │
-│  ┌────▼────────────▼──────────────▼──────┐ │
-│  │         Background Service            │ │
-│  └──────────────────┬────────────────────┘ │
-└─────────────────────┼───────────────────────┘
-                      │
-         ┌────────────┼────────────┐
-         │            │            │
-    ┌────▼─────┐ ┌────▼────┐ ┌────▼──────┐
-    │  Agent   │ │   API   │ │AI Service │
-    │(Local)   │ │(Cloud)  │ │ (Cloud)   │
-    └──────────┘ └─────────┘ └───────────┘
+wxt-starter/
+├── entrypoints/          # Extension entry points
+│   ├── popup/           # Popup UI
+│   ├── background.ts    # Service worker (handles API proxy)
+│   ├── content.ts       # Content script
+│   └── auth-callback/   # OAuth callback handler
+├── components/          # React components
+├── utils/              # Utilities
+│   ├── api.ts         # Momo API client setup
+│   └── store.ts       # Storage definitions
+├── types/              # TypeScript types
+├── lib/                # Helper functions
+└── public/            # Static assets
 ```
 
-### Components
+## Configuration
 
-#### Extension (`apps/extension`)
-- **manifest.json**: Extension configuration
-- **background.js**: Request capture, storage, message handling
-- **panel/**: UI components
-- **utils/**: Helper modules (diff, diagnostics, export, collections, sync, agent)
+### Environment Variables
 
-#### Local Agent (`apps/agent`)
-- Lightweight Node.js server
-- Proxies requests to localhost/private networks
-- Runs locally on port 47321
+Create a `.env` file:
 
-#### Backend API (`apps/api`)
-- User authentication
-- Collection storage
-- Sync service
+```env
+# Momo Environment
+VITE_APP_ENV=local          # local | stage | prod
+WXT_DRACON_URL=http://localhost:8080
+WXT_API_URL=http://localhost:8080
 
-#### AI Service (`apps/ai-service`)
-- Request analysis
-- Explanation generation
-- Sanitization of sensitive data
-
-## API Reference
-
-### Extension APIs
-
-#### `background.js`
-
-**Message Types:**
-- `GET_REQUESTS`: Retrieve captured requests
-- `REPLAY_REQUEST`: Replay a request
-
-**Storage Keys:**
-- `requests`: Captured request history
-- `collections`: User collections
-- `savedRequests`: Saved request items
-
-#### Utility Modules
-
-**`diff.js`**
-```javascript
-window.diffStatus(original, replay)
-window.diffHeaders(original, modified)
-window.diffText(original, modified)
+# Optional: Stripe price IDs for your extension
+# WXT_STRIPE_PRICE_ID=price_xxx
 ```
 
-**`diagnostics.js`**
-```javascript
-window.analyzeRequest(record)
-// Returns array of diagnostics
-```
+### Customize for Your Extension
 
-**`export.js`**
-```javascript
-window.exportHelpers.toCurl(record)
-window.exportHelpers.toFetch(record)
-window.exportHelpers.toJson(record)
-window.exportHelpers.copyToClipboard(text)
-```
+1. **Update `wxt.config.ts`**
+   - Change extension name, description
+   - Add/remove permissions
+   - Configure host permissions
 
-**`collections.js`**
-```javascript
-window.collectionsHelpers.getAllCollections()
-window.collectionsHelpers.createCollection(name, description)
-window.collectionsHelpers.saveRequestToCollection(collectionId, request, name, tags)
-window.collectionsHelpers.getRequestsByCollection(collectionId)
-```
+2. **Update `utils/api.ts`**
+   - Change `appName` to your extension name
+   - Change `appId` to your Momo product slug
 
-**`sync.js`**
-```javascript
-window.syncService.login(email, password)
-window.syncService.register(email, password)
-window.syncService.logout()
-window.syncService.syncCollections()
-```
+3. **Update `utils/store.ts`**
+   - Add custom settings
+   - Define app-specific stores
 
-**`agent.js`**
-```javascript
-window.agentService.checkAgentHealth()
-window.agentService.replayViaAgent(request)
-window.agentService.discoverLocalPorts(ports)
-```
-
-### Local Agent API
-
-**Base URL:** `http://localhost:47321`
-
-#### Health Check
-```
-GET /health
-Response: { status, version, uptime, timestamp }
-```
-
-#### Replay Request
-```
-POST /replay
-Body: { url, method, headers, body, timeout }
-Response: { success, status, statusText, headers, body, duration }
-```
-
-#### Discover Endpoints
-```
-POST /discover
-Body: { ports: [3000, 8080, ...] }
-Response: { success, results: [{ port, status, available }] }
-```
-
-### Backend API
-
-**Base URL:** `http://localhost:4321`
-
-#### Auth
-```
-POST /api/auth/register
-POST /api/auth/login
-POST /api/auth/logout
-GET /api/auth/me
-```
-
-#### Collections
-```
-GET /api/collections
-POST /api/collections
-PUT /api/collections/:id
-DELETE /api/collections/:id
-```
-
-#### Saved Requests
-```
-GET /api/saved-requests
-POST /api/saved-requests
-PUT /api/saved-requests/:id
-DELETE /api/saved-requests/:id
-```
-
-#### Sync
-```
-POST /api/sync/push
-GET /api/sync/pull
-```
-
-### AI Service API
-
-**Base URL:** `http://localhost:3456`
-
-#### Explain Request
-```
-POST /api/explain
-Body: { request, diagnostics }
-Response: { success, explanation }
-```
-
-## Troubleshooting
-
-### Extension Not Capturing Requests
-
-1. Check permissions in `manifest.json`
-2. Ensure `webRequest` permission is granted
-3. Refresh the page after installing extension
-4. Check service worker console for errors
-
-### Replay Failing
-
-1. Check if URL is accessible
-2. For localhost URLs, ensure agent is running
-3. Check CORS headers on target server
-4. Verify request body format
-
-### Agent Connection Failed
-
-1. Verify agent is running: `curl http://localhost:47321/health`
-2. Check port 47321 is not blocked
-3. Try different port: `apidbg serve 3000`
-4. Check firewall settings
-
-### Sync Not Working
-
-1. Verify backend API is running
-2. Check network tab for API errors
-3. Ensure valid authentication token
-4. Try logging out and back in
-
-### Diagnostics Not Showing
-
-1. Only appears on failed requests (4xx, 5xx)
-2. Check if `diagnostics.js` is loaded
-3. Verify request has necessary data (headers, status)
+4. **Update `public/_locales/en/messages.json`**
+   - Add translations
 
 ## Development
 
-### Building
-
-No build step required - extension runs directly from source.
-
-### Testing
-
 ```bash
-# Test local agent
-cd apps/agent
-npm start
-curl http://localhost:47321/health
+# Development with hot reload
+npm run dev
 
-# Test backend API
-cd apps/api
-npm start
-curl http://localhost:4321/health
+# Build for production
+npm run build
 
-# Test AI service
-cd apps/ai-service
-npm start
-curl http://localhost:3456/health
+# Build for Firefox
+npm run build:firefox
+
+# Create zip for Chrome Web Store
+npm run zip
+
+# Run tests
+npm test
+
+# Type check
+npm run compile
 ```
 
-### Debugging
+## Using Momo APIs
 
-**Extension:**
-1. Go to `chrome://extensions`
-2. Click "Inspect views: service worker"
-3. Check console for logs
+### Authentication
 
-**Agent/API/AI Service:**
-- Check terminal output
-- Logs print to stdout
+```typescript
+import { authFlow } from '@/utils/api';
 
-## Limitations
+// Open Momo login
+authFlow.openLogin();
 
-### Browser Extension
-- Cannot capture WebSocket frames (future feature)
-- Response body limited by Chrome's webRequest API
-- Some headers may be redacted by browser
+// Handle OAuth callback (in auth-callback page)
+const result = await authFlow.handleAuthCallback();
 
-### Local Agent
-- Only HTTP/HTTPS protocols
-- Request body limited to 1MB
-- Requires manual startup
+// Logout
+await authFlow.logout();
+```
 
-### Backend API
-- In-memory storage (data lost on restart)
-- No password hashing (dev only)
-- No rate limiting
+### API Calls
 
-### AI Service
-- Mock responses by default
-- Requires API key for real AI
-- No streaming responses
+```typescript
+import { apiClient } from '@/utils/api';
 
-## Future Enhancements
+// Get user with subscription status
+const { user, subscription } = await apiClient.getUser();
 
-- [ ] WebSocket debugging
-- [ ] GraphQL support
-- [ ] gRPC support
-- [ ] OpenAPI/Swagger integration
-- [ ] Request recording and playback
-- [ ] Team collaboration
-- [ ] Custom themes
-- [ ] Keyboard shortcuts
-- [ ] Request templates
-- [ ] Environment variables
-- [ ] Mock server
-- [ ] Performance metrics
-- [ ] Automated testing
+// AI chat
+const response = await apiClient.chatCompletions({
+  messages: [{ role: 'user', content: 'Hello!' }],
+  project_id: 'my-project'
+});
 
-## Contributing
+// Custom API calls
+const data = await apiClient.get('/api/v1/my-endpoint');
+const result = await apiClient.post('/api/v1/my-endpoint', { data });
+```
 
-Contributions welcome! Areas to help:
+### Product-Specific Endpoints
 
-1. **Testing**: Test with real APIs, report bugs
-2. **Documentation**: Improve guides, add examples
-3. **Features**: Implement items from roadmap
-4. **Diagnostics**: Add more failure detection rules
-5. **UI/UX**: Improve interface design
+If your extension has a product config in Momo (via Pages DB):
+
+```typescript
+// These endpoints include subscription checking
+const user = await apiClient.getProductUser('myproduct');
+
+// Chat with product-specific settings
+const chat = await apiClient.productChatCompletions('myproduct', {
+  messages: [{ role: 'user', content: 'Hello!' }]
+});
+
+// Subscribe to product
+const { checkout_url } = await apiClient.productSubscribe('myproduct', 'price_xxx');
+```
+
+## Momo Auth Flow Details
+
+The auth flow follows Momo's security model:
+
+1. **Login URL**: `GET /api/v1/auth/login/google?redirect_uri={ext}&app={appId}`
+2. **Redirect**: Momo redirects to extension with `#code=xxx` in URL fragment
+3. **Exchange**: Extension calls `POST /api/v1/auth/exchange` with the code
+4. **Tokens**: Momo returns `{ session_token, refresh_token }`
+5. **User Info**: Extension fetches user info via `GET /api/v1/user`
+
+This keeps tokens out of browser history and logs.
+
+## Common Patterns
+
+### Adding a New Content Script
+
+```typescript
+// entrypoints/my-content.ts
+export default defineContentScript({
+  matches: ['https://example.com/*'],
+  main() {
+    // Proxy requests through background script
+    const result = await browser.runtime.sendMessage({
+      type: 'apiProxyRequest',
+      endpoint: '/api/v1/user',
+      method: 'GET'
+    });
+  },
+});
+```
+
+### Background Message Handling
+
+```typescript
+// background.ts
+const router = createMessageRouter({
+  apiClient,
+  handlers: {
+    'myAction': async (msg, sender) => {
+      // Handle custom messages
+      return { result: 'done' };
+    },
+  },
+});
+```
+
+### Using Storage
+
+```typescript
+import { authStore, settingsStore } from '@/utils/store';
+
+// Auth is automatically persisted
+const auth = await authStore.getValue();
+
+// Settings sync across devices
+await settingsStore.setValue({ theme: 'dark' });
+```
+
+## Deployment
+
+1. Build the extension:
+   ```bash
+   npm run build
+   ```
+
+2. Load in Chrome:
+   - Open `chrome://extensions/`
+   - Enable "Developer mode"
+   - Click "Load unpacked"
+   - Select `.output/chrome-mv3-dev`
+
+3. Publish to Chrome Web Store:
+   ```bash
+   npm run zip
+   # Upload .output/my-extension.zip to Chrome Web Store
+   ```
+
+4. Configure in Momo:
+   - Add your extension as a product in Momo's Pages DB
+   - Set allowed origins to `chrome-extension://{your-extension-id}`
+   - Configure pricing if needed
 
 ## License
 
 MIT
-
-## Support
-
-- GitHub Issues: [Report bugs, request features]
-- Documentation: This file + docs/ folder
-- Email: (Add contact if applicable)

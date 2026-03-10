@@ -1,27 +1,56 @@
 {
-  "name": "api-debugger",
+  "name": "@dracon/wxt-starter",
+  "description": "WXT Starter Template for Dracon Chrome Extensions",
   "private": true,
-  "version": "0.1.2",
-  "description": "API Debugger - Browser-first API debugging tool",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "version": "1.0.1",
+  "type": "module",
   "scripts": {
-    "start:agent": "cd apps/agent && npm start",
-    "start:api": "cd apps/api && npm start",
-    "start:ai": "cd apps/ai-service && npm start",
-    "start:all": "npm run start:agent & npm run start:api & npm run start:ai",
-    "test": "echo \"Run tests manually - see docs/TESTING.md\"",
-    "lint": "echo \"No linter configured yet\""
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:dev": "wxt build --mode development",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "compile": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "postinstall": "wxt prepare",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{ts,tsx,json,css}\""
   },
-  "keywords": [
-    "api",
-    "debugger",
-    "browser-extension",
-    "api-testing",
-    "developer-tools"
-  ],
-  "author": "",
-  "license": "MIT"
+  "dependencies": {
+    "@dracon/wxt-shared": "file:../wxt-shared",
+    "@radix-ui/themes": "^3.1.6",
+    "@types/webextension-polyfill": "^0.12.4",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.460.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.6.0",
+    "webextension-polyfill": "^0.12.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.280",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
+    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/parser": "^8.48.0",
+    "@wxt-dev/module-react": "^1.1.5",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "happy-dom": "^20.1.0",
+    "postcss": "^8.4.49",
+    "prettier": "^3.4.0",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.6.3",
+    "vitest": "^4.0.16",
+    "wxt": "^0.20.13"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
