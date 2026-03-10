@@ -359,6 +359,66 @@ async function renderSyncView(container) {
   note.textContent = "Backend must be running on localhost:4321";
   syncDiv.appendChild(note);
   
+  // Agent status section
+  const agentSection = document.createElement("div");
+  agentSection.style.marginTop = "16px";
+  agentSection.style.paddingTop = "12px";
+  agentSection.style.borderTop = "1px solid #ddd";
+  
+  const agentHeading = document.createElement("h3");
+  agentHeading.textContent = "Local Agent";
+  agentHeading.style.margin = "0 0 8px";
+  agentHeading.style.fontSize = "13px";
+  agentSection.appendChild(agentHeading);
+  
+  if (window.agentService) {
+    const checkBtn = document.createElement("button");
+    checkBtn.textContent = "Check Agent Status";
+    checkBtn.onclick = async () => {
+      checkBtn.disabled = true;
+      checkBtn.textContent = "Checking...";
+      
+      const health = await window.agentService.checkAgentHealth();
+      
+      if (health) {
+        checkBtn.textContent = `Agent OK (v${health.version})`;
+        
+        const statusDiv = document.createElement("div");
+        statusDiv.style.marginTop = "8px";
+        statusDiv.style.fontSize = "10px";
+        statusDiv.style.color = "#666";
+        statusDiv.innerHTML = `
+          <div>✓ Agent running</div>
+          <div>Port: ${health.port || 'unknown'}</div>
+          <div>Uptime: ${Math.floor(health.uptime)}s</div>
+        `;
+        agentSection.appendChild(statusDiv);
+      } else {
+        checkBtn.textContent = "Agent Not Running";
+        
+        const helpDiv = document.createElement("div");
+        helpDiv.style.marginTop = "8px";
+        helpDiv.style.fontSize = "10px";
+        helpDiv.style.color = "#888";
+        helpDiv.innerHTML = `
+          <div style="margin-bottom:4px;">To start the agent:</div>
+          <div style="font-family:monospace;background:#f5f5f5;padding:4px;">
+            cd apps/agent && npm start
+          </div>
+        `;
+        agentSection.appendChild(helpDiv);
+      }
+      
+      setTimeout(() => {
+        checkBtn.textContent = "Check Agent Status";
+        checkBtn.disabled = false;
+      }, 3000);
+    };
+    agentSection.appendChild(checkBtn);
+  }
+  
+  syncDiv.appendChild(agentSection);
+  
   container.appendChild(syncDiv);
 }
 
@@ -546,6 +606,20 @@ function renderReplayBlock(record) {
   button.textContent = "Send replay";
   button.style.marginTop = "6px";
   block.appendChild(button);
+  
+  // Add option to use agent for localhost requests
+  const useAgentCheckbox = document.createElement("input");
+  useAgentCheckbox.type = "checkbox";
+  useAgentCheckbox.id = "useAgent";
+  useAgentCheckbox.style.marginLeft = "8px";
+  
+  const useAgentLabel = document.createElement("label");
+  useAgentLabel.textContent = "Use local agent";
+  useAgentLabel.style.fontSize = "11px";
+  useAgentLabel.setAttribute("for", "useAgent");
+  
+  block.appendChild(useAgentCheckbox);
+  block.appendChild(useAgentLabel);
 
   const resultBox = document.createElement("div");
   resultBox.style.marginTop = "8px";
@@ -555,12 +629,36 @@ function renderReplayBlock(record) {
     button.disabled = true;
     resultBox.textContent = "Sending replay...";
     try {
-      const response = await sendReplay({
+      const payload = {
         method: methodInput.value.trim() || "GET",
         url: urlInput.value.trim(),
         headers: parseHeaders(headersArea.value),
         body: bodyArea.value || null,
-      });
+      };
+      
+      let response;
+      
+      // Check if agent should be used
+      if (useAgentCheckbox.checked && window.agentService) {
+        resultBox.textContent = "Sending via local agent...";
+        response = await window.agentService.replayViaAgent(payload);
+        
+        if (!response.success) {
+          throw new Error(response.error || 'Agent replay failed');
+        }
+        
+        // Transform agent response to match expected format
+        response = {
+          status: response.status,
+          statusText: response.statusText,
+          headers: response.headers,
+          bodyPreview: response.body,
+          duration: response.duration
+        };
+      } else {
+        response = await sendReplay(payload);
+      }
+      
       renderReplayResult(resultBox, response, record);
     } catch (err) {
       resultBox.textContent = `Replay failed: ${err.message}`;
