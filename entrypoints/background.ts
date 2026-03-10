@@ -1,67 +1,220 @@
 /**
- * Background Service Worker
- * 
- * Handles:
- * - API proxy requests from content scripts
- * - Extension lifecycle events
- * - Message routing
+ * API Debugger - Background Service Worker
+ *
+ * Captures HTTP requests and stores them for inspection
  */
 
-import { 
-  createMessageRouter, 
-  isBackgroundMessage,
-  setupLifecycle 
-} from "@dracon/wxt-shared/background";
-import { apiClient } from "@/utils/api";
-import { authStore, defaultAuthStore } from "@/utils/store";
+// Types
+interface RequestRecord {
+  id: string;
+  url: string;
+  method: string;
+  statusCode: number;
+  type?: string;
+  tabId: number;
+  startTime: number;
+  timeStamp: number;
+  duration: number;
+  requestHeaders: chrome.webRequest.HttpHeader[];
+  requestBody: Record<string, unknown> | null;
+  requestBodyText: string | null;
+  responseHeaders: chrome.webRequest.HttpHeader[];
+}
 
-// Create message router with API client
-const router = createMessageRouter({
-  apiClient,
-  handlers: {
-    // Add custom message handlers here
-    // 'customAction': async (msg, sender) => { ... },
-  },
-});
+interface PartialRequest {
+  startTime?: number;
+  requestBody?: Record<string, unknown>;
+  requestBodyText?: string | null;
+  requestHeaders?: chrome.webRequest.HttpHeader[];
+  responseHeaders?: chrome.webRequest.HttpHeader[];
+}
 
-export default defineBackground(() => {
-  console.log("[Background] Service worker started");
+interface ReplayPayload {
+  method: string;
+  url: string;
+  headers: Array<{ name: string; value: string }>;
+  body?: string;
+}
 
-  // Handle messages from content scripts and popup
-  browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (!isBackgroundMessage(message)) return;
+interface ReplayResponse {
+  success: boolean;
+  status: number;
+  statusText: string;
+  headers: Array<[string, string]>;
+  bodyPreview: string;
+  duration: number;
+}
 
-    router(message, sender)
-      .then((response) => {
-        if (response !== undefined) {
-          sendResponse(response);
+// Constants
+const MAX_HISTORY = 200;
+const textDecoder = new TextDecoder("utf-8");
+
+// State
+const partial = new Map<string, PartialRequest>();
+
+// Helper functions
+function serializeRequestBody(details: chrome.webRequest.WebRequestBodyDetails): string | null {
+  const body = details.requestBody;
+  if (!body) return null;
+
+  if (body.raw && body.raw.length) {
+    return body.raw
+      .map((chunk) => {
+        if (chunk?.bytes) {
+          try {
+            return textDecoder.decode(chunk.bytes);
+          } catch {
+            return "";
+          }
         }
+        return "";
       })
-      .catch((err) => {
-        console.error("[Background] Message error:", err);
-        sendResponse({ error: err.message });
-      });
+      .join("");
+  }
 
-    return true; // Async response
+  if (body.formData) {
+    return Object.entries(body.formData)
+      .map(([key, value]) => {
+        const values = Array.isArray(value) ? value : [value];
+        return `${key}=${values.join(",")}`;
+      })
+      .join("&");
+  }
+
+  return null;
+}
+
+async function addRecord(record: RequestRecord): Promise<void> {
+  const result = await chrome.storage.local.get(["requests"]);
+  const list = (result.requests as RequestRecord[]) || [];
+
+  list.unshift(record);
+  if (list.length > MAX_HISTORY) list.length = MAX_HISTORY;
+
+  await chrome.storage.local.set({ requests: list });
+}
+
+async function handleReplay(payload: ReplayPayload): Promise<ReplayResponse> {
+  const start = performance.now();
+
+  const headers: Record<string, string> = {};
+  payload.headers?.forEach((h) => {
+    headers[h.name] = h.value;
   });
 
-  // Setup lifecycle callbacks
-  setupLifecycle({
-    onInstall: async () => {
-      console.log("[Background] Extension installed");
-      
-      // Initialize auth store
-      try {
-        await authStore.setValue(defaultAuthStore);
-      } catch (error) {
-        console.error("[Background] Failed to initialize auth store:", error);
-      }
+  const response = await fetch(payload.url, {
+    method: payload.method,
+    headers,
+    body: payload.body || undefined,
+  });
 
-      // Open welcome page or onboarding
-      // browser.tabs.create({ url: browser.runtime.getURL("welcome.html") });
+  const duration = performance.now() - start;
+  const text = await response.text();
+  const preview = text.slice(0, 2048);
+
+  return {
+    success: true,
+    status: response.status,
+    statusText: response.statusText,
+    headers: Array.from(response.headers.entries()),
+    bodyPreview: preview,
+    duration,
+  };
+}
+
+export default defineBackground(() => {
+  console.log("[API Debugger] Background service worker started");
+
+  // Request lifecycle hooks
+  chrome.webRequest.onBeforeRequest.addListener(
+    (details) => {
+      partial.set(details.requestId, {
+        startTime: details.timeStamp,
+        requestBody: details.requestBody?.formData || null,
+        requestBodyText: serializeRequestBody(details as chrome.webRequest.WebRequestBodyDetails),
+      });
     },
-    onUpdate: () => {
-      console.log("[Background] Extension updated");
+    { urls: ["<all_urls>"] },
+    ["requestBody"]
+  );
+
+  chrome.webRequest.onBeforeSendHeaders.addListener(
+    (details) => {
+      const p = partial.get(details.requestId) || {};
+      p.requestHeaders = details.requestHeaders;
+      partial.set(details.requestId, p);
     },
+    { urls: ["<all_urls>"] },
+    ["requestHeaders"]
+  );
+
+  chrome.webRequest.onHeadersReceived.addListener(
+    (details) => {
+      const p = partial.get(details.requestId) || {};
+      p.responseHeaders = details.responseHeaders;
+      partial.set(details.requestId, p);
+    },
+    { urls: ["<all_urls>"] },
+    ["responseHeaders"]
+  );
+
+  chrome.webRequest.onCompleted.addListener(
+    async (details) => {
+      try {
+        const base = partial.get(details.requestId) || {};
+        partial.delete(details.requestId);
+
+        const start = base.startTime || details.timeStamp;
+        const duration = typeof base.startTime === "number"
+          ? details.timeStamp - base.startTime
+          : 0;
+
+        const record: RequestRecord = {
+          id: details.requestId,
+          url: details.url,
+          method: details.method,
+          statusCode: details.statusCode,
+          type: details.type,
+          tabId: details.tabId,
+          startTime: start,
+          timeStamp: details.timeStamp,
+          duration,
+          requestHeaders: base.requestHeaders || [],
+          requestBody: base.requestBody || null,
+          requestBodyText: base.requestBodyText || null,
+          responseHeaders: base.responseHeaders || [],
+        };
+
+        await addRecord(record);
+        console.log("[API Debugger] Captured:", record.method, record.url, record.statusCode);
+      } catch (err) {
+        console.error("[API Debugger] Capture error:", err);
+      }
+    },
+    { urls: ["<all_urls>"] }
+  );
+
+  // Message handler
+  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+    if (message.type === "GET_REQUESTS") {
+      chrome.storage.local.get(["requests"]).then((res) => {
+        sendResponse({ requests: res.requests || [] });
+      });
+      return true;
+    }
+
+    if (message.type === "CLEAR_REQUESTS") {
+      chrome.storage.local.set({ requests: [] }).then(() => {
+        sendResponse({ success: true });
+      });
+      return true;
+    }
+
+    if (message.type === "REPLAY_REQUEST") {
+      handleReplay(message.payload).then(sendResponse);
+      return true;
+    }
+
+    return false;
   });
 });
