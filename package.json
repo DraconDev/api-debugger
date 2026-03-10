@@ -1,8 +1,8 @@
 {
-  "name": "@dracon/wxt-starter",
-  "description": "WXT Starter Template for Dracon Chrome Extensions",
+  "name": "@dracon/api-debugger",
+  "description": "API Debugger - Browser-first API debugging tool",
   "private": true,
-  "version": "1.0.1",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "dev": "wxt",
@@ -17,7 +17,10 @@
     "test:watch": "vitest",
     "postinstall": "wxt prepare",
     "lint": "eslint . --ext .ts,.tsx",
-    "format": "prettier --write \"**/*.{ts,tsx,json,css}\""
+    "format": "prettier --write \"**/*.{ts,tsx,json,css}\"",
+    "start:agent": "cd apps/agent && npm start",
+    "start:api": "cd apps/api && npm start",
+    "start:ai": "cd apps/ai-service && npm start"
   },
   "dependencies": {
     "@dracon/wxt-shared": "file:../wxt-shared",
