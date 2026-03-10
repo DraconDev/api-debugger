@@ -4,13 +4,18 @@ import { defineConfig } from "wxt";
 export default defineConfig({
   modules: ["@wxt-dev/module-react"],
   manifest: {
-    name: process.env.NODE_ENV === "development" 
-      ? "__MSG_extNameDev__" 
-      : "__MSG_extName__",
-    description: "__MSG_extDescription__",
-    default_locale: "en",
-    version: "1.0.0",
-    permissions: ["storage", "activeTab"],
+    name: process.env.NODE_ENV === "development"
+      ? "API Debugger (Dev)"
+      : "API Debugger",
+    description: "Browser-first API debugging tool - capture, inspect, replay, and debug API requests",
+    version: "0.1.0",
+    permissions: [
+      "webRequest",
+      "webRequestAuthProvider",
+      "storage",
+      "activeTab",
+      "tabs"
+    ],
     host_permissions: ["<all_urls>"],
     icons: {
       "16": "icon/16.png",
@@ -28,13 +33,9 @@ export default defineConfig({
         "128": "icon/128.png",
       },
     },
-    background: {
-      service_worker: "background.ts",
-      type: "module",
-    },
     web_accessible_resources: [
       {
-        resources: ["auth-callback.html"],
+        resources: ["injected.js"],
         matches: ["<all_urls>"],
       },
     ],
