@@ -109,11 +109,14 @@ export default defineBackground(() => {
     const text = await response.text();
     const preview = text.slice(0, 2048);
 
+    const headerPairs: [string, string][] = [];
+    response.headers.forEach((v, k) => headerPairs.push([k, v]));
+    
     return {
       success: true,
       status: response.status,
       statusText: response.statusText,
-      headers: Object.entries(Object.fromEntries(response.headers)) as [string, string][],
+      headers: headerPairs,
       bodyPreview: preview,
       duration,
     };
