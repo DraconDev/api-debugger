@@ -224,6 +224,51 @@ Keep response under 150 words.`;
           </div>
         ))}
       </div>
+
+      {/* AI Explanation Section */}
+      {aiSettings && (
+        <div className="mt-3 pt-3 border-t">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-xs font-medium">AI Analysis</h4>
+            {!aiExplanation && !isLoadingAI && (
+              <button
+                onClick={getAIExplanation}
+                className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/80"
+              >
+                Get AI Insight
+              </button>
+            )}
+          </div>
+          
+          {isLoadingAI && (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="animate-spin h-3 w-3 border border-primary border-t-transparent rounded-full" />
+              Analyzing...
+            </div>
+          )}
+          
+          {aiError && (
+            <div className="text-xs text-red-500 p-2 bg-red-50 rounded">
+              {aiError}
+            </div>
+          )}
+          
+          {aiExplanation && (
+            <div className="text-xs text-muted-foreground p-2 bg-muted rounded whitespace-pre-wrap">
+              {aiExplanation}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Prompt to configure AI if not set up */}
+      {!aiSettings && (
+        <div className="mt-3 pt-3 border-t text-xs text-muted-foreground">
+          <span className="text-primary cursor-pointer hover:underline" onClick={() => {/* Navigate to settings */}}>
+            Configure AI settings
+          </span> to get AI-powered insights.
+        </div>
+      )}
     </div>
   );
 }
