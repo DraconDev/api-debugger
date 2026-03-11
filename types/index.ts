@@ -11,6 +11,7 @@ export interface RequestRecord {
   requestHeaders: chrome.webRequest.HttpHeader[];
   requestBody: Record<string, unknown> | null;
   requestBodyText: string | null;
+  responseBodyText?: string;
   responseHeaders: chrome.webRequest.HttpHeader[];
 }
 
