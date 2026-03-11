@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { createAIClient, getAvailableModels, validateApiKey, type AIProvider } from "@/utils/ai-client";
+import { getAvailableModels, validateApiKey, type AIProvider } from "@/utils/ai-client";
 
 interface AISettings {
   provider: AIProvider;
