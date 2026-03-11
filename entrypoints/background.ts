@@ -119,7 +119,7 @@ export default defineBackground(() => {
       success: true,
       status: response.status,
       statusText: response.statusText,
-      headers: Array.from(response.headers.entries()),
+      headers: Array.from(response.headers.entries()).map(([k, v]) => [k, v] as [string, string]),
       bodyPreview: preview,
       duration,
     };
