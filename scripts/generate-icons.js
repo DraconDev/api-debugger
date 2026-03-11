@@ -1,15 +1,17 @@
-const sharp = require("sharp");
-const path = require("path");
-const fs = require("fs");
+import sharp from "sharp";
+import path from "path";
+import { fileURLToPath } from "url";
+import fs from "fs";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const sizes = [16, 32, 48, 96, 128];
 
-// Generate a gradient icon with "AD" text
 async function generateIcons() {
-  const iconDir = path.join(__dirname, "public", "icon");
+  const iconDir = path.join(__dirname, "..", "public", "icon");
 
   for (const size of sizes) {
-    // Create SVG with gradient background
     const svg = `
       <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -34,9 +36,7 @@ async function generateIcons() {
 
     const outputPath = path.join(iconDir, `${size}.png`);
 
-    await sharp(Buffer.from(svg))
-      .png()
-      .toFile(outputPath);
+    await sharp(Buffer.from(svg)).png().toFile(outputPath);
 
     console.log(`Generated ${size}x${size} icon`);
   }
