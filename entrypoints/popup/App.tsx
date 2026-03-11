@@ -118,8 +118,10 @@ function App() {
             requests={requests}
             onSelectRequest={handleSelectRequest}
           />
-        ) : (
+        ) : view === "collections" ? (
           <CollectionsView onSelectRequest={handleSelectRequest} />
+        ) : (
+          <SettingsPanel />
         )}
       </main>
     </div>

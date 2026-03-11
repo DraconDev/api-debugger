@@ -1,8 +1,18 @@
+import { useState, useEffect } from "react";
 import type { RequestRecord, Diagnostic } from "@/types";
+import { createAIClient, type AIProvider } from "@/utils/ai-client";
 
 interface DiagnosticsPanelProps {
   request: RequestRecord;
 }
+
+interface AISettings {
+  provider: AIProvider;
+  apiKey: string;
+  model: string;
+}
+
+const AI_STORAGE_KEY = "sync:ai_settings";
 
 function analyzeRequest(request: RequestRecord): Diagnostic[] {
   const diagnostics: Diagnostic[] = [];
