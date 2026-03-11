@@ -26,14 +26,11 @@ declare module '#imports' {
   export { RequestDetail } from '../components/RequestDetail';
   export { RequestHeaders } from '../components/RequestHeaders';
   export { RequestList } from '../components/RequestList';
-  export { default as useAsync } from '../hooks/useAsync';
-  export { default as useAuth } from '../hooks/useAuth';
-  export { default as useStorage } from '../hooks/useStorage';
-  export { default as analytics, track, trackError, pageView, action, getQueuedEvents, clearQueue, AnalyticsEvent } from '../utils/analytics';
+  export { SaveToCollection } from '../components/SaveToCollection';
+  export { SettingsPanel } from '../components/SettingsPanel';
+  export { createAIClient, getAvailableModels, validateApiKey, AIProvider, AIConfig, AIMessage, AIResponse } from '../utils/ai-client';
   export { ext, config, apiClient, authFlow, authStore, getAuthState, isAuthenticated, openLogin, openDashboard, logout, getUser, subscribe, DraconConfig, Environment } from '../utils/api';
-  export { default as debug, log, warn, error, measure, measureAsync, getDebugInfo, simulateDelay, mockResponse, DebugInfo } from '../utils/debug';
   export { isContentScript, isExtensionContext, getExtensionUrl, sendMessageToActiveTab, executeInActiveTab, openInNewTab } from '../utils/extension';
   export { default as features, isEnabled, enable, disable, toggle, getAllFeatures, resetFeatures, createFeatureHook } from '../utils/features';
   export { defaultSettings, settingsStore, defaultMyData, myDataStore, MyExtensionSettings, MyDataStore } from '../utils/store';
-  export { initWasm, isWasmReady, demoExtractJson, demoExtractFromMarkdown, demoValidateEmail, createWasmRateLimiter } from '../utils/wasm-demo';
 }

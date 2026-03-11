@@ -12,20 +12,18 @@ declare global {
   const RequestDetail: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestDetail').RequestDetail
   const RequestHeaders: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestHeaders').RequestHeaders
   const RequestList: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestList').RequestList
-  const action: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/analytics').action
-  const analytics: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/analytics').default
+  const SaveToCollection: typeof import('/home/dracon/Dev/extensions/api-debugger/components/SaveToCollection').SaveToCollection
+  const SettingsPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/SettingsPanel').SettingsPanel
   const apiClient: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').apiClient
   const authFlow: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').authFlow
   const authStore: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').authStore
   const browser: typeof import('wxt/browser').browser
-  const clearQueue: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/analytics').clearQueue
   const config: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').config
+  const createAIClient: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/ai-client').createAIClient
   const createFeatureHook: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/features').createFeatureHook
   const createIframeUi: typeof import('wxt/utils/content-script-ui/iframe').createIframeUi
   const createIntegratedUi: typeof import('wxt/utils/content-script-ui/integrated').createIntegratedUi
   const createShadowRootUi: typeof import('wxt/utils/content-script-ui/shadow-root').createShadowRootUi
-  const createWasmRateLimiter: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/wasm-demo').createWasmRateLimiter
-  const debug: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/debug').default
   const defaultMyData: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/store').defaultMyData
   const defaultSettings: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/store').defaultSettings
   const defineAppConfig: typeof import('wxt/utils/define-app-config').defineAppConfig
@@ -33,12 +31,8 @@ declare global {
   const defineContentScript: typeof import('wxt/utils/define-content-script').defineContentScript
   const defineUnlistedScript: typeof import('wxt/utils/define-unlisted-script').defineUnlistedScript
   const defineWxtPlugin: typeof import('wxt/utils/define-wxt-plugin').defineWxtPlugin
-  const demoExtractFromMarkdown: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/wasm-demo').demoExtractFromMarkdown
-  const demoExtractJson: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/wasm-demo').demoExtractJson
-  const demoValidateEmail: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/wasm-demo').demoValidateEmail
   const disable: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/features').disable
   const enable: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/features').enable
-  const error: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/debug').error
   const executeInActiveTab: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/extension').executeInActiveTab
   const ext: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').ext
   const fakeBrowser: typeof import('wxt/testing').fakeBrowser
@@ -46,39 +40,26 @@ declare global {
   const getAllFeatures: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/features').getAllFeatures
   const getAppConfig: typeof import('wxt/utils/app-config').getAppConfig
   const getAuthState: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').getAuthState
-  const getDebugInfo: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/debug').getDebugInfo
+  const getAvailableModels: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/ai-client').getAvailableModels
   const getExtensionUrl: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/extension').getExtensionUrl
-  const getQueuedEvents: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/analytics').getQueuedEvents
   const getUser: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').getUser
-  const initWasm: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/wasm-demo').initWasm
   const injectScript: typeof import('wxt/utils/inject-script').injectScript
   const isAuthenticated: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').isAuthenticated
   const isContentScript: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/extension').isContentScript
   const isEnabled: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/features').isEnabled
   const isExtensionContext: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/extension').isExtensionContext
-  const isWasmReady: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/wasm-demo').isWasmReady
-  const log: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/debug').log
   const logout: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').logout
-  const measure: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/debug').measure
-  const measureAsync: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/debug').measureAsync
-  const mockResponse: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/debug').mockResponse
   const myDataStore: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/store').myDataStore
   const openDashboard: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').openDashboard
   const openInNewTab: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/extension').openInNewTab
   const openLogin: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').openLogin
-  const pageView: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/analytics').pageView
   const resetFeatures: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/features').resetFeatures
   const sendMessageToActiveTab: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/extension').sendMessageToActiveTab
   const settingsStore: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/store').settingsStore
-  const simulateDelay: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/debug').simulateDelay
   const storage: typeof import('wxt/utils/storage').storage
   const subscribe: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').subscribe
   const toggle: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/features').toggle
-  const track: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/analytics').track
-  const trackError: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/analytics').trackError
   const useAppConfig: typeof import('wxt/utils/app-config').useAppConfig
-  const useAsync: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useAsync').default
-  const useAuth: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useAuth').default
   const useCallback: typeof import('react').useCallback
   const useContext: typeof import('react').useContext
   const useEffect: typeof import('react').useEffect
@@ -86,8 +67,7 @@ declare global {
   const useReducer: typeof import('react').useReducer
   const useRef: typeof import('react').useRef
   const useState: typeof import('react').useState
-  const useStorage: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useStorage').default
-  const warn: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/debug').warn
+  const validateApiKey: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/ai-client').validateApiKey
 }
 // for type re-export
 declare global {
@@ -119,14 +99,11 @@ declare global {
   export type { ScriptPublicPath, InjectScriptOptions } from 'wxt/utils/inject-script'
   import('wxt/utils/inject-script')
   // @ts-ignore
-  export type { AnalyticsEvent } from '/home/dracon/Dev/extensions/api-debugger/utils/analytics'
-  import('/home/dracon/Dev/extensions/api-debugger/utils/analytics')
+  export type { AIProvider, AIConfig, AIMessage, AIResponse } from '/home/dracon/Dev/extensions/api-debugger/utils/ai-client'
+  import('/home/dracon/Dev/extensions/api-debugger/utils/ai-client')
   // @ts-ignore
   export type { DraconConfig, Environment } from '/home/dracon/Dev/extensions/api-debugger/utils/api'
   import('/home/dracon/Dev/extensions/api-debugger/utils/api')
-  // @ts-ignore
-  export type { DebugInfo } from '/home/dracon/Dev/extensions/api-debugger/utils/debug'
-  import('/home/dracon/Dev/extensions/api-debugger/utils/debug')
   // @ts-ignore
   export type { MyExtensionSettings, MyDataStore } from '/home/dracon/Dev/extensions/api-debugger/utils/store'
   import('/home/dracon/Dev/extensions/api-debugger/utils/store')

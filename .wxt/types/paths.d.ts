@@ -14,11 +14,6 @@ declare module "wxt/browser" {
     | "/icon/48.png"
     | "/icon/96.png"
     | "/popup.html"
-    | "/wasm/dracon_wasm.d.ts"
-    | "/wasm/dracon_wasm.js"
-    | "/wasm/dracon_wasm_bg.wasm"
-    | "/wasm/dracon_wasm_bg.wasm.d.ts"
-    | "/wasm/package.json"
   type HtmlPublicPath = Extract<PublicPath, `${string}.html`>
   export interface WxtRuntime {
     getURL(path: PublicPath): string;
