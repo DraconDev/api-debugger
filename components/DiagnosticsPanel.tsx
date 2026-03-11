@@ -126,6 +126,62 @@ function analyzeRequest(request: RequestRecord): Diagnostic[] {
 
 export function DiagnosticsPanel({ request }: DiagnosticsPanelProps) {
   const diagnostics = analyzeRequest(request);
+  const [aiExplanation, setAiExplanation] = useState<string | null>(null);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [aiSettings, setAiSettings] = useState<AISettings | null>(null);
+
+  useEffect(() => {
+    loadAISettings();
+  }, []);
+
+  const loadAISettings = async () => {
+    try {
+      const result = await chrome.storage.sync.get(AI_STORAGE_KEY);
+      if (result[AI_STORAGE_KEY]?.apiKey) {
+        setAiSettings(result[AI_STORAGE_KEY]);
+      }
+    } catch (err) {
+      console.error("Failed to load AI settings:", err);
+    }
+  };
+
+  const getAIExplanation = async () => {
+    if (!aiSettings) return;
+    
+    setIsLoadingAI(true);
+    setAiError(null);
+    
+    try {
+      const client = createAIClient({
+        provider: aiSettings.provider,
+        apiKey: aiSettings.apiKey,
+        model: aiSettings.model,
+      });
+
+      const prompt = `Analyze this failed HTTP request and provide a brief, actionable explanation:
+
+Method: ${request.method}
+URL: ${request.url}
+Status Code: ${request.statusCode}
+Response Headers: ${JSON.stringify(request.responseHeaders?.slice(0, 5) || [], null, 2)}
+${request.responseBodyText ? `Response Body: ${request.responseBodyText.slice(0, 500)}` : ""}
+
+Provide:
+1. Most likely cause (1 sentence)
+2. Specific fix suggestion (1-2 sentences)
+3. Related debugging tips (1 sentence)
+
+Keep response under 150 words.`;
+
+      const response = await client.complete(prompt, "You are an API debugging expert. Provide concise, actionable advice.");
+      setAiExplanation(response.content);
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : "Failed to get AI explanation");
+    } finally {
+      setIsLoadingAI(false);
+    }
+  };
 
   if (diagnostics.length === 0) {
     return null;
