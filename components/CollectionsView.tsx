@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import type { RequestRecord, Collection } from "@/types";
 
 interface CollectionsViewProps {
-  onSelectRequest: (request: RequestRecord) => void;
+  onSelectRequest?: (request: RequestRecord) => void;
 }
 
 export function CollectionsView({ onSelectRequest }: CollectionsViewProps) {
