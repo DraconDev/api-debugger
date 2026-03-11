@@ -8,6 +8,7 @@ declare module "wxt/browser" {
     | "/_locales/en/messages.json"
     | "/auth-callback.html"
     | "/background.js"
+    | "/dashboard.html"
     | "/icon/128.png"
     | "/icon/16.png"
     | "/icon/32.png"
