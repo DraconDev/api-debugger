@@ -30,7 +30,7 @@ declare module '#imports' {
   export { default as useAuth } from '../hooks/useAuth';
   export { default as useStorage } from '../hooks/useStorage';
   export { default as analytics, track, trackError, pageView, action, getQueuedEvents, clearQueue, AnalyticsEvent } from '../utils/analytics';
-  export { ext, config, apiClient, authStore, getAuthState, isAuthenticated, openLogin, openDashboard, logout, getUser, subscribe, hooks, DraconConfig, Environment } from '../utils/api';
+  export { ext, config, apiClient, authFlow, authStore, getAuthState, isAuthenticated, openLogin, openDashboard, logout, getUser, subscribe, DraconConfig, Environment } from '../utils/api';
   export { default as debug, log, warn, error, measure, measureAsync, getDebugInfo, simulateDelay, mockResponse, DebugInfo } from '../utils/debug';
   export { isContentScript, isExtensionContext, getExtensionUrl, sendMessageToActiveTab, executeInActiveTab, openInNewTab } from '../utils/extension';
   export { default as features, isEnabled, enable, disable, toggle, getAllFeatures, resetFeatures, createFeatureHook } from '../utils/features';

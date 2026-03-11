@@ -8,7 +8,6 @@ declare module "wxt/browser" {
     | "/_locales/en/messages.json"
     | "/auth-callback.html"
     | "/background.js"
-    | "/content-scripts/content.js"
     | "/popup.html"
     | "/wasm/dracon_wasm.d.ts"
     | "/wasm/dracon_wasm.js"

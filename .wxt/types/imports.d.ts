@@ -15,6 +15,7 @@ declare global {
   const action: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/analytics').action
   const analytics: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/analytics').default
   const apiClient: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').apiClient
+  const authFlow: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').authFlow
   const authStore: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').authStore
   const browser: typeof import('wxt/browser').browser
   const clearQueue: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/analytics').clearQueue
@@ -49,7 +50,6 @@ declare global {
   const getExtensionUrl: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/extension').getExtensionUrl
   const getQueuedEvents: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/analytics').getQueuedEvents
   const getUser: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').getUser
-  const hooks: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').hooks
   const initWasm: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/wasm-demo').initWasm
   const injectScript: typeof import('wxt/utils/inject-script').injectScript
   const isAuthenticated: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').isAuthenticated
