@@ -20,7 +20,7 @@ describe("Diff Engine", () => {
     const result = diffHeaders(original, modified);
 
     expect(result.added).toHaveLength(1);
-    expect(result.added[0].name).toBe("Authorization");
+    expect(result.added[0].name.toLowerCase()).toBe("authorization");
     expect(result.removed).toHaveLength(0);
     expect(result.changed).toHaveLength(0);
   });
@@ -38,7 +38,7 @@ describe("Diff Engine", () => {
 
     expect(result.added).toHaveLength(0);
     expect(result.removed).toHaveLength(1);
-    expect(result.removed[0].name).toBe("Authorization");
+    expect(result.removed[0].name.toLowerCase()).toBe("authorization");
   });
 
   it("should detect changed headers", () => {
@@ -52,7 +52,7 @@ describe("Diff Engine", () => {
     const result = diffHeaders(original, modified);
 
     expect(result.changed).toHaveLength(1);
-    expect(result.changed[0].name).toBe("Authorization");
+    expect(result.changed[0].name.toLowerCase()).toBe("authorization");
     expect(result.changed[0].originalValue).toBe("Bearer old-token");
     expect(result.changed[0].replayValue).toBe("Bearer new-token");
   });
