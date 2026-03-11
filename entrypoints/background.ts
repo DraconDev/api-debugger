@@ -4,126 +4,126 @@
  * Captures HTTP requests and stores them for inspection
  */
 
-// Types
-interface RequestRecord {
-  id: string;
-  url: string;
-  method: string;
-  statusCode: number;
-  type?: string;
-  tabId: number;
-  startTime: number;
-  timeStamp: number;
-  duration: number;
-  requestHeaders: chrome.webRequest.HttpHeader[];
-  requestBody: Record<string, unknown> | null;
-  requestBodyText: string | null;
-  responseHeaders: chrome.webRequest.HttpHeader[];
-}
-
-interface PartialRequest {
-  startTime?: number;
-  requestBody?: Record<string, unknown>;
-  requestBodyText?: string | null;
-  requestHeaders?: chrome.webRequest.HttpHeader[];
-  responseHeaders?: chrome.webRequest.HttpHeader[];
-}
-
-interface ReplayPayload {
-  method: string;
-  url: string;
-  headers: Array<{ name: string; value: string }>;
-  body?: string;
-}
-
-interface ReplayResponse {
-  success: boolean;
-  status: number;
-  statusText: string;
-  headers: Array<[string, string]>;
-  bodyPreview: string;
-  duration: number;
-}
-
-// Constants
-const MAX_HISTORY = 200;
-const textDecoder = new TextDecoder("utf-8");
-
-// State
-const partial = new Map<string, PartialRequest>();
-
-// Helper functions
-function serializeRequestBody(details: chrome.webRequest.WebRequestBodyDetails): string | null {
-  const body = details.requestBody;
-  if (!body) return null;
-
-  if (body.raw && body.raw.length) {
-    return body.raw
-      .map((chunk) => {
-        if (chunk?.bytes) {
-          try {
-            return textDecoder.decode(chunk.bytes);
-          } catch {
-            return "";
-          }
-        }
-        return "";
-      })
-      .join("");
-  }
-
-  if (body.formData) {
-    return Object.entries(body.formData)
-      .map(([key, value]) => {
-        const values = Array.isArray(value) ? value : [value];
-        return `${key}=${values.join(",")}`;
-      })
-      .join("&");
-  }
-
-  return null;
-}
-
-async function addRecord(record: RequestRecord): Promise<void> {
-  const result = await chrome.storage.local.get(["requests"]);
-  const list = (result.requests as RequestRecord[]) || [];
-
-  list.unshift(record);
-  if (list.length > MAX_HISTORY) list.length = MAX_HISTORY;
-
-  await chrome.storage.local.set({ requests: list });
-}
-
-async function handleReplay(payload: ReplayPayload): Promise<ReplayResponse> {
-  const start = performance.now();
-
-  const headers: Record<string, string> = {};
-  payload.headers?.forEach((h) => {
-    headers[h.name] = h.value;
-  });
-
-  const response = await fetch(payload.url, {
-    method: payload.method,
-    headers,
-    body: payload.body || undefined,
-  });
-
-  const duration = performance.now() - start;
-  const text = await response.text();
-  const preview = text.slice(0, 2048);
-
-  return {
-    success: true,
-    status: response.status,
-    statusText: response.statusText,
-    headers: Array.from(response.headers.entries()),
-    bodyPreview: preview,
-    duration,
-  };
-}
-
 export default defineBackground(() => {
   console.log("[API Debugger] Background service worker started");
+
+  // Constants
+  const MAX_HISTORY = 200;
+  const textDecoder = new TextDecoder("utf-8");
+
+  // Types
+  interface RequestRecord {
+    id: string;
+    url: string;
+    method: string;
+    statusCode: number;
+    type?: string;
+    tabId: number;
+    startTime: number;
+    timeStamp: number;
+    duration: number;
+    requestHeaders: chrome.webRequest.HttpHeader[];
+    requestBody: Record<string, unknown> | null;
+    requestBodyText: string | null;
+    responseHeaders: chrome.webRequest.HttpHeader[];
+  }
+
+  interface PartialRequest {
+    startTime?: number;
+    requestBody?: Record<string, unknown>;
+    requestBodyText?: string | null;
+    requestHeaders?: chrome.webRequest.HttpHeader[];
+    responseHeaders?: chrome.webRequest.HttpHeader[];
+  }
+
+  interface ReplayPayload {
+    method: string;
+    url: string;
+    headers: Array<{ name: string; value: string }>;
+    body?: string;
+  }
+
+  interface ReplayResponse {
+    success: boolean;
+    status: number;
+    statusText: string;
+    headers: Array<[string, string]>;
+    bodyPreview: string;
+    duration: number;
+  }
+
+  // State
+  const partial = new Map<string, PartialRequest>();
+
+  // Helper functions
+  function serializeRequestBody(details: chrome.webRequest.WebRequestBodyDetails): string | null {
+    const body = details.requestBody;
+    if (!body) return null;
+
+    if (body.raw && body.raw.length) {
+      return body.raw
+        .map((chunk) => {
+          if (chunk?.bytes) {
+            try {
+              return textDecoder.decode(chunk.bytes);
+            } catch {
+              return "";
+            }
+          }
+          return "";
+        })
+        .join("");
+    }
+
+    if (body.formData) {
+      return Object.entries(body.formData)
+        .map(([key, value]) => {
+          const values = Array.isArray(value) ? value : [value];
+          return `${key}=${values.join(",")}`;
+        })
+        .join("&");
+    }
+
+    return null;
+  }
+
+  async function addRecord(record: RequestRecord): Promise<void> {
+    const result = await chrome.storage.local.get(["requests"]);
+    const list = (result.requests as RequestRecord[]) || [];
+
+    list.unshift(record);
+    if (list.length > MAX_HISTORY) list.length = MAX_HISTORY;
+
+    await chrome.storage.local.set({ requests: list });
+  }
+
+  async function handleReplay(payload: ReplayPayload): Promise<ReplayResponse> {
+    const start = performance.now();
+
+    const headers: Record<string, string> = {};
+    payload.headers?.forEach((h) => {
+      headers[h.name] = h.value;
+    });
+
+    const response = await fetch(payload.url, {
+      method: payload.method,
+      headers,
+      body: payload.body || undefined,
+    });
+
+    const duration = performance.now() - start;
+    const text = await response.text();
+    const preview = text.slice(0, 2048);
+
+    return {
+      success: true,
+      status: response.status,
+      statusText: response.statusText,
+      headers: Array.from(response.headers.entries()),
+      bodyPreview: preview,
+      duration,
+    };
+  }
 
   // Request lifecycle hooks
   chrome.webRequest.onBeforeRequest.addListener(
