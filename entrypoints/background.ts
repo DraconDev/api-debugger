@@ -1,9 +1,3 @@
-/**
- * API Debugger - Background Service Worker
- *
- * Captures HTTP requests and stores them for inspection
- */
-
 export default defineBackground(() => {
   console.log("[API Debugger] Background service worker started");
 
