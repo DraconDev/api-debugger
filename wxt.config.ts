@@ -9,6 +9,7 @@ export default defineConfig({
       : "API Debugger",
     description: "Browser-first API debugging tool - capture, inspect, replay, and debug API requests",
     version: "0.1.0",
+    default_locale: "en",
     permissions: [
       "webRequest",
       "webRequestAuthProvider",
