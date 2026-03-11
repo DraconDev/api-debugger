@@ -4,6 +4,7 @@ import { RequestBody } from "./RequestBody";
 import { DiagnosticsPanel } from "./DiagnosticsPanel";
 import { ExportPanel } from "./ExportPanel";
 import { ReplayPanel } from "./ReplayPanel";
+import { SaveToCollection } from "./SaveToCollection";
 import type { RequestRecord } from "@/types";
 
 interface RequestDetailProps {
@@ -88,10 +89,11 @@ export function RequestDetail({ request, onBack }: RequestDetailProps) {
       </div>
 
       {/* Panels */}
-      <div className="border-t overflow-auto max-h-[200px]">
+      <div className="border-t overflow-auto max-h-[300px]">
         {request.statusCode >= 400 && <DiagnosticsPanel request={request} />}
         <ExportPanel request={request} />
         <ReplayPanel request={request} />
+        <SaveToCollection request={request} />
       </div>
     </div>
   );
