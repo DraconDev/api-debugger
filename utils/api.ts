@@ -1,6 +1,6 @@
 /**
- * API Client Setup for Momo Integration
- * 
+ * API Client Setup for Dracon Extension
+ *
  * Uses createStarterExtension() to bundle config, API, auth, storage,
  * and starter-friendly hooks.
  */
@@ -8,13 +8,14 @@
 import { createStarterExtension } from "@dracon/wxt-shared/starter";
 
 export const ext = createStarterExtension({
-  appName: "MyExtension",
-  appId: "myextension",
+  appName: "APIDebugger",
+  appId: "api-debugger",
 });
 
 export const {
   config,
   apiClient,
+  authFlow,
   authStore,
   getAuthState,
   isAuthenticated,
@@ -23,7 +24,6 @@ export const {
   logout,
   getUser,
   subscribe,
-  hooks,
 } = ext;
 
 export type { DraconConfig, Environment } from "@dracon/wxt-shared";
