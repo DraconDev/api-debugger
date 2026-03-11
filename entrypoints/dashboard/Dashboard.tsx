@@ -32,16 +32,14 @@ export default function Dashboard() {
   const loadData = async () => {
     setState((s) => ({ ...s, isLoading: true }));
     try {
-      const [historyRes, collectionsRes, savedRes] = await Promise.all([
-        chrome.runtime.sendMessage({ type: "GET_REQUESTS" }),
-        chrome.storage.sync.get(["apiDebugger_collections", "apiDebugger_savedRequests"]),
-      ]);
+      const historyRes = await chrome.runtime.sendMessage({ type: "GET_REQUESTS" });
+      const storageRes = await chrome.storage.sync.get(["apiDebugger_collections", "apiDebugger_savedRequests"]);
 
       setState((s) => ({
         ...s,
         requests: historyRes.requests || [],
-        collections: collectionsRes.apiDebugger_collections || [],
-        savedRequests: collectionsRes.apiDebugger_savedRequests || [],
+        collections: storageRes.apiDebugger_collections || [],
+        savedRequests: storageRes.apiDebugger_savedRequests || [],
         isLoading: false,
       }));
     } catch (err) {
