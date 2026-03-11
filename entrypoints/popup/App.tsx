@@ -77,7 +77,7 @@ function App() {
       {/* View Tabs */}
       <nav className="flex border-b">
         <button
-          onClick={() => setView("history")}
+          onClick={() => { setView("history"); setSelectedRequest(null); }}
           className={`flex-1 px-4 py-2 text-sm font-medium ${
             view === "history"
               ? "border-b-2 border-primary text-primary"
@@ -87,7 +87,7 @@ function App() {
           History
         </button>
         <button
-          onClick={() => setView("collections")}
+          onClick={() => { setView("collections"); setSelectedRequest(null); }}
           className={`flex-1 px-4 py-2 text-sm font-medium ${
             view === "collections"
               ? "border-b-2 border-primary text-primary"
