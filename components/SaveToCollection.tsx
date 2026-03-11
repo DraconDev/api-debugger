@@ -8,7 +8,6 @@ interface SaveToCollectionProps {
 
 export function SaveToCollection({ request, onSave }: SaveToCollectionProps) {
   const [collections, setCollections] = useState<Collection[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedCollectionId, setSelectedCollectionId] = useState<string>("");
   const [name, setName] = useState("");
   const [tags, setTags] = useState("");
@@ -17,14 +16,11 @@ export function SaveToCollection({ request, onSave }: SaveToCollectionProps) {
   const [saved, setSaved] = useState(false);
 
   const loadCollections = async () => {
-    setIsLoading(true);
     try {
       const result = await chrome.storage.sync.get(["apiDebugger_collections"]);
       setCollections(result.apiDebugger_collections || []);
     } catch (err) {
       console.error("Failed to load collections:", err);
-    } finally {
-      setIsLoading(false);
     }
   };
 
