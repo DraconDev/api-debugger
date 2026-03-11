@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { RequestList } from "@/components/RequestList";
 import { RequestDetail } from "@/components/RequestDetail";
 import { CollectionsView } from "@/components/CollectionsView";
+import { SettingsPanel } from "@/components/SettingsPanel";
 import type { RequestRecord } from "@/types";
 
-type ViewType = "history" | "collections";
+type ViewType = "history" | "collections" | "settings";
 
 function App() {
   const [view, setView] = useState<ViewType>("history");
