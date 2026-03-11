@@ -18,8 +18,9 @@
     "paths": {
       "@/*": ["./*"],
       "@shared/*": ["./utils/shared/*"]
-    }
+    },
+    "types": ["chrome", "vite/client"]
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", ".output", ".wxt"]
+  "include": [".wxt/**/*", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", ".output"]
 }
