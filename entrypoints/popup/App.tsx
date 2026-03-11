@@ -97,6 +97,16 @@ function App() {
         >
           Collections
         </button>
+        <button
+          onClick={() => { setView("settings"); setSelectedRequest(null); }}
+          className={`flex-1 px-4 py-2 text-sm font-medium ${
+            view === "settings"
+              ? "border-b-2 border-primary text-primary"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          Settings
+        </button>
       </nav>
 
       {/* Main Content */}
