@@ -113,7 +113,7 @@ export default defineBackground(() => {
       success: true,
       status: response.status,
       statusText: response.statusText,
-      headers: [...response.headers.entries()] as [string, string][],
+      headers: Object.entries(Object.fromEntries(response.headers)) as [string, string][],
       bodyPreview: preview,
       duration,
     };
