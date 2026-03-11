@@ -1,14 +1,14 @@
-# WXT Starter Template for Momo
+# WXT Starter Template for the Dracon Platform
 
-A modern, production-ready starter template for building Chrome extensions that integrate with **Momo** (the Dracon backend).
+A modern, production-ready starter template for building Chrome extensions that integrate with the Dracon platform.
 
 ## Features
 
 - ⚡ **WXT Framework** - Modern web extension toolkit with hot reload
 - ⚛️ **React 19** - Latest React with TypeScript
 - 🎨 **Tailwind CSS** - Utility-first styling
-- 🔐 **Momo Auth** - OAuth integration with Momo/Dracon
-- 📦 **Momo API Client** - Pre-configured for Momo's API structure
+- 🔐 **Platform Auth** - OAuth integration with Dracon
+- 📦 **Platform API Client** - Pre-configured for the canonical `/api/v1/...` surface
 - 🧪 **Testing Ready** - Vitest configured
 - 📱 **Type Safe** - Full TypeScript support
 
@@ -24,7 +24,7 @@ npm install
 
 # 3. Configure environment
 cp .env.example .env
-# Edit .env with your Momo settings
+# Edit .env with your platform settings
 
 # 4. Start development
 npm run dev
@@ -39,9 +39,9 @@ Quick overview:
 - **OAuth** uses `chrome-extension://` URLs, not `https://`
 - **Storage** uses `chrome.storage`, not `localStorage`
 
-## Momo Integration
+## Platform Integration
 
-This starter is pre-configured to work with Momo:
+This starter is pre-configured to work with the platform:
 
 ### OAuth Flow
 
