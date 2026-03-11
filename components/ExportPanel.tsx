@@ -25,7 +25,7 @@ function toCurl(request: RequestRecord): string {
 function toFetch(request: RequestRecord): string {
   const headers: Record<string, string> = {};
   request.requestHeaders?.forEach((h) => {
-    headers[h.name] = h.value;
+    headers[h.name] = h.value ?? "";
   });
 
   const options: Record<string, unknown> = {
