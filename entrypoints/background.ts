@@ -121,13 +121,13 @@ export default defineBackground(() => {
 
   // Request lifecycle hooks
   chrome.webRequest.onBeforeRequest.addListener(
-    (details) => {
-      partial.set(details.requestId, {
-        startTime: details.timeStamp,
-        requestBody: details.requestBody?.formData || null,
-        requestBodyText: serializeRequestBody(details as chrome.webRequest.WebRequestBodyDetails),
-      });
-    },
+  (details) => {
+    partial.set(details.requestId, {
+      startTime: details.timeStamp,
+      requestBody: details.requestBody?.formData || undefined,
+      requestBodyText: serializeRequestBody(details as chrome.webRequest.WebRequestBodyDetails),
+    });
+  },
     { urls: ["<all_urls>"] },
     ["requestBody"]
   );
