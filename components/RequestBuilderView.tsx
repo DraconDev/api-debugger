@@ -264,6 +264,31 @@ export function RequestBuilderView() {
               <AuthEditor auth={config.auth} onChange={(auth) => updateConfig("auth", auth)} />
             )}
 
+            {activeTab === "scripts" && (
+              <div className="h-full flex flex-col">
+                <div className="flex-1 border-b border-border">
+                  <ScriptEditor
+                    script={config.preRequestScript || ""}
+                    onChange={(script) => updateConfig("preRequestScript", script)}
+                    title="Pre-request Script"
+                    description="Executes before the request is sent"
+                    logs={scriptLogs.filter((l) => !l.includes("Post-response"))}
+                    error={scriptError && !response ? scriptError : undefined}
+                  />
+                </div>
+                <div className="flex-1">
+                  <ScriptEditor
+                    script={config.postResponseScript || ""}
+                    onChange={(script) => updateConfig("postResponseScript", script)}
+                    title="Post-response Script"
+                    description="Executes after the response is received"
+                    logs={response ? scriptLogs.filter((l) => l.includes("Post-response") || scriptLogs.indexOf(l) > scriptLogs.findIndex((s) => s.includes("Response"))) : undefined}
+                    error={scriptError && response ? scriptError : undefined}
+                  />
+                </div>
+              </div>
+            )}
+
             {activeTab === "extractions" && (
               <VariableExtractor
                 extractions={config.extractions || []}
