@@ -25,7 +25,6 @@ export function AuthEditor({ auth, onChange }: AuthEditorProps) {
       </div>
 
       <div className="flex-1 overflow-auto p-3 space-y-4">
-        {/* Auth Type Selector */}
         <div className="grid grid-cols-2 gap-2">
           {AUTH_TYPES.map((type) => (
             <button
@@ -43,7 +42,6 @@ export function AuthEditor({ auth, onChange }: AuthEditorProps) {
           ))}
         </div>
 
-        {/* Auth Configuration */}
         {auth.type === "bearer" && (
           <div className="space-y-2">
             <label className="text-xs font-medium">Token</label>
@@ -73,7 +71,7 @@ export function AuthEditor({ auth, onChange }: AuthEditorProps) {
                 value={auth.basic?.username || ""}
                 onChange={(e) =>
                   updateAuth({
-                    basic: { ...auth.basic, username: e.target.value },
+                    basic: { username: e.target.value, password: auth.basic?.password || "" },
                   })
                 }
                 placeholder="Username"
@@ -87,7 +85,7 @@ export function AuthEditor({ auth, onChange }: AuthEditorProps) {
                 value={auth.basic?.password || ""}
                 onChange={(e) =>
                   updateAuth({
-                    basic: { ...auth.basic, password: e.target.value },
+                    basic: { username: auth.basic?.username || "", password: e.target.value },
                   })
                 }
                 placeholder="Password"
@@ -106,7 +104,11 @@ export function AuthEditor({ auth, onChange }: AuthEditorProps) {
                 value={auth.apiKey?.key || ""}
                 onChange={(e) =>
                   updateAuth({
-                    apiKey: { ...auth.apiKey, key: e.target.value },
+                    apiKey: {
+                      key: e.target.value,
+                      value: auth.apiKey?.value || "",
+                      addTo: auth.apiKey?.addTo || "header",
+                    },
                   })
                 }
                 placeholder="X-API-Key"
@@ -120,7 +122,11 @@ export function AuthEditor({ auth, onChange }: AuthEditorProps) {
                 value={auth.apiKey?.value || ""}
                 onChange={(e) =>
                   updateAuth({
-                    apiKey: { ...auth.apiKey, value: e.target.value },
+                    apiKey: {
+                      key: auth.apiKey?.key || "",
+                      value: e.target.value,
+                      addTo: auth.apiKey?.addTo || "header",
+                    },
                   })
                 }
                 placeholder="api-key-value"
@@ -134,7 +140,8 @@ export function AuthEditor({ auth, onChange }: AuthEditorProps) {
                 onChange={(e) =>
                   updateAuth({
                     apiKey: {
-                      ...auth.apiKey,
+                      key: auth.apiKey?.key || "",
+                      value: auth.apiKey?.value || "",
                       addTo: e.target.value as "header" | "query",
                     },
                   })
@@ -157,7 +164,12 @@ export function AuthEditor({ auth, onChange }: AuthEditorProps) {
                 value={auth.oauth2?.accessTokenUrl || ""}
                 onChange={(e) =>
                   updateAuth({
-                    oauth2: { ...auth.oauth2, accessTokenUrl: e.target.value },
+                    oauth2: {
+                      accessTokenUrl: e.target.value,
+                      clientId: auth.oauth2?.clientId || "",
+                      clientSecret: auth.oauth2?.clientSecret || "",
+                      scope: auth.oauth2?.scope || "",
+                    },
                   })
                 }
                 placeholder="https://oauth.example.com/token"
@@ -172,7 +184,12 @@ export function AuthEditor({ auth, onChange }: AuthEditorProps) {
                   value={auth.oauth2?.clientId || ""}
                   onChange={(e) =>
                     updateAuth({
-                      oauth2: { ...auth.oauth2, clientId: e.target.value },
+                      oauth2: {
+                        accessTokenUrl: auth.oauth2?.accessTokenUrl || "",
+                        clientId: e.target.value,
+                        clientSecret: auth.oauth2?.clientSecret || "",
+                        scope: auth.oauth2?.scope || "",
+                      },
                     })
                   }
                   placeholder="Client ID"
@@ -186,7 +203,12 @@ export function AuthEditor({ auth, onChange }: AuthEditorProps) {
                   value={auth.oauth2?.clientSecret || ""}
                   onChange={(e) =>
                     updateAuth({
-                      oauth2: { ...auth.oauth2, clientSecret: e.target.value },
+                      oauth2: {
+                        accessTokenUrl: auth.oauth2?.accessTokenUrl || "",
+                        clientId: auth.oauth2?.clientId || "",
+                        clientSecret: e.target.value,
+                        scope: auth.oauth2?.scope || "",
+                      },
                     })
                   }
                   placeholder="Client Secret"
@@ -201,7 +223,12 @@ export function AuthEditor({ auth, onChange }: AuthEditorProps) {
                 value={auth.oauth2?.scope || ""}
                 onChange={(e) =>
                   updateAuth({
-                    oauth2: { ...auth.oauth2, scope: e.target.value },
+                    oauth2: {
+                      accessTokenUrl: auth.oauth2?.accessTokenUrl || "",
+                      clientId: auth.oauth2?.clientId || "",
+                      clientSecret: auth.oauth2?.clientSecret || "",
+                      scope: e.target.value,
+                    },
                   })
                 }
                 placeholder="read write"
