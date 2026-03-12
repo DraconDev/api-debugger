@@ -253,8 +253,26 @@ export default defineBackground(() => {
       return true;
     }
 
+    if (message.type === "SEND_REQUEST") {
+      sendRequest(message.payload.config)
+        .then((response) => sendResponse({ success: true, response }))
+        .catch((error) => sendResponse({ success: false, error: error.message }));
+      return true;
+    }
+
     if (message.type === "REPLAY_REQUEST") {
-      handleReplay(message.payload).then(sendResponse);
+      const config: import("@/types").RequestConfig = {
+        method: message.payload.method,
+        url: message.payload.url,
+        headers: message.payload.headers || [],
+        params: [],
+        bodyType: "raw",
+        body: { raw: message.payload.body },
+        auth: { type: "none" },
+      };
+      sendRequest(config)
+        .then((response) => sendResponse({ success: true, response }))
+        .catch((error) => sendResponse({ success: false, error: error.message }));
       return true;
     }
 
