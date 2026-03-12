@@ -302,12 +302,14 @@ export default function Dashboard() {
                       key={request.id}
                       request={request}
                       selected={state.selectedRequestId === request.id}
+                      checked={state.selectedRequestIds.has(request.id)}
                       onClick={() =>
                         setState((s) => ({
                           ...s,
                           selectedRequestId: request.id,
                         }))
                       }
+                      onToggleSelect={() => toggleSelectRequest(request.id)}
                       onDelete={() => deleteRequest(request.id)}
                     />
                   ))
