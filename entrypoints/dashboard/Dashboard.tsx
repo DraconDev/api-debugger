@@ -430,6 +430,13 @@ export default function Dashboard() {
 
         {view === "mocks" && <MockServerManager />}
 
+        {view === "docs" && (
+          <ApiDocGenerator
+            collections={state.collections}
+            savedRequests={state.savedRequests}
+          />
+        )}
+
         {view === "settings" && <SettingsView />}
       </main>
     </div>
