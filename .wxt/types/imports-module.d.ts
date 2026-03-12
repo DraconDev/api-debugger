@@ -19,6 +19,7 @@ declare module '#imports' {
   export { useState, useCallback, useMemo, useEffect, useRef, useContext, useReducer } from 'react';
   export { fakeBrowser } from 'wxt/testing';
   export { CaptureFilter } from '../components/CaptureFilter';
+  export { CollectionRunner } from '../components/CollectionRunner';
   export { CollectionsView } from '../components/CollectionsView';
   export { CookieManager } from '../components/CookieManager';
   export { DiagnosticsPanel } from '../components/DiagnosticsPanel';

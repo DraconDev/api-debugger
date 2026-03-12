@@ -7,6 +7,7 @@ const globals = {
   "AutoMountOptions": true,
   "Browser": true,
   "CaptureFilter": true,
+  "CollectionRunner": true,
   "CollectionsView": true,
   "ContentScriptAnchoredOptions": true,
   "ContentScriptAppendMode": true,
