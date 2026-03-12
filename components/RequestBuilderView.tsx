@@ -255,7 +255,11 @@ export function RequestBuilderView() {
             )}
 
             {response && responseTab === "body" && (
-              <ResponseViewer body={response.body} />
+              <ResponseViewer 
+                body={response.body} 
+                statusCode={response.status}
+                headers={Object.fromEntries(response.headers)}
+              />
             )}
 
             {response && responseTab === "headers" && (
