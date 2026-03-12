@@ -702,6 +702,10 @@ function SettingsView() {
                   </div>
                 ))}
               </div>
+
+              <div className="mt-6">
+                <ThemeToggle />
+              </div>
             </div>
           )}
         </div>
