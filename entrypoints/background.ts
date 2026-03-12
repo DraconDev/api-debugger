@@ -187,14 +187,32 @@ export default defineBackground(() => {
   // Request lifecycle hooks
   chrome.webRequest.onBeforeRequest.addListener(
   (details) => {
+    const url = new URL(details.url);
+    
+    for (const server of mockServers) {
+      if (!server.enabled) continue;
+      
+      for (const endpoint of server.endpoints) {
+        if (!endpoint.enabled) continue;
+        
+        if (details.method === endpoint.method && url.pathname === endpoint.path) {
+          return {
+            redirectUrl: `data:${endpoint.contentType};base64,${btoa(endpoint.body)}`,
+          };
+        }
+      }
+    }
+    
     partial.set(details.requestId, {
       startTime: details.timeStamp,
       requestBody: details.requestBody?.formData || undefined,
       requestBodyText: serializeRequestBody(details as chrome.webRequest.WebRequestBodyDetails),
     });
+    
+    return {};
   },
     { urls: ["<all_urls>"] },
-    ["requestBody"]
+    ["requestBody", "blocking"]
   );
 
   chrome.webRequest.onBeforeSendHeaders.addListener(
