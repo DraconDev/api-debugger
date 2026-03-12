@@ -109,6 +109,24 @@ export default function Dashboard() {
             icon={<PlusIcon />}
             label="New Request"
           />
+          <div className="pt-2 pb-1">
+            <span className="px-3 text-xs text-muted-foreground">Protocols</span>
+          </div>
+          <NavItem
+            active={view === "websocket"}
+            onClick={() => setView("websocket")}
+            icon={<WebSocketIcon />}
+            label="WebSocket"
+          />
+          <NavItem
+            active={view === "graphql"}
+            onClick={() => setView("graphql")}
+            icon={<GraphQLIcon />}
+            label="GraphQL"
+          />
+          <div className="pt-2 pb-1">
+            <span className="px-3 text-xs text-muted-foreground">Tools</span>
+          </div>
           <NavItem
             active={view === "history"}
             onClick={() => setView("history")}
@@ -122,6 +140,12 @@ export default function Dashboard() {
             icon={<FolderIcon />}
             label="Collections"
             count={state.collections.length}
+          />
+          <NavItem
+            active={view === "diff"}
+            onClick={() => setView("diff")}
+            icon={<DiffIcon />}
+            label="Diff"
           />
           <NavItem
             active={view === "settings"}
