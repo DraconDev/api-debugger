@@ -15,7 +15,8 @@ export default defineConfig({
       "webRequestAuthProvider",
       "storage",
       "activeTab",
-      "tabs"
+      "tabs",
+      "cookies"
     ],
     host_permissions: ["<all_urls>"],
     icons: {
