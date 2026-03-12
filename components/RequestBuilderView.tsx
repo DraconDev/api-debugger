@@ -217,7 +217,7 @@ export function RequestBuilderView() {
 
           {/* Response Tabs */}
           <div className="flex border-b border-border">
-            {(["body", "headers", "code", "ai"] as const).map((tab) => (
+            {(["body", "headers", "tests", "code", "ai"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setResponseTab(tab)}
