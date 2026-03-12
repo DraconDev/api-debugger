@@ -120,6 +120,18 @@ export interface Variable {
   description?: string;
 }
 
+export interface VariableExtraction {
+  id: string;
+  variableName: string;
+  source: "body" | "header";
+  path: string;
+  enabled?: boolean;
+}
+
+export interface RuntimeVariables {
+  [key: string]: string;
+}
+
 export interface Environment {
   id: string;
   name: string;
