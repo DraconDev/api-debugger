@@ -201,6 +201,29 @@ export interface ScriptExecutionResult {
   modifiedRequest?: Partial<RequestConfig>;
 }
 
+export interface MockEndpoint {
+  id: string;
+  name: string;
+  path: string;
+  method: string;
+  statusCode: number;
+  headers: Record<string, string>;
+  body: string;
+  contentType: string;
+  delay: number;
+  enabled: boolean;
+  createdAt: number;
+}
+
+export interface MockServer {
+  id: string;
+  name: string;
+  port?: number;
+  endpoints: MockEndpoint[];
+  enabled: boolean;
+  createdAt: number;
+}
+
 export interface ScriptContext {
   request: {
     method: string;
