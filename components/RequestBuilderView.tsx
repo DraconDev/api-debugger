@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   UrlEditor,
   HeadersEditor,
@@ -7,10 +7,12 @@ import {
   CodeGenerator,
   ResponseViewer,
   TimingBreakdown,
+  VariableExtractor,
   AIAnalysisPanel,
 } from "@/components/request";
 import { TestRunner } from "@/components/testing";
-import type { RequestConfig, CapturedResponse } from "@/types";
+import { useRuntimeVariables, interpolateVariables } from "@/hooks/useRuntimeVariables";
+import type { RequestConfig, CapturedResponse, VariableExtraction } from "@/types";
 
 const DEFAULT_CONFIG: RequestConfig = {
   method: "GET",
@@ -20,6 +22,7 @@ const DEFAULT_CONFIG: RequestConfig = {
   bodyType: "none",
   body: {},
   auth: { type: "none" },
+  extractions: [],
 };
 
 export function RequestBuilderView() {
