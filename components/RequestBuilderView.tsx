@@ -27,7 +27,7 @@ export function RequestBuilderView() {
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"params" | "headers" | "body" | "auth">("headers");
-  const [responseTab, setResponseTab] = useState<"body" | "headers" | "code" | "ai">("body");
+  const [responseTab, setResponseTab] = useState<"body" | "headers" | "tests" | "code" | "ai">("body");
 
   const sendRequest = async () => {
     if (!config.url) return;
