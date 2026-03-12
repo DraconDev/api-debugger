@@ -675,10 +675,6 @@ function SettingsView() {
     </div>
   );
 }
-      </div>
-    </div>
-  );
-}
 
 // Icons
 
