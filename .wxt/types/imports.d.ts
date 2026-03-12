@@ -9,6 +9,7 @@ declare global {
   const MatchPattern: typeof import('wxt/utils/match-patterns').MatchPattern
   const ReplayPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ReplayPanel').ReplayPanel
   const RequestBody: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestBody').RequestBody
+  const RequestBuilderView: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestBuilderView').RequestBuilderView
   const RequestDetail: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestDetail').RequestDetail
   const RequestHeaders: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestHeaders').RequestHeaders
   const RequestList: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestList').RequestList

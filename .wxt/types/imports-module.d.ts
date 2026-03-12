@@ -23,6 +23,7 @@ declare module '#imports' {
   export { ExportPanel } from '../components/ExportPanel';
   export { ReplayPanel } from '../components/ReplayPanel';
   export { RequestBody } from '../components/RequestBody';
+  export { RequestBuilderView } from '../components/RequestBuilderView';
   export { RequestDetail } from '../components/RequestDetail';
   export { RequestHeaders } from '../components/RequestHeaders';
   export { RequestList } from '../components/RequestList';

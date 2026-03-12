@@ -33,6 +33,7 @@ const globals = {
   "MyExtensionSettings": true,
   "ReplayPanel": true,
   "RequestBody": true,
+  "RequestBuilderView": true,
   "RequestDetail": true,
   "RequestHeaders": true,
   "RequestList": true,
