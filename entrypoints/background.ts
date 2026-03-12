@@ -133,11 +133,26 @@ export default defineBackground(() => {
       body: config.method !== "GET" && config.method !== "HEAD" ? body : undefined,
     });
 
-    const duration = performance.now() - start;
     const responseBody = await response.text();
+    const end = performance.now();
+    const duration = end - start;
 
     const headerPairs: [string, string][] = [];
     response.headers.forEach((v, k) => headerPairs.push([k, v]));
+
+    let timing: import("@/types").TimingBreakdown | undefined;
+    const entries = performance.getEntriesByName(url, "resource") as PerformanceResourceTiming[];
+    if (entries.length > 0) {
+      const entry = entries[entries.length - 1];
+      timing = {
+        dns: entry.domainLookupEnd - entry.domainLookupStart,
+        connect: entry.connectEnd - entry.connectStart,
+        tls: entry.secureConnectionStart > 0 ? entry.connectEnd - entry.secureConnectionStart : 0,
+        ttfb: entry.responseStart - entry.requestStart,
+        download: entry.responseEnd - entry.responseStart,
+        total: entry.duration,
+      };
+    }
 
     const record: RequestRecord = {
       id: "manual_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9),
@@ -165,6 +180,7 @@ export default defineBackground(() => {
       body: responseBody,
       duration,
       size: responseBody.length,
+      timing,
     };
   }
 
