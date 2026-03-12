@@ -61,6 +61,7 @@ export interface RequestConfig {
     binary?: string;
   };
   auth: AuthConfig;
+  extractions?: VariableExtraction[];
 }
 
 export interface RequestRecord {
