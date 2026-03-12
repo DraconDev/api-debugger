@@ -35,9 +35,11 @@ function App() {
     <div className="w-80 p-3 bg-background text-foreground dark">
       {/* Header */}
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
-          <span className="text-white font-bold text-xs">AD</span>
-        </div>
+        <img
+          src={chrome.runtime.getURL("/icon/32.png")}
+          alt="API Debugger"
+          className="w-8 h-8 rounded-lg"
+        />
         <div className="flex-1">
           <h1 className="font-semibold text-sm">API Debugger</h1>
           <p className="text-xs text-muted-foreground">{requests.length} requests captured</p>
