@@ -13,8 +13,9 @@ import { ThemeToggle } from "@/hooks/useTheme";
 import { RuntimeVariablesProvider } from "@/hooks/useRuntimeVariables";
 import { CollectionRunner } from "@/components/CollectionRunner";
 import { MockServerManager } from "@/components/MockServerManager";
+import { ApiDocGenerator } from "@/components/ApiDocGenerator";
 
-type ViewType = "builder" | "websocket" | "sse" | "socketio" | "graphql" | "history" | "collections" | "cookies" | "mocks" | "diff" | "settings";
+type ViewType = "builder" | "websocket" | "sse" | "socketio" | "graphql" | "history" | "collections" | "cookies" | "mocks" | "docs" | "diff" | "settings";
 
 interface DashboardState {
   requests: RequestRecord[];
