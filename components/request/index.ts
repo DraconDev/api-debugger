@@ -4,4 +4,5 @@ export { BodyEditor } from "./BodyEditor";
 export { AuthEditor } from "./AuthEditor";
 export { CodeGenerator } from "./CodeGenerator";
 export { ResponseViewer, JsonViewer } from "./ResponseViewer";
+export { TimingBreakdown } from "./TimingBreakdown";
 export { AIAnalysisPanel } from "./AIAnalysisPanel";
