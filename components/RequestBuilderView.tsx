@@ -34,10 +34,12 @@ export function RequestBuilderView() {
   const [response, setResponse] = useState<CapturedResponse | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"params" | "headers" | "body" | "auth" | "extractions">("headers");
+  const [activeTab, setActiveTab] = useState<"params" | "headers" | "body" | "auth" | "scripts" | "extractions">("headers");
   const [responseTab, setResponseTab] = useState<"body" | "headers" | "timing" | "tests" | "code" | "ai">("body");
+  const [scriptLogs, setScriptLogs] = useState<string[]>([]);
+  const [scriptError, setScriptError] = useState<string | null>(null);
   
-  const { variables, extractFromResponse, clearVariables } = useRuntimeVariables();
+  const { variables, extractFromResponse, clearVariables, setVariables } = useRuntimeVariables();
 
   const sendRequest = async () => {
     if (!config.url) return;
@@ -45,13 +47,37 @@ export function RequestBuilderView() {
     setIsSending(true);
     setError(null);
     setResponse(null);
+    setScriptLogs([]);
+    setScriptError(null);
 
     try {
-      const interpolatedConfig = interpolateConfigVariables(config, variables);
+      let finalConfig = interpolateConfigVariables(config, variables);
       
+      if (config.preRequestScript) {
+        const preResult = executePreRequestScript(
+          config.preRequestScript,
+          config,
+          variables,
+          {}
+        );
+        setScriptLogs(preResult.logs);
+        
+        if (!preResult.success) {
+          setScriptError(preResult.error || "Pre-request script failed");
+          setIsSending(false);
+          return;
+        }
+        
+        setVariables(preResult.variables);
+        
+        if (preResult.modifiedRequest) {
+          finalConfig = applyScriptModifications(finalConfig, preResult.modifiedRequest);
+        }
+      }
+
       const result = await chrome.runtime.sendMessage({
         type: "SEND_REQUEST",
-        payload: { config: interpolatedConfig },
+        payload: { config: finalConfig },
       });
 
       if (result.success) {
@@ -63,6 +89,23 @@ export function RequestBuilderView() {
             result.response.headers,
             config.extractions
           );
+        }
+        
+        if (config.postResponseScript) {
+          const postResult = executePostResponseScript(
+            config.postResponseScript,
+            finalConfig,
+            result.response,
+            variables,
+            {}
+          );
+          setScriptLogs((prev) => [...prev, ...postResult.logs]);
+          
+          if (!postResult.success) {
+            setScriptError(postResult.error || "Post-response script failed");
+          } else {
+            setVariables(postResult.variables);
+          }
         }
       } else {
         setError(result.error || "Request failed");
