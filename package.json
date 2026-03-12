@@ -2,7 +2,7 @@
   "name": "@dracon/api-debugger",
   "description": "API Debugger - Browser-first API debugging tool",
   "private": true,
-  "version": "0.1.196",
+  "version": "0.1.197",
   "type": "module",
   "scripts": {
     "dev": "wxt",
@@ -31,6 +31,7 @@
     "lucide-react": "^0.460.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "socket.io-client": "^4.8.3",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "webextension-polyfill": "^0.12.0"
