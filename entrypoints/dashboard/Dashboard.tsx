@@ -278,6 +278,8 @@ export default function Dashboard() {
           />
         )}
 
+        {view === "cookies" && <CookieManager />}
+
         {view === "settings" && <SettingsView />}
       </main>
     </div>
