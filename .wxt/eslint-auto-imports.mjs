@@ -35,6 +35,7 @@ const globals = {
   "InvalidMatchPattern": true,
   "MatchPattern": true,
   "MigrationError": true,
+  "MockServerManager": true,
   "MyDataStore": true,
   "MyExtensionSettings": true,
   "ReplayPanel": true,

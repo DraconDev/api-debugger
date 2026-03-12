@@ -13,6 +13,7 @@ declare global {
   const ImportExport: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ImportExport').ImportExport
   const InvalidMatchPattern: typeof import('wxt/utils/match-patterns').InvalidMatchPattern
   const MatchPattern: typeof import('wxt/utils/match-patterns').MatchPattern
+  const MockServerManager: typeof import('/home/dracon/Dev/extensions/api-debugger/components/MockServerManager').MockServerManager
   const ReplayPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ReplayPanel').ReplayPanel
   const RequestBody: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestBody').RequestBody
   const RequestBuilderView: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestBuilderView').RequestBuilderView

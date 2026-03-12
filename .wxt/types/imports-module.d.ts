@@ -26,6 +26,7 @@ declare module '#imports' {
   export { EnvironmentManager } from '../components/EnvironmentManager';
   export { ExportPanel } from '../components/ExportPanel';
   export { ImportExport } from '../components/ImportExport';
+  export { MockServerManager } from '../components/MockServerManager';
   export { ReplayPanel } from '../components/ReplayPanel';
   export { RequestBody } from '../components/RequestBody';
   export { RequestBuilderView } from '../components/RequestBuilderView';
