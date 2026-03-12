@@ -209,7 +209,7 @@ Be specific and actionable. Use markdown formatting.`;
 function buildAnalysisPrompt(
   request: RequestRecord,
   response?: CapturedResponse,
-  tab?: string
+  _tab?: string
 ): string {
   let prompt = `## Request
 
