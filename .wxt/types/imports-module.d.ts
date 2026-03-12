@@ -18,9 +18,12 @@ declare module '#imports' {
   export { InvalidMatchPattern, MatchPattern } from 'wxt/utils/match-patterns';
   export { useState, useCallback, useMemo, useEffect, useRef, useContext, useReducer } from 'react';
   export { fakeBrowser } from 'wxt/testing';
+  export { CaptureFilter } from '../components/CaptureFilter';
   export { CollectionsView } from '../components/CollectionsView';
   export { DiagnosticsPanel } from '../components/DiagnosticsPanel';
+  export { EnvironmentManager } from '../components/EnvironmentManager';
   export { ExportPanel } from '../components/ExportPanel';
+  export { ImportExport } from '../components/ImportExport';
   export { ReplayPanel } from '../components/ReplayPanel';
   export { RequestBody } from '../components/RequestBody';
   export { RequestBuilderView } from '../components/RequestBuilderView';
