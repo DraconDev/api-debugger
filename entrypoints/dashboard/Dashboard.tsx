@@ -421,6 +421,8 @@ export default function Dashboard() {
 
         {view === "cookies" && <CookieManager />}
 
+        {view === "mocks" && <MockServerManager />}
+
         {view === "settings" && <SettingsView />}
       </main>
     </div>
