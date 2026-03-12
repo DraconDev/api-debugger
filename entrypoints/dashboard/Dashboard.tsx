@@ -167,6 +167,12 @@ export default function Dashboard() {
       <main className="flex-1 flex">
         {view === "builder" && <RequestBuilderView />}
 
+        {view === "websocket" && <WebSocketClient />}
+
+        {view === "graphql" && <GraphQLClient />}
+
+        {view === "diff" && <DiffViewer left="" right="" />}
+
         {view === "history" && (
           <>
             {/* Request List */}
