@@ -10,9 +10,11 @@ import {
   VariableExtractor,
   AIAnalysisPanel,
 } from "@/components/request";
+import { ScriptEditor } from "@/components/request/ScriptEditorPanel";
 import { TestRunner } from "@/components/testing";
 import { useRuntimeVariables, interpolateVariables } from "@/hooks/useRuntimeVariables";
-import type { RequestConfig, CapturedResponse, VariableExtraction } from "@/types";
+import { executePreRequestScript, executePostResponseScript, applyScriptModifications } from "@/lib/scriptExecutor";
+import type { RequestConfig, CapturedResponse, VariableExtraction, ScriptExecutionResult } from "@/types";
 
 const DEFAULT_CONFIG: RequestConfig = {
   method: "GET",
@@ -23,6 +25,8 @@ const DEFAULT_CONFIG: RequestConfig = {
   body: {},
   auth: { type: "none" },
   extractions: [],
+  preRequestScript: "",
+  postResponseScript: "",
 };
 
 export function RequestBuilderView() {
