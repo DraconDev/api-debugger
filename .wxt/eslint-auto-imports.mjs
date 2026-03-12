@@ -18,6 +18,7 @@ const globals = {
   "ContentScriptPositioningOptions": true,
   "ContentScriptUi": true,
   "ContentScriptUiOptions": true,
+  "CookieManager": true,
   "DEFAULT_SHORTCUTS": true,
   "DiagnosticsPanel": true,
   "DraconConfig": true,

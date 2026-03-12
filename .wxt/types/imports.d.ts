@@ -4,6 +4,7 @@ declare global {
   const CaptureFilter: typeof import('/home/dracon/Dev/extensions/api-debugger/components/CaptureFilter').CaptureFilter
   const CollectionsView: typeof import('/home/dracon/Dev/extensions/api-debugger/components/CollectionsView').CollectionsView
   const ContentScriptContext: typeof import('wxt/utils/content-script-context').ContentScriptContext
+  const CookieManager: typeof import('/home/dracon/Dev/extensions/api-debugger/components/CookieManager').CookieManager
   const DEFAULT_SHORTCUTS: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useKeyboardShortcuts').DEFAULT_SHORTCUTS
   const DiagnosticsPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/DiagnosticsPanel').DiagnosticsPanel
   const EnvironmentManager: typeof import('/home/dracon/Dev/extensions/api-debugger/components/EnvironmentManager').EnvironmentManager

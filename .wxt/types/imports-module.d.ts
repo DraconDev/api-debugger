@@ -20,6 +20,7 @@ declare module '#imports' {
   export { fakeBrowser } from 'wxt/testing';
   export { CaptureFilter } from '../components/CaptureFilter';
   export { CollectionsView } from '../components/CollectionsView';
+  export { CookieManager } from '../components/CookieManager';
   export { DiagnosticsPanel } from '../components/DiagnosticsPanel';
   export { EnvironmentManager } from '../components/EnvironmentManager';
   export { ExportPanel } from '../components/ExportPanel';
