@@ -52,7 +52,7 @@ export function AuthEditor({ auth, onChange }: AuthEditorProps) {
               value={auth.bearer?.token || ""}
               onChange={(e) =>
                 updateAuth({
-                  bearer: { ...auth.bearer, token: e.target.value },
+                  bearer: { token: e.target.value },
                 })
               }
               placeholder="Enter bearer token"
