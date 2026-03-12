@@ -144,6 +144,15 @@ export interface Diagnostic {
   confidence: number;
 }
 
+export interface TimingBreakdown {
+  dns: number;
+  connect: number;
+  tls: number;
+  ttfb: number;
+  download: number;
+  total: number;
+}
+
 export interface CapturedResponse {
   status: number;
   statusText: string;
@@ -151,6 +160,7 @@ export interface CapturedResponse {
   body: string;
   duration: number;
   size: number;
+  timing?: TimingBreakdown;
 }
 
 export interface RequestTest {
