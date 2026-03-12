@@ -145,6 +145,12 @@ export default function Dashboard() {
             count={state.collections.length}
           />
           <NavItem
+            active={view === "cookies"}
+            onClick={() => setView("cookies")}
+            icon={<CookieIcon />}
+            label="Cookies"
+          />
+          <NavItem
             active={view === "diff"}
             onClick={() => setView("diff")}
             icon={<DiffIcon />}
