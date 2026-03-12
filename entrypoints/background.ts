@@ -1,11 +1,9 @@
 export default defineBackground(() => {
   console.log("[API Debugger] Background service worker started");
 
-  // Constants
   const MAX_HISTORY = 200;
   const textDecoder = new TextDecoder("utf-8");
 
-  // Types
   interface RequestRecord {
     id: string;
     url: string;
@@ -19,7 +17,9 @@ export default defineBackground(() => {
     requestHeaders: chrome.webRequest.HttpHeader[];
     requestBody: Record<string, unknown> | null;
     requestBodyText: string | null;
+    responseBodyText?: string;
     responseHeaders: chrome.webRequest.HttpHeader[];
+    requestConfig?: import("@/types").RequestConfig;
   }
 
   interface PartialRequest {
@@ -30,23 +30,6 @@ export default defineBackground(() => {
     responseHeaders?: chrome.webRequest.HttpHeader[];
   }
 
-  interface ReplayPayload {
-    method: string;
-    url: string;
-    headers: Array<{ name: string; value: string }>;
-    body?: string;
-  }
-
-  interface ReplayResponse {
-    success: boolean;
-    status: number;
-    statusText: string;
-    headers: Array<[string, string]>;
-    bodyPreview: string;
-    duration: number;
-  }
-
-  // State
   const partial = new Map<string, PartialRequest>();
 
   // Helper functions
