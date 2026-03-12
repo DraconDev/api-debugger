@@ -266,6 +266,8 @@ export default function Dashboard() {
 
         {view === "sse" && <SSEClient />}
 
+        {view === "socketio" && <SocketIOClient />}
+
         {view === "graphql" && <GraphQLClient />}
 
         {view === "diff" && <DiffViewer left="" right="" />}
