@@ -388,12 +388,16 @@ function NavItem({
 function RequestListItem({
   request,
   selected,
+  checked,
   onClick,
+  onToggleSelect,
   onDelete,
 }: {
   request: RequestRecord;
   selected: boolean;
+  checked: boolean;
   onClick: () => void;
+  onToggleSelect: () => void;
   onDelete: () => void;
 }) {
   const statusColor =
@@ -418,12 +422,21 @@ function RequestListItem({
 
   return (
     <div
-      onClick={onClick}
       className={`group px-3 py-2 border-b border-border cursor-pointer transition-colors ${
         selected ? "bg-accent" : "hover:bg-accent/50"
       }`}
     >
       <div className="flex items-center gap-2 mb-1">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => {
+            e.stopPropagation();
+            onToggleSelect();
+          }}
+          onClick={(e) => e.stopPropagation()}
+          className="rounded border-border"
+        />
         <span className={`font-mono text-xs font-medium ${methodColor}`}>
           {request.method}
         </span>
@@ -432,8 +445,8 @@ function RequestListItem({
         </span>
         <span className="text-xs text-muted-foreground ml-auto">{request.duration.toFixed(0)}ms</span>
       </div>
-      <div className="text-xs text-muted-foreground truncate">{request.url}</div>
-      <div className="flex items-center gap-2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="text-xs text-muted-foreground truncate pl-6" onClick={onClick}>{request.url}</div>
+      <div className="flex items-center gap-2 mt-1 pl-6 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
           onClick={(e) => {
             e.stopPropagation();
