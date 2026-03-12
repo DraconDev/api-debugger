@@ -378,6 +378,51 @@ export function RequestBuilderView() {
   );
 }
 
+function interpolateConfigVariables(
+  config: RequestConfig,
+  variables: Record<string, string>
+): RequestConfig {
+  return {
+    ...config,
+    url: interpolateVariables(config.url, variables),
+    params: config.params.map((p) => ({
+      ...p,
+      name: interpolateVariables(p.name, variables),
+      value: interpolateVariables(p.value, variables),
+    })),
+    headers: config.headers.map((h) => ({
+      ...h,
+      name: interpolateVariables(h.name, variables),
+      value: interpolateVariables(h.value, variables),
+    })),
+    body: {
+      ...config.body,
+      json: config.body.json ? interpolateVariables(config.body.json, variables) : undefined,
+      raw: config.body.raw ? interpolateVariables(config.body.raw, variables) : undefined,
+      urlEncoded: config.body.urlEncoded?.map((f) => ({
+        ...f,
+        name: interpolateVariables(f.name, variables),
+        value: interpolateVariables(f.value, variables),
+      })),
+    },
+    auth: {
+      ...config.auth,
+      bearer: config.auth.bearer ? {
+        token: interpolateVariables(config.auth.bearer.token, variables),
+      } : undefined,
+      basic: config.auth.basic ? {
+        username: interpolateVariables(config.auth.basic.username, variables),
+        password: interpolateVariables(config.auth.basic.password, variables),
+      } : undefined,
+      apiKey: config.auth.apiKey ? {
+        ...config.auth.apiKey,
+        key: interpolateVariables(config.auth.apiKey.key, variables),
+        value: interpolateVariables(config.auth.apiKey.value, variables),
+      } : undefined,
+    },
+  };
+}
+
 function SendIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
