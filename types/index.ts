@@ -192,3 +192,29 @@ export interface TestResult {
   duration: number;
   error?: string;
 }
+
+export interface ScriptExecutionResult {
+  success: boolean;
+  error?: string;
+  logs: string[];
+  variables: Record<string, string>;
+  modifiedRequest?: Partial<RequestConfig>;
+}
+
+export interface ScriptContext {
+  request: {
+    method: string;
+    url: string;
+    headers: Record<string, string>;
+    body?: string;
+  };
+  response?: {
+    status: number;
+    statusText: string;
+    headers: Record<string, string>;
+    body: string;
+    duration: number;
+  };
+  variables: Record<string, string>;
+  environment: Record<string, string>;
+}
