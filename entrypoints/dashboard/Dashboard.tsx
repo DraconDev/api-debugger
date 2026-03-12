@@ -3,8 +3,12 @@ import type { RequestRecord, Collection, SavedRequest } from "@/types";
 import { RequestBuilderView } from "@/components/RequestBuilderView";
 import { EnvironmentManager } from "@/components/EnvironmentManager";
 import { CaptureFilter } from "@/components/CaptureFilter";
+import { WebSocketClient } from "@/components/protocol/WebSocketClient";
+import { GraphQLClient } from "@/components/protocol/GraphQLClient";
+import { DiffViewer } from "@/components/diff/DiffViewer";
+import { ThemeToggle } from "@/hooks/useTheme";
 
-type ViewType = "builder" | "history" | "collections" | "settings";
+type ViewType = "builder" | "websocket" | "graphql" | "history" | "collections" | "diff" | "settings";
 
 interface DashboardState {
   requests: RequestRecord[];
