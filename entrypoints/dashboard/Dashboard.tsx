@@ -5,13 +5,14 @@ import { EnvironmentManager } from "@/components/EnvironmentManager";
 import { CaptureFilter } from "@/components/CaptureFilter";
 import { CookieManager } from "@/components/CookieManager";
 import { WebSocketClient } from "@/components/protocol/WebSocketClient";
+import { SSEClient } from "@/components/protocol/SSEClient";
 import { GraphQLClient } from "@/components/protocol/GraphQLClient";
 import { DiffViewer } from "@/components/diff/DiffViewer";
 import { ThemeToggle } from "@/hooks/useTheme";
 import { RuntimeVariablesProvider } from "@/hooks/useRuntimeVariables";
 import { CollectionRunner } from "@/components/CollectionRunner";
 
-type ViewType = "builder" | "websocket" | "graphql" | "history" | "collections" | "cookies" | "diff" | "settings";
+type ViewType = "builder" | "websocket" | "sse" | "graphql" | "history" | "collections" | "cookies" | "diff" | "settings";
 
 interface DashboardState {
   requests: RequestRecord[];
