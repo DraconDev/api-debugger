@@ -13,7 +13,7 @@ import { ThemeToggle } from "@/hooks/useTheme";
 import { RuntimeVariablesProvider } from "@/hooks/useRuntimeVariables";
 import { CollectionRunner } from "@/components/CollectionRunner";
 
-type ViewType = "builder" | "websocket" | "sse" | "graphql" | "history" | "collections" | "cookies" | "diff" | "settings";
+type ViewType = "builder" | "websocket" | "sse" | "socketio" | "graphql" | "history" | "collections" | "cookies" | "diff" | "settings";
 
 interface DashboardState {
   requests: RequestRecord[];
@@ -196,6 +196,12 @@ export default function Dashboard() {
             onClick={() => setView("sse")}
             icon={<SSEIcon />}
             label="SSE"
+          />
+          <NavItem
+            active={view === "socketio"}
+            onClick={() => setView("socketio")}
+            icon={<SocketIOIcon />}
+            label="Socket.IO"
           />
           <NavItem
             active={view === "graphql"}
