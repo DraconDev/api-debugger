@@ -18,7 +18,7 @@ export function JsonViewer({ data, depth = 0 }: JsonViewerProps) {
     setCollapsed(newCollapsed);
   };
 
-  const renderValue = (value: unknown, path: string, key?: string): React.ReactNode => {
+  const renderValue = (value: unknown, path: string): React.ReactNode => {
     if (value === null) {
       return <span className="text-purple-400">null</span>;
     }
