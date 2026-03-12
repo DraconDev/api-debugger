@@ -1,6 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import '@dracon/wxt-shared/styles/globals.css';
+
+/* Force dark mode for dashboard */
+html, body {
+  @apply dark;
+}
 
 /* Custom scrollbar for dark theme */
 ::-webkit-scrollbar {
@@ -9,19 +12,14 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #18181b;
+  background: hsl(var(--muted));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3f3f46;
+  background: hsl(var(--muted-foreground) / 0.3);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #52525b;
-}
-
-/* Selection color */
-::selection {
-  background: rgba(139, 92, 246, 0.3);
+  background: hsl(var(--muted-foreground) / 0.5);
 }
