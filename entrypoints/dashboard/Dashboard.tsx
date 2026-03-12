@@ -8,6 +8,7 @@ import { WebSocketClient } from "@/components/protocol/WebSocketClient";
 import { GraphQLClient } from "@/components/protocol/GraphQLClient";
 import { DiffViewer } from "@/components/diff/DiffViewer";
 import { ThemeToggle } from "@/hooks/useTheme";
+import { RuntimeVariablesProvider } from "@/hooks/useRuntimeVariables";
 
 type ViewType = "builder" | "websocket" | "graphql" | "history" | "collections" | "cookies" | "diff" | "settings";
 
