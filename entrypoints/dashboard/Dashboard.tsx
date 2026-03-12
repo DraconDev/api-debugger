@@ -6,6 +6,7 @@ import { CaptureFilter } from "@/components/CaptureFilter";
 import { CookieManager } from "@/components/CookieManager";
 import { WebSocketClient } from "@/components/protocol/WebSocketClient";
 import { SSEClient } from "@/components/protocol/SSEClient";
+import { SocketIOClient } from "@/components/protocol/SocketIOClient";
 import { GraphQLClient } from "@/components/protocol/GraphQLClient";
 import { DiffViewer } from "@/components/diff/DiffViewer";
 import { ThemeToggle } from "@/hooks/useTheme";
