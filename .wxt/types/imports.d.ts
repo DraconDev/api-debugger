@@ -18,6 +18,7 @@ declare global {
   const RequestDetail: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestDetail').RequestDetail
   const RequestHeaders: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestHeaders').RequestHeaders
   const RequestList: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestList').RequestList
+  const RuntimeVariablesProvider: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useRuntimeVariables').RuntimeVariablesProvider
   const SaveToCollection: typeof import('/home/dracon/Dev/extensions/api-debugger/components/SaveToCollection').SaveToCollection
   const SettingsPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/SettingsPanel').SettingsPanel
   const ThemeToggle: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useTheme').ThemeToggle
@@ -51,6 +52,7 @@ declare global {
   const getExtensionUrl: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/extension').getExtensionUrl
   const getUser: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').getUser
   const injectScript: typeof import('wxt/utils/inject-script').injectScript
+  const interpolateVariables: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useRuntimeVariables').interpolateVariables
   const isAuthenticated: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').isAuthenticated
   const isContentScript: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/extension').isContentScript
   const isEnabled: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/features').isEnabled
@@ -74,6 +76,7 @@ declare global {
   const useMemo: typeof import('react').useMemo
   const useReducer: typeof import('react').useReducer
   const useRef: typeof import('react').useRef
+  const useRuntimeVariables: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useRuntimeVariables').useRuntimeVariables
   const useState: typeof import('react').useState
   const useTheme: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useTheme').useTheme
   const validateApiKey: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/ai-client').validateApiKey

@@ -42,6 +42,7 @@ const globals = {
   "RequestDetail": true,
   "RequestHeaders": true,
   "RequestList": true,
+  "RuntimeVariablesProvider": true,
   "SaveToCollection": true,
   "ScriptPublicPath": true,
   "SettingsPanel": true,
@@ -86,6 +87,7 @@ const globals = {
   "getExtensionUrl": true,
   "getUser": true,
   "injectScript": true,
+  "interpolateVariables": true,
   "isAuthenticated": true,
   "isContentScript": true,
   "isEnabled": true,
@@ -109,6 +111,7 @@ const globals = {
   "useMemo": true,
   "useReducer": true,
   "useRef": true,
+  "useRuntimeVariables": true,
   "useState": true,
   "useTheme": true,
   "validateApiKey": true

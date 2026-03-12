@@ -34,6 +34,7 @@ declare module '#imports' {
   export { SaveToCollection } from '../components/SaveToCollection';
   export { SettingsPanel } from '../components/SettingsPanel';
   export { useKeyboardShortcuts, DEFAULT_SHORTCUTS } from '../hooks/useKeyboardShortcuts';
+  export { RuntimeVariablesProvider, useRuntimeVariables, interpolateVariables } from '../hooks/useRuntimeVariables';
   export { useTheme, ThemeToggle } from '../hooks/useTheme';
   export { createAIClient, getAvailableModels, validateApiKey, AIProvider, AIConfig, AIMessage, AIResponse } from '../utils/ai-client';
   export { ext, config, apiClient, authFlow, authStore, getAuthState, isAuthenticated, openLogin, openDashboard, logout, getUser, subscribe, DraconConfig, Environment } from '../utils/api';
