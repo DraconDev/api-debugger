@@ -89,7 +89,7 @@ export function JsonViewer({ data, depth = 0 }: JsonViewerProps) {
                 <div key={k} style={{ marginLeft: `${(depth + 1) * 16}px` }}>
                   <span className="text-primary">"{k}"</span>
                   <span className="text-muted-foreground">: </span>
-                  {renderValue(v, `${path}.${k}`, k)}
+                  {renderValue(v, `${path}.${k}`)}
                   {index < entries.length - 1 && <span className="text-muted-foreground">,</span>}
                 </div>
               ))}
