@@ -5,4 +5,5 @@ export { AuthEditor } from "./AuthEditor";
 export { CodeGenerator } from "./CodeGenerator";
 export { ResponseViewer, JsonViewer } from "./ResponseViewer";
 export { TimingBreakdown } from "./TimingBreakdown";
+export { VariableExtractor } from "./VariableExtractor";
 export { AIAnalysisPanel } from "./AIAnalysisPanel";
