@@ -656,10 +656,77 @@ function CollectionsView({
   selectedCollectionId: string | null;
   onSelectCollection: (id: string | null) => void;
 }) {
+  const [isRunning, setIsRunning] = useState(false);
   const selectedCollection = collections.find((c) => c.id === selectedCollectionId);
   const collectionRequests = selectedCollectionId
     ? savedRequests.filter((r) => r.collectionId === selectedCollectionId)
     : [];
+
+  const sendRequest = async (config: SavedRequest["requestConfig"]) => {
+    if (!config) {
+      throw new Error("No request config");
+    }
+    
+    const headers: Record<string, string> = {};
+    config.headers.forEach((h) => {
+      if (h.enabled !== false && h.name) {
+        headers[h.name] = h.value;
+      }
+    });
+
+    if (config.auth.type === "bearer" && config.auth.bearer?.token) {
+      headers["Authorization"] = "Bearer " + config.auth.bearer.token;
+    } else if (config.auth.type === "basic" && config.auth.basic) {
+      const encoded = btoa(config.auth.basic.username + ":" + config.auth.basic.password);
+      headers["Authorization"] = "Basic " + encoded;
+    } else if (config.auth.type === "api-key" && config.auth.apiKey?.addTo === "header") {
+      headers[config.auth.apiKey.key] = config.auth.apiKey.value;
+    }
+
+    let body: string | undefined;
+    if (config.bodyType === "json" && config.body.json) {
+      body = config.body.json;
+      if (!headers["Content-Type"]) {
+        headers["Content-Type"] = "application/json";
+      }
+    } else if (config.bodyType === "raw" && config.body.raw) {
+      body = config.body.raw;
+    }
+
+    let url = config.url;
+    if (config.params.length > 0) {
+      const enabledParams = config.params.filter((p) => p.enabled !== false);
+      if (enabledParams.length > 0) {
+        const sep = url.includes("?") ? "&" : "?";
+        const queryString = enabledParams
+          .map((p) => encodeURIComponent(p.name) + "=" + encodeURIComponent(p.value))
+          .join("&");
+        url = url + sep + queryString;
+      }
+    }
+
+    const start = performance.now();
+    const response = await fetch(url, {
+      method: config.method,
+      headers,
+      body: config.method !== "GET" && config.method !== "HEAD" ? body : undefined,
+    });
+
+    const responseBody = await response.text();
+    const duration = performance.now() - start;
+
+    const headerPairs: [string, string][] = [];
+    response.headers.forEach((v, k) => headerPairs.push([k, v]));
+
+    return {
+      status: response.status,
+      statusText: response.statusText,
+      headers: headerPairs,
+      body: responseBody,
+      duration,
+      size: responseBody.length,
+    };
+  };
 
   return (
     <div className="flex-1 flex">
@@ -675,7 +742,10 @@ function CollectionsView({
             collections.map((col) => (
               <button
                 key={col.id}
-                onClick={() => onSelectCollection(col.id)}
+                onClick={() => {
+                  onSelectCollection(col.id);
+                  setIsRunning(false);
+                }}
                 className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
                   selectedCollectionId === col.id
                     ? "bg-accent text-accent-foreground"
@@ -696,44 +766,62 @@ function CollectionsView({
       {/* Collection Content */}
       <div className="flex-1">
         {selectedCollection ? (
-          <div>
-            <div className="p-4 border-b border-border">
-              <h2 className="font-medium">{selectedCollection.name}</h2>
-              {selectedCollection.description && (
-                <p className="text-sm text-muted-foreground mt-1">{selectedCollection.description}</p>
-              )}
-            </div>
-            <div className="p-2">
-              {collectionRequests.length === 0 ? (
-                <div className="p-4 text-sm text-muted-foreground text-center">
-                  No requests in this collection
+          isRunning ? (
+            <CollectionRunner
+              requests={collectionRequests}
+              onRequestSend={sendRequest}
+            />
+          ) : (
+            <div>
+              <div className="p-4 border-b border-border flex items-start justify-between">
+                <div>
+                  <h2 className="font-medium">{selectedCollection.name}</h2>
+                  {selectedCollection.description && (
+                    <p className="text-sm text-muted-foreground mt-1">{selectedCollection.description}</p>
+                  )}
                 </div>
-              ) : (
-                collectionRequests.map((req) => (
-                  <div
-                    key={req.id}
-                    className="px-3 py-2 border-b border-border hover:bg-accent/50 cursor-pointer"
+                {collectionRequests.length > 0 && (
+                  <button
+                    onClick={() => setIsRunning(true)}
+                    className="px-3 py-1.5 bg-primary text-primary-foreground text-sm rounded hover:bg-primary/90 flex items-center gap-2"
                   >
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`font-mono text-xs ${
-                          req.request.method === "GET"
-                            ? "text-emerald-500"
-                            : req.request.method === "POST"
-                            ? "text-amber-500"
-                            : "text-muted-foreground"
-                        }`}
-                      >
-                        {req.request.method}
-                      </span>
-                      <span className="text-sm text-foreground">{req.name}</span>
-                    </div>
-                    <div className="text-xs text-muted-foreground truncate mt-1">{req.request.url}</div>
+                    <PlayIcon className="w-4 h-4" />
+                    Run
+                  </button>
+                )}
+              </div>
+              <div className="p-2">
+                {collectionRequests.length === 0 ? (
+                  <div className="p-4 text-sm text-muted-foreground text-center">
+                    No requests in this collection
                   </div>
-                ))
-              )}
+                ) : (
+                  collectionRequests.map((req) => (
+                    <div
+                      key={req.id}
+                      className="px-3 py-2 border-b border-border hover:bg-accent/50 cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`font-mono text-xs ${
+                            req.request.method === "GET"
+                              ? "text-emerald-500"
+                              : req.request.method === "POST"
+                              ? "text-amber-500"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {req.request.method}
+                        </span>
+                        <span className="text-sm text-foreground">{req.name}</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate mt-1">{req.request.url}</div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
-          </div>
+          )
         ) : (
           <div className="flex-1 flex items-center justify-center text-muted-foreground">
             <div className="text-center">
