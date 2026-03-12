@@ -276,6 +276,21 @@ export function RequestBuilderView() {
               </div>
             )}
 
+            {responseTab === "timing" && (
+              response?.timing ? (
+                <div className="overflow-auto">
+                  <TimingBreakdown timing={response.timing} />
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                  <div className="text-center">
+                    <p className="text-sm">No timing data available</p>
+                    <p className="text-xs mt-1">Timing data is only available for manually sent requests</p>
+                  </div>
+                </div>
+              )
+            )}
+
             {responseTab === "tests" && (
               <TestRunner response={response} />
             )}
