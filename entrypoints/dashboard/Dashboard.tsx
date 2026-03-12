@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import type { RequestRecord, Collection, SavedRequest } from "@/types";
 import { RequestBuilderView } from "@/components/RequestBuilderView";
+import { EnvironmentManager } from "@/components/EnvironmentManager";
+import { CaptureFilter } from "@/components/CaptureFilter";
 
 type ViewType = "builder" | "history" | "collections" | "settings";
 
