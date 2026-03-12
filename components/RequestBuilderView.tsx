@@ -8,6 +8,7 @@ import {
   ResponseViewer,
   AIAnalysisPanel,
 } from "@/components/request";
+import { TestRunner } from "@/components/testing";
 import type { RequestConfig, CapturedResponse } from "@/types";
 
 const DEFAULT_CONFIG: RequestConfig = {
