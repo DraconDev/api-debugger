@@ -30,6 +30,7 @@ export default function Dashboard() {
     savedRequests: [],
     selectedRequestId: null,
     selectedCollectionId: null,
+    selectedRequestIds: new Set(),
     searchQuery: "",
     isLoading: true,
   });
