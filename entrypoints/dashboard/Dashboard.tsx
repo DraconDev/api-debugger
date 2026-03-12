@@ -12,8 +12,9 @@ import { DiffViewer } from "@/components/diff/DiffViewer";
 import { ThemeToggle } from "@/hooks/useTheme";
 import { RuntimeVariablesProvider } from "@/hooks/useRuntimeVariables";
 import { CollectionRunner } from "@/components/CollectionRunner";
+import { MockServerManager } from "@/components/MockServerManager";
 
-type ViewType = "builder" | "websocket" | "sse" | "socketio" | "graphql" | "history" | "collections" | "cookies" | "diff" | "settings";
+type ViewType = "builder" | "websocket" | "sse" | "socketio" | "graphql" | "history" | "collections" | "cookies" | "mocks" | "diff" | "settings";
 
 interface DashboardState {
   requests: RequestRecord[];
