@@ -62,6 +62,8 @@ export interface RequestConfig {
   };
   auth: AuthConfig;
   extractions?: VariableExtraction[];
+  preRequestScript?: string;
+  postResponseScript?: string;
 }
 
 export interface RequestRecord {
