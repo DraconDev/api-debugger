@@ -74,34 +74,97 @@ export default defineBackground(() => {
     await chrome.storage.local.set({ requests: list });
   }
 
-  async function handleReplay(payload: ReplayPayload): Promise<ReplayResponse> {
+  async function sendRequest(config: import("@/types").RequestConfig): Promise<import("@/types").CapturedResponse> {
     const start = performance.now();
 
     const headers: Record<string, string> = {};
-    payload.headers?.forEach((h) => {
-      headers[h.name] = h.value;
+    config.headers.forEach((h) => {
+      if (h.enabled !== false && h.name) {
+        headers[h.name] = h.value;
+      }
     });
 
-    const response = await fetch(payload.url, {
-      method: payload.method,
+    if (config.auth.type === "bearer" && config.auth.bearer?.token) {
+      headers["Authorization"] = "Bearer " + config.auth.bearer.token;
+    } else if (config.auth.type === "basic" && config.auth.basic) {
+      const encoded = btoa(config.auth.basic.username + ":" + config.auth.basic.password);
+      headers["Authorization"] = "Basic " + encoded;
+    } else if (config.auth.type === "api-key" && config.auth.apiKey?.addTo === "header") {
+      headers[config.auth.apiKey.key] = config.auth.apiKey.value;
+    }
+
+    let body: string | undefined;
+    if (config.bodyType === "json" && config.body.json) {
+      body = config.body.json;
+      if (!headers["Content-Type"]) {
+        headers["Content-Type"] = "application/json";
+      }
+    } else if (config.bodyType === "raw" && config.body.raw) {
+      body = config.body.raw;
+    } else if (config.bodyType === "x-www-form-urlencoded" && config.body.urlEncoded) {
+      body = new URLSearchParams(
+        config.body.urlEncoded.map((f) => [f.name, f.value])
+      ).toString();
+      if (!headers["Content-Type"]) {
+        headers["Content-Type"] = "application/x-www-form-urlencoded";
+      }
+    }
+
+    let url = config.url;
+    if (config.auth.type === "api-key" && config.auth.apiKey?.addTo === "query") {
+      const sep = url.includes("?") ? "&" : "?";
+      url = url + sep + config.auth.apiKey.key + "=" + encodeURIComponent(config.auth.apiKey.value);
+    }
+
+    if (config.params.length > 0) {
+      const enabledParams = config.params.filter((p) => p.enabled !== false);
+      if (enabledParams.length > 0) {
+        const sep = url.includes("?") ? "&" : "?";
+        const queryString = enabledParams
+          .map((p) => encodeURIComponent(p.name) + "=" + encodeURIComponent(p.value))
+          .join("&");
+        url = url + sep + queryString;
+      }
+    }
+
+    const response = await fetch(url, {
+      method: config.method,
       headers,
-      body: payload.body || undefined,
+      body: config.method !== "GET" && config.method !== "HEAD" ? body : undefined,
     });
 
     const duration = performance.now() - start;
-    const text = await response.text();
-    const preview = text.slice(0, 2048);
+    const responseBody = await response.text();
 
     const headerPairs: [string, string][] = [];
     response.headers.forEach((v, k) => headerPairs.push([k, v]));
-    
+
+    const record: RequestRecord = {
+      id: "manual_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9),
+      url,
+      method: config.method,
+      statusCode: response.status,
+      tabId: -1,
+      startTime: start,
+      timeStamp: Date.now(),
+      duration,
+      requestHeaders: Object.entries(headers).map(([name, value]) => ({ name, value })),
+      requestBody: null,
+      requestBodyText: body || null,
+      responseBodyText: responseBody,
+      responseHeaders: headerPairs.map(([name, value]) => ({ name, value })),
+      requestConfig: config,
+    };
+
+    await addRecord(record);
+
     return {
-      success: true,
       status: response.status,
       statusText: response.statusText,
       headers: headerPairs,
-      bodyPreview: preview,
+      body: responseBody,
       duration,
+      size: responseBody.length,
     };
   }
 
