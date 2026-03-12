@@ -4,6 +4,7 @@ declare global {
   const CaptureFilter: typeof import('/home/dracon/Dev/extensions/api-debugger/components/CaptureFilter').CaptureFilter
   const CollectionsView: typeof import('/home/dracon/Dev/extensions/api-debugger/components/CollectionsView').CollectionsView
   const ContentScriptContext: typeof import('wxt/utils/content-script-context').ContentScriptContext
+  const DEFAULT_SHORTCUTS: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useKeyboardShortcuts').DEFAULT_SHORTCUTS
   const DiagnosticsPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/DiagnosticsPanel').DiagnosticsPanel
   const EnvironmentManager: typeof import('/home/dracon/Dev/extensions/api-debugger/components/EnvironmentManager').EnvironmentManager
   const ExportPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ExportPanel').ExportPanel
@@ -18,6 +19,7 @@ declare global {
   const RequestList: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestList').RequestList
   const SaveToCollection: typeof import('/home/dracon/Dev/extensions/api-debugger/components/SaveToCollection').SaveToCollection
   const SettingsPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/SettingsPanel').SettingsPanel
+  const ThemeToggle: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useTheme').ThemeToggle
   const apiClient: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').apiClient
   const authFlow: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').authFlow
   const authStore: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/api').authStore
@@ -67,10 +69,12 @@ declare global {
   const useCallback: typeof import('react').useCallback
   const useContext: typeof import('react').useContext
   const useEffect: typeof import('react').useEffect
+  const useKeyboardShortcuts: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useKeyboardShortcuts').useKeyboardShortcuts
   const useMemo: typeof import('react').useMemo
   const useReducer: typeof import('react').useReducer
   const useRef: typeof import('react').useRef
   const useState: typeof import('react').useState
+  const useTheme: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useTheme').useTheme
   const validateApiKey: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/ai-client').validateApiKey
 }
 // for type re-export

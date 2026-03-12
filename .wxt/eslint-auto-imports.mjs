@@ -18,6 +18,7 @@ const globals = {
   "ContentScriptPositioningOptions": true,
   "ContentScriptUi": true,
   "ContentScriptUiOptions": true,
+  "DEFAULT_SHORTCUTS": true,
   "DiagnosticsPanel": true,
   "DraconConfig": true,
   "Environment": true,
@@ -49,6 +50,7 @@ const globals = {
   "StorageArea": true,
   "StorageAreaChanges": true,
   "StorageItemKey": true,
+  "ThemeToggle": true,
   "WxtAppConfig": true,
   "WxtStorage": true,
   "WxtStorageItem": true,
@@ -102,10 +104,12 @@ const globals = {
   "useCallback": true,
   "useContext": true,
   "useEffect": true,
+  "useKeyboardShortcuts": true,
   "useMemo": true,
   "useReducer": true,
   "useRef": true,
   "useState": true,
+  "useTheme": true,
   "validateApiKey": true
 }
 
