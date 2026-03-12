@@ -257,6 +257,8 @@ export default function Dashboard() {
 
         {view === "websocket" && <WebSocketClient />}
 
+        {view === "sse" && <SSEClient />}
+
         {view === "graphql" && <GraphQLClient />}
 
         {view === "diff" && <DiffViewer left="" right="" />}
