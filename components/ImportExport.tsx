@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { RequestConfig, QueryParam, HttpHeader, BodyType } from "@/types";
+import type { RequestConfig } from "@/types";
 
 interface ImportExportProps {
   onImport?: (config: RequestConfig) => void;
