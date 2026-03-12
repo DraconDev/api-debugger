@@ -135,6 +135,8 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="flex-1 flex">
+        {view === "builder" && <RequestBuilderView />}
+
         {view === "history" && (
           <>
             {/* Request List */}
