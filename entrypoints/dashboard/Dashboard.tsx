@@ -17,6 +17,7 @@ interface DashboardState {
   savedRequests: SavedRequest[];
   selectedRequestId: string | null;
   selectedCollectionId: string | null;
+  selectedRequestIds: Set<string>;
   searchQuery: string;
   isLoading: boolean;
 }
