@@ -271,6 +271,10 @@ export function RequestBuilderView() {
               </div>
             )}
 
+            {responseTab === "tests" && (
+              <TestRunner response={response} />
+            )}
+
             {responseTab === "code" && (
               <CodeGenerator request={config} />
             )}
