@@ -30,8 +30,10 @@ export function RequestBuilderView() {
   const [response, setResponse] = useState<CapturedResponse | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"params" | "headers" | "body" | "auth">("headers");
+  const [activeTab, setActiveTab] = useState<"params" | "headers" | "body" | "auth" | "extractions">("headers");
   const [responseTab, setResponseTab] = useState<"body" | "headers" | "timing" | "tests" | "code" | "ai">("body");
+  
+  const { variables, extractFromResponse, clearVariables } = useRuntimeVariables();
 
   const sendRequest = async () => {
     if (!config.url) return;
@@ -41,13 +43,23 @@ export function RequestBuilderView() {
     setResponse(null);
 
     try {
+      const interpolatedConfig = interpolateConfigVariables(config, variables);
+      
       const result = await chrome.runtime.sendMessage({
         type: "SEND_REQUEST",
-        payload: { config },
+        payload: { config: interpolatedConfig },
       });
 
       if (result.success) {
         setResponse(result.response);
+        
+        if (config.extractions && config.extractions.length > 0) {
+          extractFromResponse(
+            result.response.body,
+            result.response.headers,
+            config.extractions
+          );
+        }
       } else {
         setError(result.error || "Request failed");
       }
