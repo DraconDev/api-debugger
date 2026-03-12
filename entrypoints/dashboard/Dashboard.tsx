@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import type { RequestRecord, Collection, SavedRequest } from "@/types";
+import { RequestBuilderView } from "@/components/RequestBuilderView";
 
-type ViewType = "history" | "collections" | "settings";
+type ViewType = "builder" | "history" | "collections" | "settings";
 
 interface DashboardState {
   requests: RequestRecord[];
