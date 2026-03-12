@@ -6,6 +6,7 @@ import {
   AuthEditor,
   CodeGenerator,
   ResponseViewer,
+  TimingBreakdown,
   AIAnalysisPanel,
 } from "@/components/request";
 import { TestRunner } from "@/components/testing";
@@ -27,7 +28,7 @@ export function RequestBuilderView() {
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"params" | "headers" | "body" | "auth">("headers");
-  const [responseTab, setResponseTab] = useState<"body" | "headers" | "tests" | "code" | "ai">("body");
+  const [responseTab, setResponseTab] = useState<"body" | "headers" | "timing" | "tests" | "code" | "ai">("body");
 
   const sendRequest = async () => {
     if (!config.url) return;
