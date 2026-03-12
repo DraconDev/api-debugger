@@ -150,7 +150,7 @@ export function RequestBuilderView() {
         <div className="w-1/2 flex flex-col border-r border-border">
           {/* Request Tabs */}
           <div className="flex border-b border-border">
-            {(["params", "headers", "body", "auth", "extractions"] as const).map((tab) => (
+            {(["params", "headers", "body", "auth", "scripts", "extractions"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -166,6 +166,9 @@ export function RequestBuilderView() {
                 )}
                 {tab === "headers" && config.headers.filter((h) => h.enabled !== false).length > 0 && (
                   <span className="ml-1 text-xs">({config.headers.filter((h) => h.enabled !== false).length})</span>
+                )}
+                {tab === "scripts" && (config.preRequestScript || config.postResponseScript) && (
+                  <span className="ml-1 text-xs text-primary">•</span>
                 )}
                 {tab === "extractions" && config.extractions?.filter((e) => e.enabled !== false).length > 0 && (
                   <span className="ml-1 text-xs">({config.extractions.filter((e) => e.enabled !== false).length})</span>
