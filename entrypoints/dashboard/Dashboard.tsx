@@ -78,18 +78,18 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-zinc-900 text-zinc-100">
+    <div className="flex h-screen bg-background text-foreground dark">
       {/* Sidebar */}
-      <aside className="w-56 flex-shrink-0 bg-zinc-950 border-r border-zinc-800 flex flex-col">
+      <aside className="w-56 flex-shrink-0 bg-card border-r border-border flex flex-col">
         {/* Logo */}
-        <div className="p-4 border-b border-zinc-800">
+        <div className="p-4 border-b border-border">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
               <span className="text-white font-bold text-sm">AD</span>
             </div>
             <div>
               <h1 className="font-semibold text-sm">API Debugger</h1>
-              <p className="text-xs text-zinc-500">v0.1.0</p>
+              <p className="text-xs text-muted-foreground">v0.1.0</p>
             </div>
           </div>
         </div>
@@ -119,8 +119,8 @@ export default function Dashboard() {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-zinc-800">
-          <div className="text-xs text-zinc-500">
+        <div className="p-4 border-t border-border">
+          <div className="text-xs text-muted-foreground">
             {state.requests.length} requests captured
           </div>
         </div>
@@ -131,11 +131,11 @@ export default function Dashboard() {
         {view === "history" && (
           <>
             {/* Request List */}
-            <div className="w-80 flex-shrink-0 border-r border-zinc-800 flex flex-col">
+            <div className="w-80 flex-shrink-0 border-r border-border flex flex-col">
               {/* Search */}
-              <div className="p-3 border-b border-zinc-800">
+              <div className="p-3 border-b border-border">
                 <div className="relative">
-                  <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                  <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <input
                     type="text"
                     value={state.searchQuery}
@@ -143,23 +143,23 @@ export default function Dashboard() {
                       setState((s) => ({ ...s, searchQuery: e.target.value }))
                     }
                     placeholder="Search requests..."
-                    className="w-full pl-9 pr-3 py-2 text-sm bg-zinc-800 border border-zinc-700 rounded-md text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
+                    className="w-full pl-9 pr-3 py-2 text-sm bg-input border border-border rounded-md text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   />
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="p-2 border-b border-zinc-800 flex gap-2">
+              <div className="p-2 border-b border-border flex gap-2">
                 <button
                   onClick={loadData}
-                  className="flex-1 px-2 py-1.5 text-xs bg-zinc-800 hover:bg-zinc-700 rounded text-zinc-300 flex items-center justify-center gap-1"
+                  className="flex-1 px-2 py-1.5 text-xs bg-secondary hover:bg-secondary/80 rounded text-secondary-foreground flex items-center justify-center gap-1"
                 >
                   <RefreshIcon className="w-3 h-3" />
                   Refresh
                 </button>
                 <button
                   onClick={clearHistory}
-                  className="flex-1 px-2 py-1.5 text-xs bg-zinc-800 hover:bg-zinc-700 rounded text-zinc-300 flex items-center justify-center gap-1"
+                  className="flex-1 px-2 py-1.5 text-xs bg-secondary hover:bg-secondary/80 rounded text-secondary-foreground flex items-center justify-center gap-1"
                 >
                   <TrashIcon className="w-3 h-3" />
                   Clear
@@ -170,10 +170,10 @@ export default function Dashboard() {
               <div className="flex-1 overflow-y-auto">
                 {state.isLoading ? (
                   <div className="flex items-center justify-center h-32">
-                    <div className="animate-spin w-6 h-6 border-2 border-violet-500 border-t-transparent rounded-full" />
+                    <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
                   </div>
                 ) : filteredRequests.length === 0 ? (
-                  <div className="p-4 text-center text-zinc-500 text-sm">
+                  <div className="p-4 text-center text-muted-foreground text-sm">
                     {state.searchQuery ? "No matching requests" : "No requests captured yet"}
                   </div>
                 ) : (
@@ -200,10 +200,10 @@ export default function Dashboard() {
               {selectedRequest ? (
                 <RequestDetailView request={selectedRequest} />
               ) : (
-                <div className="flex-1 flex items-center justify-center text-zinc-500">
+                <div className="flex-1 flex items-center justify-center text-muted-foreground">
                   <div className="text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-zinc-800 flex items-center justify-center">
-                      <CodeIcon className="w-8 h-8 text-zinc-600" />
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+                      <CodeIcon className="w-8 h-8 text-muted-foreground" />
                     </div>
                     <p className="text-sm">Select a request to view details</p>
                   </div>
@@ -248,16 +248,16 @@ function NavItem({
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm ${
+      className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
         active
-          ? "bg-zinc-800 text-zinc-100"
-          : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50"
+          ? "bg-accent text-accent-foreground"
+          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
       }`}
     >
       {icon}
       <span className="flex-1 text-left">{label}</span>
       {count !== undefined && (
-        <span className="text-xs bg-zinc-700 px-1.5 py-0.5 rounded">{count}</span>
+        <span className="text-xs bg-muted px-1.5 py-0.5 rounded">{count}</span>
       )}
     </button>
   );
@@ -276,29 +276,29 @@ function RequestListItem({
 }) {
   const statusColor =
     request.statusCode >= 500
-      ? "text-red-400"
+      ? "text-red-500"
       : request.statusCode >= 400
-      ? "text-amber-400"
+      ? "text-amber-500"
       : request.statusCode >= 300
-      ? "text-blue-400"
-      : "text-emerald-400";
+      ? "text-blue-500"
+      : "text-emerald-500";
 
   const methodColor =
     request.method === "GET"
-      ? "text-emerald-400"
+      ? "text-emerald-500"
       : request.method === "POST"
-      ? "text-amber-400"
+      ? "text-amber-500"
       : request.method === "PUT"
-      ? "text-blue-400"
+      ? "text-blue-500"
       : request.method === "DELETE"
-      ? "text-red-400"
-      : "text-zinc-400";
+      ? "text-red-500"
+      : "text-muted-foreground";
 
   return (
     <div
       onClick={onClick}
-      className={`group px-3 py-2 border-b border-zinc-800 cursor-pointer ${
-        selected ? "bg-zinc-800" : "hover:bg-zinc-800/50"
+      className={`group px-3 py-2 border-b border-border cursor-pointer transition-colors ${
+        selected ? "bg-accent" : "hover:bg-accent/50"
       }`}
     >
       <div className="flex items-center gap-2 mb-1">
@@ -308,16 +308,16 @@ function RequestListItem({
         <span className={`font-mono text-xs ${statusColor}`}>
           {request.statusCode}
         </span>
-        <span className="text-xs text-zinc-500 ml-auto">{request.duration.toFixed(0)}ms</span>
+        <span className="text-xs text-muted-foreground ml-auto">{request.duration.toFixed(0)}ms</span>
       </div>
-      <div className="text-xs text-zinc-400 truncate">{request.url}</div>
+      <div className="text-xs text-muted-foreground truncate">{request.url}</div>
       <div className="flex items-center gap-2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
           onClick={(e) => {
             e.stopPropagation();
             onDelete();
           }}
-          className="text-xs text-zinc-500 hover:text-red-400"
+          className="text-xs text-muted-foreground hover:text-destructive"
         >
           Delete
         </button>
@@ -332,19 +332,19 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
   return (
     <>
       {/* Header */}
-      <div className="p-4 border-b border-zinc-800">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center gap-3 mb-2">
           <span
             className={`font-mono text-sm font-semibold ${
               request.method === "GET"
-                ? "text-emerald-400"
+                ? "text-emerald-500"
                 : request.method === "POST"
-                ? "text-amber-400"
+                ? "text-amber-500"
                 : request.method === "PUT"
-                ? "text-blue-400"
+                ? "text-blue-500"
                 : request.method === "DELETE"
-                ? "text-red-400"
-                : "text-zinc-400"
+                ? "text-red-500"
+                : "text-muted-foreground"
             }`}
           >
             {request.method}
@@ -352,33 +352,33 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
           <span
             className={`font-mono text-sm ${
               request.statusCode >= 500
-                ? "text-red-400"
+                ? "text-red-500"
                 : request.statusCode >= 400
-                ? "text-amber-400"
+                ? "text-amber-500"
                 : request.statusCode >= 300
-                ? "text-blue-400"
-                : "text-emerald-400"
+                ? "text-blue-500"
+                : "text-emerald-500"
             }`}
           >
             {request.statusCode}
           </span>
         </div>
-        <div className="font-mono text-xs text-zinc-400 break-all">{request.url}</div>
-        <div className="text-xs text-zinc-500 mt-2">
+        <div className="font-mono text-xs text-muted-foreground break-all">{request.url}</div>
+        <div className="text-xs text-muted-foreground mt-2">
           {new Date(request.timeStamp).toLocaleString()} · {request.duration.toFixed(0)}ms
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-zinc-800">
+      <div className="flex border-b border-border">
         {(["headers", "body", "response", "timing"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 text-sm capitalize ${
+            className={`px-4 py-2 text-sm capitalize transition-colors ${
               activeTab === tab
-                ? "text-zinc-100 border-b-2 border-violet-500"
-                : "text-zinc-500 hover:text-zinc-300"
+                ? "text-foreground border-b-2 border-primary"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             {tab}
@@ -390,20 +390,20 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
       <div className="flex-1 overflow-auto p-4">
         {activeTab === "headers" && (
           <div className="space-y-1">
-            <h3 className="text-xs font-medium text-zinc-500 mb-2">Request Headers</h3>
+            <h3 className="text-xs font-medium text-muted-foreground mb-2">Request Headers</h3>
             {request.requestHeaders?.map((h, i) => (
               <div key={i} className="flex text-xs">
-                <span className="text-violet-400 w-40 flex-shrink-0 truncate">{h.name}</span>
-                <span className="text-zinc-400 truncate">{h.value}</span>
+                <span className="text-primary w-40 flex-shrink-0 truncate">{h.name}</span>
+                <span className="text-muted-foreground truncate">{h.value}</span>
               </div>
             ))}
             {request.responseHeaders && (
               <>
-                <h3 className="text-xs font-medium text-zinc-500 mb-2 mt-4">Response Headers</h3>
+                <h3 className="text-xs font-medium text-muted-foreground mb-2 mt-4">Response Headers</h3>
                 {request.responseHeaders.map((h, i) => (
                   <div key={i} className="flex text-xs">
-                    <span className="text-violet-400 w-40 flex-shrink-0 truncate">{h.name}</span>
-                    <span className="text-zinc-400 truncate">{h.value}</span>
+                    <span className="text-primary w-40 flex-shrink-0 truncate">{h.name}</span>
+                    <span className="text-muted-foreground truncate">{h.value}</span>
                   </div>
                 ))}
               </>
@@ -414,11 +414,11 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
         {activeTab === "body" && (
           <div>
             {request.requestBodyText ? (
-              <pre className="text-xs font-mono text-zinc-300 bg-zinc-800 p-3 rounded overflow-auto">
+              <pre className="text-xs font-mono text-foreground bg-muted p-3 rounded overflow-auto">
                 {request.requestBodyText}
               </pre>
             ) : (
-              <div className="text-sm text-zinc-500">No request body</div>
+              <div className="text-sm text-muted-foreground">No request body</div>
             )}
           </div>
         )}
@@ -426,11 +426,11 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
         {activeTab === "response" && (
           <div>
             {request.responseBodyText ? (
-              <pre className="text-xs font-mono text-zinc-300 bg-zinc-800 p-3 rounded overflow-auto">
+              <pre className="text-xs font-mono text-foreground bg-muted p-3 rounded overflow-auto">
                 {request.responseBodyText}
               </pre>
             ) : (
-              <div className="text-sm text-zinc-500">No response body captured</div>
+              <div className="text-sm text-muted-foreground">No response body captured</div>
             )}
           </div>
         )}
@@ -438,20 +438,20 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
         {activeTab === "timing" && (
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-zinc-400">Total Duration</span>
-              <span className="font-mono text-zinc-200">{request.duration.toFixed(2)}ms</span>
+              <span className="text-muted-foreground">Total Duration</span>
+              <span className="font-mono text-foreground">{request.duration.toFixed(2)}ms</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-zinc-400">Status Code</span>
-              <span className="font-mono text-zinc-200">{request.statusCode}</span>
+              <span className="text-muted-foreground">Status Code</span>
+              <span className="font-mono text-foreground">{request.statusCode}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-zinc-400">Tab ID</span>
-              <span className="font-mono text-zinc-200">{request.tabId}</span>
+              <span className="text-muted-foreground">Tab ID</span>
+              <span className="font-mono text-foreground">{request.tabId}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-zinc-400">Request Type</span>
-              <span className="font-mono text-zinc-200">{request.type || "main_frame"}</span>
+              <span className="text-muted-foreground">Request Type</span>
+              <span className="font-mono text-foreground">{request.type || "main_frame"}</span>
             </div>
           </div>
         )}
@@ -479,27 +479,27 @@ function CollectionsView({
   return (
     <div className="flex-1 flex">
       {/* Collections List */}
-      <div className="w-64 border-r border-zinc-800">
-        <div className="p-3 border-b border-zinc-800">
+      <div className="w-64 border-r border-border">
+        <div className="p-3 border-b border-border">
           <h2 className="text-sm font-medium">Collections</h2>
         </div>
         <div className="p-2 space-y-1">
           {collections.length === 0 ? (
-            <div className="p-4 text-sm text-zinc-500 text-center">No collections yet</div>
+            <div className="p-4 text-sm text-muted-foreground text-center">No collections yet</div>
           ) : (
             collections.map((col) => (
               <button
                 key={col.id}
                 onClick={() => onSelectCollection(col.id)}
-                className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm ${
+                className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
                   selectedCollectionId === col.id
-                    ? "bg-zinc-800 text-zinc-100"
-                    : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50"
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                 }`}
               >
                 <FolderIcon className="w-4 h-4" />
                 <span className="flex-1 text-left truncate">{col.name}</span>
-                <span className="text-xs bg-zinc-700 px-1.5 py-0.5 rounded">
+                <span className="text-xs bg-muted px-1.5 py-0.5 rounded">
                   {savedRequests.filter((r) => r.collectionId === col.id).length}
                 </span>
               </button>
@@ -512,47 +512,47 @@ function CollectionsView({
       <div className="flex-1">
         {selectedCollection ? (
           <div>
-            <div className="p-4 border-b border-zinc-800">
+            <div className="p-4 border-b border-border">
               <h2 className="font-medium">{selectedCollection.name}</h2>
               {selectedCollection.description && (
-                <p className="text-sm text-zinc-400 mt-1">{selectedCollection.description}</p>
+                <p className="text-sm text-muted-foreground mt-1">{selectedCollection.description}</p>
               )}
             </div>
             <div className="p-2">
               {collectionRequests.length === 0 ? (
-                <div className="p-4 text-sm text-zinc-500 text-center">
+                <div className="p-4 text-sm text-muted-foreground text-center">
                   No requests in this collection
                 </div>
               ) : (
                 collectionRequests.map((req) => (
                   <div
                     key={req.id}
-                    className="px-3 py-2 border-b border-zinc-800 hover:bg-zinc-800/50"
+                    className="px-3 py-2 border-b border-border hover:bg-accent/50 cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
                       <span
                         className={`font-mono text-xs ${
                           req.request.method === "GET"
-                            ? "text-emerald-400"
+                            ? "text-emerald-500"
                             : req.request.method === "POST"
-                            ? "text-amber-400"
-                            : "text-zinc-400"
+                            ? "text-amber-500"
+                            : "text-muted-foreground"
                         }`}
                       >
                         {req.request.method}
                       </span>
-                      <span className="text-sm text-zinc-300">{req.name}</span>
+                      <span className="text-sm text-foreground">{req.name}</span>
                     </div>
-                    <div className="text-xs text-zinc-500 truncate mt-1">{req.request.url}</div>
+                    <div className="text-xs text-muted-foreground truncate mt-1">{req.request.url}</div>
                   </div>
                 ))
               )}
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-zinc-500">
+          <div className="flex-1 flex items-center justify-center text-muted-foreground">
             <div className="text-center">
-              <FolderIcon className="w-12 h-12 mx-auto mb-3 text-zinc-600" />
+              <FolderIcon className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
               <p className="text-sm">Select a collection to view</p>
             </div>
           </div>
@@ -568,42 +568,42 @@ function SettingsView() {
       <h2 className="text-lg font-semibold mb-6">Settings</h2>
 
       <div className="max-w-lg space-y-6">
-        <div className="p-4 bg-zinc-800 rounded-lg">
+        <div className="p-4 bg-card rounded-lg border border-border">
           <h3 className="font-medium mb-3">AI Integration</h3>
-          <p className="text-sm text-zinc-400 mb-3">
+          <p className="text-sm text-muted-foreground mb-3">
             Configure AI providers for intelligent request analysis and debugging suggestions.
           </p>
           <a
             href={chrome.runtime.getURL("/popup.html")}
             target="_blank"
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-violet-600 hover:bg-violet-500 rounded text-white"
+            className="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-primary hover:bg-primary/90 rounded text-primary-foreground"
           >
             Open Settings
             <ExternalLinkIcon className="w-3 h-3" />
           </a>
         </div>
 
-        <div className="p-4 bg-zinc-800 rounded-lg">
+        <div className="p-4 bg-card rounded-lg border border-border">
           <h3 className="font-medium mb-3">Keyboard Shortcuts</h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-zinc-400">Refresh</span>
-              <kbd className="px-2 py-0.5 bg-zinc-700 rounded text-xs">Ctrl+R</kbd>
+              <span className="text-muted-foreground">Refresh</span>
+              <kbd className="px-2 py-0.5 bg-muted rounded text-xs">Ctrl+R</kbd>
             </div>
             <div className="flex justify-between">
-              <span className="text-zinc-400">Search</span>
-              <kbd className="px-2 py-0.5 bg-zinc-700 rounded text-xs">Ctrl+F</kbd>
+              <span className="text-muted-foreground">Search</span>
+              <kbd className="px-2 py-0.5 bg-muted rounded text-xs">Ctrl+F</kbd>
             </div>
             <div className="flex justify-between">
-              <span className="text-zinc-400">Clear History</span>
-              <kbd className="px-2 py-0.5 bg-zinc-700 rounded text-xs">Ctrl+Shift+Delete</kbd>
+              <span className="text-muted-foreground">Clear History</span>
+              <kbd className="px-2 py-0.5 bg-muted rounded text-xs">Ctrl+Shift+Delete</kbd>
             </div>
           </div>
         </div>
 
-        <div className="p-4 bg-zinc-800 rounded-lg">
+        <div className="p-4 bg-card rounded-lg border border-border">
           <h3 className="font-medium mb-3">About</h3>
-          <div className="space-y-2 text-sm text-zinc-400">
+          <div className="space-y-2 text-sm text-muted-foreground">
             <p>API Debugger v0.1.0</p>
             <p>A browser-first API debugging tool for developers.</p>
           </div>
@@ -628,7 +628,7 @@ function HistoryIcon() {
   );
 }
 
-function FolderIcon({ className = "w-4 h-4" }) {
+function FolderIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path
@@ -660,7 +660,7 @@ function SettingsIcon() {
   );
 }
 
-function SearchIcon({ className = "w-4 h-4" }) {
+function SearchIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path
@@ -673,7 +673,7 @@ function SearchIcon({ className = "w-4 h-4" }) {
   );
 }
 
-function RefreshIcon({ className = "w-3 h-3" }) {
+function RefreshIcon({ className = "w-3 h-3" }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path
@@ -686,7 +686,7 @@ function RefreshIcon({ className = "w-3 h-3" }) {
   );
 }
 
-function TrashIcon({ className = "w-3 h-3" }) {
+function TrashIcon({ className = "w-3 h-3" }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path
@@ -699,7 +699,7 @@ function TrashIcon({ className = "w-3 h-3" }) {
   );
 }
 
-function CodeIcon({ className = "w-8 h-8" }) {
+function CodeIcon({ className = "w-8 h-8" }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path
@@ -712,7 +712,7 @@ function CodeIcon({ className = "w-8 h-8" }) {
   );
 }
 
-function ExternalLinkIcon({ className = "w-3 h-3" }) {
+function ExternalLinkIcon({ className = "w-3 h-3" }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path
