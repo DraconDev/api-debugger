@@ -76,15 +76,79 @@ export default function Dashboard() {
 
   const clearHistory = async () => {
     await chrome.runtime.sendMessage({ type: "CLEAR_REQUESTS" });
-    setState((s) => ({ ...s, requests: [], selectedRequestId: null }));
+    setState((s) => ({ ...s, requests: [], selectedRequestId: null, selectedRequestIds: new Set() }));
   };
 
   const deleteRequest = (id: string) => {
+    const newSelectedIds = new Set(state.selectedRequestIds);
+    newSelectedIds.delete(id);
     setState((s) => ({
       ...s,
       requests: s.requests.filter((r) => r.id !== id),
       selectedRequestId: s.selectedRequestId === id ? null : s.selectedRequestId,
+      selectedRequestIds: newSelectedIds,
     }));
+  };
+
+  const toggleSelectRequest = (id: string) => {
+    const newSelectedIds = new Set(state.selectedRequestIds);
+    if (newSelectedIds.has(id)) {
+      newSelectedIds.delete(id);
+    } else {
+      newSelectedIds.add(id);
+    }
+    setState((s) => ({ ...s, selectedRequestIds: newSelectedIds }));
+  };
+
+  const selectAllRequests = () => {
+    setState((s) => ({
+      ...s,
+      selectedRequestIds: new Set(filteredRequests.map((r) => r.id)),
+    }));
+  };
+
+  const deselectAllRequests = () => {
+    setState((s) => ({ ...s, selectedRequestIds: new Set() }));
+  };
+
+  const deleteSelectedRequests = async () => {
+    const idsToDelete = state.selectedRequestIds;
+    const remainingRequests = state.requests.filter((r) => !idsToDelete.has(r.id));
+    
+    await chrome.storage.local.set({ requests: remainingRequests });
+    
+    setState((s) => ({
+      ...s,
+      requests: remainingRequests,
+      selectedRequestId: idsToDelete.has(s.selectedRequestId || "") ? null : s.selectedRequestId,
+      selectedRequestIds: new Set(),
+    }));
+  };
+
+  const exportSelectedRequests = () => {
+    const selectedRequests = state.requests.filter((r) => state.selectedRequestIds.has(r.id));
+    const exportData = {
+      version: "1.0",
+      exportedAt: new Date().toISOString(),
+      requests: selectedRequests.map((r) => ({
+        method: r.method,
+        url: r.url,
+        headers: r.requestHeaders || [],
+        body: r.requestBodyText || null,
+        response: {
+          status: r.statusCode,
+          body: r.responseBodyText || null,
+        },
+      })),
+    };
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `api-debugger-export-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
