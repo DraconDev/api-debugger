@@ -191,6 +191,12 @@ export default function Dashboard() {
             label="WebSocket"
           />
           <NavItem
+            active={view === "sse"}
+            onClick={() => setView("sse")}
+            icon={<SSEIcon />}
+            label="SSE"
+          />
+          <NavItem
             active={view === "graphql"}
             onClick={() => setView("graphql")}
             icon={<GraphQLIcon />}
