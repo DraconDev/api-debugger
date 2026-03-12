@@ -213,6 +213,40 @@ export function RequestBuilderView() {
             {activeTab === "auth" && (
               <AuthEditor auth={config.auth} onChange={(auth) => updateConfig("auth", auth)} />
             )}
+
+            {activeTab === "extractions" && (
+              <VariableExtractor
+                extractions={config.extractions || []}
+                onChange={(extractions) => updateConfig("extractions", extractions)}
+              />
+            )}
+            
+            {activeTab === "extractions" && Object.keys(variables).length > 0 && (
+              <div className="border-t border-border">
+                <div className="p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium">Runtime Variables</span>
+                    <button
+                      onClick={clearVariables}
+                      className="text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                  <div className="space-y-1">
+                    {Object.entries(variables).map(([key, value]) => (
+                      <div key={key} className="flex items-center gap-2 text-xs">
+                        <span className="font-mono text-primary">{"{{" + key + "}}"}</span>
+                        <span className="text-muted-foreground">=</span>
+                        <span className="font-mono text-muted-foreground truncate flex-1">
+                          {value.length > 50 ? value.slice(0, 50) + "..." : value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
