@@ -234,6 +234,12 @@ export default function Dashboard() {
             label="Cookies"
           />
           <NavItem
+            active={view === "mocks"}
+            onClick={() => setView("mocks")}
+            icon={<MockIcon />}
+            label="Mocks"
+          />
+          <NavItem
             active={view === "diff"}
             onClick={() => setView("diff")}
             icon={<DiffIcon />}
