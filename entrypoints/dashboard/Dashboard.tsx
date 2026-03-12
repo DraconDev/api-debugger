@@ -268,6 +268,39 @@ export default function Dashboard() {
                 </div>
               </div>
 
+              {/* Selection Actions */}
+              {state.selectedRequestIds.size > 0 && (
+                <div className="p-2 border-b border-border bg-muted/50">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-muted-foreground">
+                      {state.selectedRequestIds.size} selected
+                    </span>
+                    <button
+                      onClick={deselectAllRequests}
+                      className="text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      Deselect all
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={deleteSelectedRequests}
+                      className="flex-1 px-2 py-1.5 text-xs bg-destructive hover:bg-destructive/90 rounded text-destructive-foreground flex items-center justify-center gap-1"
+                    >
+                      <TrashIcon className="w-3 h-3" />
+                      Delete
+                    </button>
+                    <button
+                      onClick={exportSelectedRequests}
+                      className="flex-1 px-2 py-1.5 text-xs bg-secondary hover:bg-secondary/80 rounded text-secondary-foreground flex items-center justify-center gap-1"
+                    >
+                      <ExportIcon className="w-3 h-3" />
+                      Export
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Actions */}
               <div className="p-2 border-b border-border flex gap-2">
                 <button
@@ -284,6 +317,15 @@ export default function Dashboard() {
                   <TrashIcon className="w-3 h-3" />
                   Clear
                 </button>
+                {filteredRequests.length > 0 && (
+                  <button
+                    onClick={selectAllRequests}
+                    className="px-2 py-1.5 text-xs bg-secondary hover:bg-secondary/80 rounded text-secondary-foreground"
+                    title="Select all"
+                  >
+                    <CheckIcon className="w-3 h-3" />
+                  </button>
+                )}
               </div>
 
               {/* List */}
