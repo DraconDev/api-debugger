@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { GitHubSync, getGitHubConfig, setGitHubConfig, clearGitHubConfig, type GitHubConfig, type SyncData } from "@/lib/githubSync";
+import { GitHubSync, getGitHubConfig, setGitHubConfig, clearGitHubConfig, initiateGitHubOAuth, type GitHubConfig, type SyncData } from "@/lib/githubSync";
 
 export function GitHubSyncPanel() {
   const [config, setConfig] = useState<GitHubConfig>({
@@ -11,12 +11,11 @@ export function GitHubSyncPanel() {
     enabled: false,
   });
   const [isConnected, setIsConnected] = useState(false);
-  const [isTesting, setIsTesting] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [lastSync, setLastSync] = useState<number | null>(null);
-  const [showToken, setShowToken] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
     loadConfig();
@@ -28,36 +27,35 @@ export function GitHubSyncPanel() {
       setConfig(saved);
       setIsConnected(!!saved.token && !!saved.owner);
       setLastSync(saved.lastSync || null);
+      if (saved.token) {
+        setUsername(saved.owner);
+      }
     }
   };
 
-  const testConnection = async () => {
-    if (!config.token || !config.owner) {
-      setError("Token and owner are required");
-      return;
-    }
-
-    setIsTesting(true);
+  const handleGitHubLogin = async () => {
     setError(null);
     setSuccess(null);
 
-    try {
-      const sync = new GitHubSync(config);
-      const result = await sync.testConnection();
-      
-      if (result.valid) {
-        setIsConnected(true);
-        setSuccess(`Connected as @${result.user}`);
-      } else {
-        setError(result.error || "Connection failed");
-        setIsConnected(false);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Connection failed");
-      setIsConnected(false);
-    } finally {
-      setIsTesting(false);
+    const result = await initiateGitHubOAuth();
+    
+    if (!result) {
+      setError("GitHub login failed or was cancelled");
+      return;
     }
+
+    const newConfig: GitHubConfig = {
+      ...config,
+      token: result.token,
+      owner: result.username,
+      enabled: true,
+    };
+
+    await setGitHubConfig(newConfig);
+    setConfig(newConfig);
+    setIsConnected(true);
+    setUsername(result.username);
+    setSuccess(`Connected as @${result.username}`);
   };
 
   const disconnect = async () => {
@@ -72,6 +70,7 @@ export function GitHubSyncPanel() {
     });
     setIsConnected(false);
     setLastSync(null);
+    setUsername(null);
     setSuccess("Disconnected from GitHub");
   };
 
@@ -88,6 +87,8 @@ export function GitHubSyncPanel() {
     try {
       const sync = new GitHubSync(config);
       
+      await sync.createRepoIfNotExists();
+
       if (direction === "push") {
         const [collectionsRes, requestsRes, envRes, settingsRes] = await Promise.all([
           chrome.storage.sync.get("apiDebugger_collections"),
@@ -104,40 +105,44 @@ export function GitHubSyncPanel() {
           environments: envRes.apiDebugger_environments || [],
           settings: {
             theme: settingsRes["sync:theme"] || "system",
-            captureFilter: settingsRes.captureFilter || {},
+            captureFilter: settingsRes.captureFilter || null,
           },
         };
 
         const { sha } = await sync.getFile();
         await sync.push(syncData, sha);
         
-        const newConfig = { ...config, lastSync: Date.now() };
-        await setGitHubConfig(newConfig);
-        setLastSync(newConfig.lastSync);
-        
+        const now = Date.now();
+        await setGitHubConfig({ ...config, lastSync: now });
+        setLastSync(now);
         setSuccess("Successfully pushed to GitHub");
       } else {
         const { content } = await sync.getFile();
         
-        if (!content) {
-          setError("No sync data found in repository");
-          return;
+        if (content) {
+          if (content.collections) {
+            await chrome.storage.sync.set({ apiDebugger_collections: content.collections });
+          }
+          if (content.savedRequests) {
+            await chrome.storage.sync.set({ apiDebugger_savedRequests: content.savedRequests });
+          }
+          if (content.environments) {
+            await chrome.storage.sync.set({ apiDebugger_environments: content.environments });
+          }
+          if (content.settings) {
+            await chrome.storage.sync.set({ 
+              "sync:theme": content.settings.theme,
+              captureFilter: content.settings.captureFilter 
+            });
+          }
+
+          const now = Date.now();
+          await setGitHubConfig({ ...config, lastSync: now });
+          setLastSync(now);
+          setSuccess("Successfully pulled from GitHub");
+        } else {
+          setError("No synced data found in repository");
         }
-
-        await chrome.storage.sync.set({
-          apiDebugger_collections: content.collections || [],
-          apiDebugger_savedRequests: content.savedRequests || [],
-          apiDebugger_environments: content.environments || [],
-          "sync:theme": content.settings?.theme || "system",
-          captureFilter: content.settings?.captureFilter || {},
-        });
-
-        const newConfig = { ...config, lastSync: Date.now() };
-        await setGitHubConfig(newConfig);
-        setLastSync(newConfig.lastSync);
-
-        setSuccess("Successfully pulled from GitHub - page will reload to apply changes");
-        setTimeout(() => window.location.reload(), 2000);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sync failed");
@@ -146,138 +151,70 @@ export function GitHubSyncPanel() {
     }
   }, [config, isConnected]);
 
+  const updateConfig = (updates: Partial<GitHubConfig>) => {
+    setConfig((prev) => ({ ...prev, ...updates }));
+  };
+
+  const saveSettings = async () => {
+    await setGitHubConfig(config);
+    setSuccess("Settings saved");
+    setTimeout(() => setSuccess(null), 2000);
+  };
+
   return (
     <div className="h-full flex flex-col">
       <div className="p-4 border-b border-border">
         <h2 className="text-lg font-semibold mb-1">GitHub Sync</h2>
         <p className="text-sm text-muted-foreground">
-          Sync your collections, environments, and settings to GitHub for backup and version control
+          Backup and sync your collections, environments, and settings
         </p>
       </div>
 
-      {error && (
-        <div className="mx-4 mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-          <p className="text-sm text-destructive">{error}</p>
-        </div>
-      )}
-
-      {success && (
-        <div className="mx-4 mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-          <p className="text-sm text-emerald-500">{success}</p>
-        </div>
-      )}
-
       <div className="flex-1 overflow-auto p-4 space-y-4">
+        {error && (
+          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+            <p className="text-sm text-destructive">{error}</p>
+          </div>
+        )}
+
+        {success && (
+          <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+            <p className="text-sm text-emerald-500">{success}</p>
+          </div>
+        )}
+
         {!isConnected ? (
-          <div className="space-y-4">
-            <div className="p-4 bg-muted/50 rounded-lg border border-border">
-              <h3 className="font-medium mb-2 flex items-center gap-2">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                </svg>
-                Connect to GitHub
-              </h3>
-              <p className="text-xs text-muted-foreground mb-3">
-                Create a <a href="https://github.com/settings/tokens/new?description=API%20Debugger%20Sync&scopes=repo" target="_blank" rel="noopener" className="text-primary hover:underline">Personal Access Token</a> with <code className="text-xs bg-muted px-1 rounded">repo</code> scope
-              </p>
+          <div className="text-center py-8">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+              <GitHubIcon className="w-8 h-8 text-muted-foreground" />
             </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Personal Access Token</label>
-              <div className="relative">
-                <input
-                  type={showToken ? "text" : "password"}
-                  value={config.token}
-                  onChange={(e) => setConfig({ ...config, token: e.target.value })}
-                  placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-                  className="w-full px-3 py-2 pr-10 bg-input border border-border rounded-md text-sm font-mono"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowToken(!showToken)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  {showToken ? (
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                    </svg>
-                  ) : (
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">GitHub Username</label>
-              <input
-                type="text"
-                value={config.owner}
-                onChange={(e) => setConfig({ ...config, owner: e.target.value })}
-                placeholder="your-username"
-                className="w-full px-3 py-2 bg-input border border-border rounded-md text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Repository</label>
-              <input
-                type="text"
-                value={config.repo}
-                onChange={(e) => setConfig({ ...config, repo: e.target.value })}
-                placeholder="api-debugger-sync"
-                className="w-full px-3 py-2 bg-input border border-border rounded-md text-sm"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Will be created if it doesn't exist
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Branch</label>
-                <input
-                  type="text"
-                  value={config.branch}
-                  onChange={(e) => setConfig({ ...config, branch: e.target.value })}
-                  placeholder="main"
-                  className="w-full px-3 py-2 bg-input border border-border rounded-md text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Path (optional)</label>
-                <input
-                  type="text"
-                  value={config.path}
-                  onChange={(e) => setConfig({ ...config, path: e.target.value })}
-                  placeholder=""
-                  className="w-full px-3 py-2 bg-input border border-border rounded-md text-sm"
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                onClick={testConnection}
-                disabled={!config.token || !config.owner || isTesting}
-                className="flex-1 py-2 px-4 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 disabled:opacity-50"
-              >
-                {isTesting ? "Testing..." : "Connect"}
-              </button>
-            </div>
+            <h3 className="font-medium mb-2">Connect to GitHub</h3>
+            <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">
+              Sync your data to a private GitHub repository for backup and version control
+            </p>
+            <button
+              onClick={handleGitHubLogin}
+              className="px-4 py-2 bg-foreground text-background rounded-md text-sm hover:bg-foreground/90 flex items-center gap-2 mx-auto"
+            >
+              <GitHubIcon className="w-4 h-4" />
+              Login with GitHub
+            </button>
+            <p className="text-xs text-muted-foreground mt-3">
+              We only request access to create private repositories
+            </p>
           </div>
         ) : (
-          <div className="space-y-4">
-            <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+          <>
+            <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="font-medium">Connected to GitHub</span>
+                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                    <CheckIcon className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Connected</p>
+                    <p className="text-xs text-muted-foreground">@{username}</p>
+                  </div>
                 </div>
                 <button
                   onClick={disconnect}
@@ -286,82 +223,159 @@ export function GitHubSyncPanel() {
                   Disconnect
                 </button>
               </div>
-              <p className="text-sm text-muted-foreground mt-1">
-                {config.owner}/{config.repo} ({config.branch})
-              </p>
               {lastSync && (
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-xs text-muted-foreground mt-2">
                   Last sync: {new Date(lastSync).toLocaleString()}
                 </p>
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => syncToGitHub("push")}
-                disabled={isSyncing}
-                className="py-3 px-4 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-                Push to GitHub
-              </button>
-              <button
-                onClick={() => syncToGitHub("pull")}
-                disabled={isSyncing}
-                className="py-3 px-4 bg-secondary text-secondary-foreground rounded-lg text-sm font-medium hover:bg-secondary/80 disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
-                </svg>
-                Pull from GitHub
-              </button>
-            </div>
-
-            {isSyncing && (
-              <div className="flex items-center justify-center py-4">
-                <div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" />
-                <span className="ml-2 text-sm text-muted-foreground">Syncing...</span>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs text-muted-foreground mb-1 block">Repository</label>
+                <input
+                  type="text"
+                  value={config.repo}
+                  onChange={(e) => updateConfig({ repo: e.target.value })}
+                  className="w-full px-3 py-2 bg-input border border-border rounded-md text-sm"
+                  placeholder="api-debugger-sync"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  A private repo will be created if it doesn't exist
+                </p>
               </div>
-            )}
 
-            <div className="p-4 bg-muted/50 rounded-lg border border-border">
-              <h4 className="font-medium mb-2">What gets synced?</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Collections & saved requests
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Environments & variables
-                </li>
-                <li className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Theme & settings
-                </li>
-              </ul>
+              <div>
+                <label className="text-xs text-muted-foreground mb-1 block">Branch</label>
+                <input
+                  type="text"
+                  value={config.branch}
+                  onChange={(e) => updateConfig({ branch: e.target.value })}
+                  className="w-full px-3 py-2 bg-input border border-border rounded-md text-sm"
+                  placeholder="main"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs text-muted-foreground mb-1 block">Path (optional)</label>
+                <input
+                  type="text"
+                  value={config.path}
+                  onChange={(e) => updateConfig({ path: e.target.value })}
+                  className="w-full px-3 py-2 bg-input border border-border rounded-md text-sm"
+                  placeholder="Leave empty for root"
+                />
+              </div>
+
+              <button
+                onClick={saveSettings}
+                className="w-full px-3 py-2 bg-secondary text-secondary-foreground rounded-md text-sm hover:bg-secondary/80"
+              >
+                Save Settings
+              </button>
             </div>
 
-            <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-              <h4 className="font-medium mb-1 text-blue-400">Why GitHub Sync?</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Free backup & version control</li>
-                <li>• Cross-device sync without accounts</li>
-                <li>• Share with team via repo access</li>
-                <li>• No vendor lock-in - you own your data</li>
-              </ul>
+            <div className="border-t border-border pt-4">
+              <h3 className="text-sm font-medium mb-3">Sync</h3>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => syncToGitHub("push")}
+                  disabled={isSyncing}
+                  className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm hover:bg-primary/90 disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isSyncing ? (
+                    <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <UploadIcon className="w-4 h-4" />
+                  )}
+                  Push
+                </button>
+                <button
+                  onClick={() => syncToGitHub("pull")}
+                  disabled={isSyncing}
+                  className="flex-1 px-4 py-2 bg-secondary text-secondary-foreground rounded-md text-sm hover:bg-secondary/80 disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isSyncing ? (
+                    <div className="w-4 h-4 border-2 border-secondary-foreground border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <DownloadIcon className="w-4 h-4" />
+                  )}
+                  Pull
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Push uploads your local data. Pull downloads from GitHub.
+              </p>
             </div>
-          </div>
+          </>
         )}
+
+        <div className="border-t border-border pt-4 mt-4">
+          <h3 className="text-sm font-medium mb-2">What gets synced</h3>
+          <ul className="text-xs text-muted-foreground space-y-1">
+            <li className="flex items-center gap-2">
+              <CheckIcon className="w-3 h-3 text-emerald-500" />
+              Collections and saved requests
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckIcon className="w-3 h-3 text-emerald-500" />
+              Environments and variables
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckIcon className="w-3 h-3 text-emerald-500" />
+              Settings and preferences
+            </li>
+            <li className="flex items-center gap-2">
+              <XIcon className="w-3 h-3 text-muted-foreground" />
+              Request history (local only)
+            </li>
+            <li className="flex items-center gap-2">
+              <XIcon className="w-3 h-3 text-muted-foreground" />
+              AI API keys (local only)
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
+  );
+}
+
+function GitHubIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+    </svg>
+  );
+}
+
+function CheckIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+    </svg>
+  );
+}
+
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  );
+}
+
+function UploadIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+    </svg>
+  );
+}
+
+function DownloadIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+    </svg>
   );
 }

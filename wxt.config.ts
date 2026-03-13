@@ -16,7 +16,8 @@ export default defineConfig({
       "storage",
       "activeTab",
       "tabs",
-      "cookies"
+      "cookies",
+      "identity"
     ],
     host_permissions: ["<all_urls>"],
     icons: {

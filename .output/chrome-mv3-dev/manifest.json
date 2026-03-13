@@ -18,6 +18,7 @@
     "activeTab",
     "tabs",
     "cookies",
+    "identity",
     "scripting"
   ],
   "host_permissions": [
