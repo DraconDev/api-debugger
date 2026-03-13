@@ -25,9 +25,12 @@ declare global {
   const RequestList: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestList').RequestList
   const RequestTemplates: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestTemplates').RequestTemplates
   const RuntimeVariablesProvider: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useRuntimeVariables').RuntimeVariablesProvider
+  const SAMPLE_COLLECTIONS: typeof import('/home/dracon/Dev/extensions/api-debugger/components/WelcomeScreen').SAMPLE_COLLECTIONS
   const SaveToCollection: typeof import('/home/dracon/Dev/extensions/api-debugger/components/SaveToCollection').SaveToCollection
   const SettingsPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/SettingsPanel').SettingsPanel
+  const ShortcutsModal: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ShortcutsModal').ShortcutsModal
   const ThemeToggle: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useTheme').ThemeToggle
+  const WelcomeScreen: typeof import('/home/dracon/Dev/extensions/api-debugger/components/WelcomeScreen').WelcomeScreen
   const browser: typeof import('wxt/browser').browser
   const createAIClient: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/ai-client').createAIClient
   const createIframeUi: typeof import('wxt/utils/content-script-ui/iframe').createIframeUi

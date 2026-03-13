@@ -39,6 +39,8 @@ declare module '#imports' {
   export { RequestTemplates } from '../components/RequestTemplates';
   export { SaveToCollection } from '../components/SaveToCollection';
   export { SettingsPanel } from '../components/SettingsPanel';
+  export { ShortcutsModal } from '../components/ShortcutsModal';
+  export { WelcomeScreen, SAMPLE_COLLECTIONS } from '../components/WelcomeScreen';
   export { useKeyboardShortcuts, DEFAULT_SHORTCUTS } from '../hooks/useKeyboardShortcuts';
   export { RuntimeVariablesProvider, useRuntimeVariables, interpolateVariables } from '../hooks/useRuntimeVariables';
   export { useTheme, ThemeToggle } from '../hooks/useTheme';
