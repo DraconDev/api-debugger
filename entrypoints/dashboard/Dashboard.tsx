@@ -14,8 +14,9 @@ import { RuntimeVariablesProvider } from "@/hooks/useRuntimeVariables";
 import { CollectionRunner } from "@/components/CollectionRunner";
 import { MockServerManager } from "@/components/MockServerManager";
 import { ApiDocGenerator } from "@/components/ApiDocGenerator";
+import { GitHubSyncPanel } from "@/components/GitHubSyncPanel";
 
-type ViewType = "builder" | "websocket" | "sse" | "socketio" | "graphql" | "history" | "collections" | "cookies" | "mocks" | "docs" | "diff" | "settings";
+type ViewType = "builder" | "websocket" | "sse" | "socketio" | "graphql" | "history" | "collections" | "cookies" | "mocks" | "docs" | "sync" | "diff" | "settings";
 
 interface DashboardState {
   requests: RequestRecord[];
