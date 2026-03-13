@@ -139,7 +139,7 @@ export function CookieManager() {
     }
 
     try {
-      await chrome.cookies.set(cookieDetails as unknown as chrome.cookies.Details);
+      await chrome.cookies.set(cookieDetails as unknown as chrome.cookies.SetDetails);
       setEditingCookie(null);
       setIsNewCookie(false);
       setFormData(emptyCookie);
