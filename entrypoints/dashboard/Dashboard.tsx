@@ -310,6 +310,8 @@ export default function Dashboard() {
 
         {view === "diff" && <DiffViewer left="" right="" />}
 
+        {view === "certs" && <CertificateViewer />}
+
         {view === "history" && (
           <>
             {/* Request List */}
