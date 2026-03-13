@@ -48,8 +48,14 @@ export function CertificateViewer() {
     })();
 
     try {
-      const response = await fetch(url, { method: "HEAD" });
-      
+      const hostname = (() => {
+        try {
+          return new URL(url).hostname;
+        } catch {
+          return url;
+        }
+      })();
+
       const certInfo = await extractCertInfo(url);
       
       const certResult: CertCheckResult = {

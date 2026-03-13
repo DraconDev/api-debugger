@@ -193,8 +193,8 @@ export function RequestBuilderView() {
                 {tab === "scripts" && (config.preRequestScript || config.postResponseScript) && (
                   <span className="ml-1 text-xs text-primary">•</span>
                 )}
-                {tab === "extractions" && config.extractions?.filter((e) => e.enabled !== false).length > 0 && (
-                  <span className="ml-1 text-xs">({config.extractions.filter((e) => e.enabled !== false).length})</span>
+                {tab === "extractions" && (config.extractions || []).filter((e) => e.enabled !== false).length > 0 && (
+                  <span className="ml-1 text-xs">({(config.extractions || []).filter((e) => e.enabled !== false).length})</span>
                 )}
               </button>
             ))}
