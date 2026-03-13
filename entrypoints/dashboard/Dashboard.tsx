@@ -29,7 +29,16 @@ interface DashboardState {
 }
 
 export default function Dashboard() {
-  const [view, setView] = useState<ViewType>("history");
+  const [view, setView] = useState<ViewType>(() => {
+    const params = new URLSearchParams(window.location.search);
+    const viewParam = params.get("view");
+    if (viewParam === "new-request") return "builder";
+    if (viewParam === "websocket") return "websocket";
+    if (viewParam === "graphql") return "graphql";
+    if (viewParam === "history") return "history";
+    if (viewParam === "settings") return "settings";
+    return "history";
+  });
   const [state, setState] = useState<DashboardState>({
     requests: [],
     collections: [],
