@@ -102,7 +102,8 @@ export function executePostResponseScript(
 
 function createPmApi(
   context: ScriptContext,
-  logs: string[]
+  logs: string[],
+  onRequestModify?: (req: Partial<RequestConfig>) => void
 ) {
   return {
     variables: {
