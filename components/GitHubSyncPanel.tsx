@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { GitHubSync, getGitHubConfig, setGitHubConfig, clearGitHubConfig, initiateGitHubOAuth, type GitHubConfig, type SyncData } from "@/lib/githubSync";
+import { GitHubSync, getGitHubConfig, setGitHubConfig, clearGitHubConfig, getGitHubPATUrl, validateGitHubToken, type GitHubConfig, type SyncData } from "@/lib/githubSync";
 
 export function GitHubSyncPanel() {
   const [config, setConfig] = useState<GitHubConfig>({
@@ -12,10 +12,13 @@ export function GitHubSyncPanel() {
   });
   const [isConnected, setIsConnected] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [lastSync, setLastSync] = useState<number | null>(null);
   const [username, setUsername] = useState<string | null>(null);
+  const [showTokenInput, setShowTokenInput] = useState(false);
+  const [tokenInput, setTokenInput] = useState("");
 
   useEffect(() => {
     loadConfig();
@@ -27,35 +30,49 @@ export function GitHubSyncPanel() {
       setConfig(saved);
       setIsConnected(!!saved.token && !!saved.owner);
       setLastSync(saved.lastSync || null);
-      if (saved.token) {
+      if (saved.owner) {
         setUsername(saved.owner);
       }
     }
   };
 
-  const handleGitHubLogin = async () => {
-    setError(null);
-    setSuccess(null);
+  const openGitHubPATPage = () => {
+    chrome.tabs.create({ url: getGitHubPATUrl() });
+    setShowTokenInput(true);
+  };
 
-    const result = await initiateGitHubOAuth();
-    
-    if (!result) {
-      setError("GitHub login failed or was cancelled");
+  const connectWithToken = async () => {
+    if (!tokenInput.trim()) {
+      setError("Please enter your token");
+      return;
+    }
+
+    setIsValidating(true);
+    setError(null);
+
+    const result = await validateGitHubToken(tokenInput.trim());
+
+    if (!result.valid) {
+      setError(result.error || "Invalid token");
+      setIsValidating(false);
       return;
     }
 
     const newConfig: GitHubConfig = {
       ...config,
-      token: result.token,
-      owner: result.username,
+      token: tokenInput.trim(),
+      owner: result.username!,
       enabled: true,
     };
 
     await setGitHubConfig(newConfig);
     setConfig(newConfig);
     setIsConnected(true);
-    setUsername(result.username);
+    setUsername(result.username!);
+    setTokenInput("");
+    setShowTokenInput(false);
     setSuccess(`Connected as @${result.username}`);
+    setIsValidating(false);
   };
 
   const disconnect = async () => {
@@ -184,24 +201,64 @@ export function GitHubSyncPanel() {
         )}
 
         {!isConnected ? (
-          <div className="text-center py-8">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-              <GitHubIcon className="w-8 h-8 text-muted-foreground" />
+          <div className="py-6">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+                <GitHubIcon className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <h3 className="font-medium mb-2">Connect to GitHub</h3>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                Create a Personal Access Token to sync your data to a private GitHub repository
+              </p>
             </div>
-            <h3 className="font-medium mb-2">Connect to GitHub</h3>
-            <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">
-              Sync your data to a private GitHub repository for backup and version control
-            </p>
-            <button
-              onClick={handleGitHubLogin}
-              className="px-4 py-2 bg-foreground text-background rounded-md text-sm hover:bg-foreground/90 flex items-center gap-2 mx-auto"
-            >
-              <GitHubIcon className="w-4 h-4" />
-              Login with GitHub
-            </button>
-            <p className="text-xs text-muted-foreground mt-3">
-              We only request access to create private repositories
-            </p>
+
+            <div className="space-y-3">
+              <button
+                onClick={openGitHubPATPage}
+                className="w-full px-4 py-3 bg-foreground text-background rounded-md text-sm hover:bg-foreground/90 flex items-center justify-center gap-2"
+              >
+                <GitHubIcon className="w-4 h-4" />
+                Create GitHub Token
+              </button>
+
+              {showTokenInput && (
+                <div className="space-y-3 p-4 border border-border rounded-lg bg-muted/30">
+                  <p className="text-xs text-muted-foreground">
+                    Click "Generate token" on GitHub, then paste it below:
+                  </p>
+                  <input
+                    type="password"
+                    value={tokenInput}
+                    onChange={(e) => setTokenInput(e.target.value)}
+                    placeholder="ghp_xxxxxxxxxxxx"
+                    className="w-full px-3 py-2 bg-input border border-border rounded-md text-sm font-mono"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setShowTokenInput(false)}
+                      className="flex-1 px-3 py-2 bg-secondary text-secondary-foreground rounded-md text-sm hover:bg-secondary/80"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={connectWithToken}
+                      disabled={isValidating || !tokenInput.trim()}
+                      className="flex-1 px-3 py-2 bg-primary text-primary-foreground rounded-md text-sm hover:bg-primary/90 disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                      {isValidating ? (
+                        <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        "Connect"
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <p className="text-xs text-muted-foreground text-center">
+                Your token is stored locally and never sent to our servers
+              </p>
+            </div>
           </div>
         ) : (
           <>
