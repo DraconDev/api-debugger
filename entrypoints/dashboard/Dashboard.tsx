@@ -42,6 +42,7 @@ export default function Dashboard() {
     if (viewParam === "settings") return "settings";
     return "history";
   });
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [state, setState] = useState<DashboardState>({
     requests: [],
     collections: [],
