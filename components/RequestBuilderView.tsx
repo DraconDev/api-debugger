@@ -39,6 +39,7 @@ export function RequestBuilderView() {
   const [responseTab, setResponseTab] = useState<"body" | "headers" | "timing" | "tests" | "code" | "ai">("body");
   const [scriptLogs, setScriptLogs] = useState<string[]>([]);
   const [scriptError, setScriptError] = useState<string | null>(null);
+  const [showTemplates, setShowTemplates] = useState(false);
   
   const { variables, extractFromResponse, clearVariables, setVariables } = useRuntimeVariables();
 
