@@ -20,7 +20,6 @@ export function TimingBreakdown({ timing }: TimingBreakdownProps) {
   };
 
   const total = timing.total || timing.dns + timing.connect + timing.tls + timing.ttfb + timing.download;
-  const waterfallStart = timing.dns === 0 ? 0 : timing.dns;
 
   return (
     <div className="p-3 space-y-3">
