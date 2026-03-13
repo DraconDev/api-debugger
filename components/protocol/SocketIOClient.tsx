@@ -175,7 +175,7 @@ export function SocketIOClient() {
   };
 
   return (
-    <div className="h-full flex">
+    <div className="h-full w-full flex">
       <div className="w-72 border-r border-border flex flex-col">
         <div className="p-3 border-b border-border">
           <h3 className="text-sm font-medium mb-2">Connection</h3>
