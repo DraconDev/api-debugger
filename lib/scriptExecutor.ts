@@ -135,24 +135,32 @@ function createPmApi(
       method: context.request.method,
       url: {
         get url() { return context.request.url; },
-        set url(value: string) { context.request.url = value; },
+        set url(value: string) { 
+          context.request.url = value;
+          onRequestModify?.({ url: value });
+        },
       },
       headers: {
         get: (name: string) => context.request.headers[name],
         add: (name: string, value: string) => {
           context.request.headers[name] = value;
+          onRequestModify?.({ headers: { [name]: value } });
         },
         remove: (name: string) => {
           delete context.request.headers[name];
         },
         upsert: (name: string, value: string) => {
           context.request.headers[name] = value;
+          onRequestModify?.({ headers: { [name]: value } });
         },
       },
       body: {
         get mode() { return "raw"; },
         get raw() { return context.request.body || ""; },
-        set raw(value: string) { context.request.body = value; },
+        set raw(value: string) { 
+          context.request.body = value;
+          onRequestModify?.({ body: { raw: value } });
+        },
       },
     },
 
