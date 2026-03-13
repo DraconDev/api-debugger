@@ -11,6 +11,7 @@ declare global {
   const DiagnosticsPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/DiagnosticsPanel').DiagnosticsPanel
   const EnvironmentManager: typeof import('/home/dracon/Dev/extensions/api-debugger/components/EnvironmentManager').EnvironmentManager
   const ExportPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ExportPanel').ExportPanel
+  const GitHubSyncPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/GitHubSyncPanel').GitHubSyncPanel
   const ImportExport: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ImportExport').ImportExport
   const InvalidMatchPattern: typeof import('wxt/utils/match-patterns').InvalidMatchPattern
   const MatchPattern: typeof import('wxt/utils/match-patterns').MatchPattern

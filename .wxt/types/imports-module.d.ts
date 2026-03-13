@@ -26,6 +26,7 @@ declare module '#imports' {
   export { DiagnosticsPanel } from '../components/DiagnosticsPanel';
   export { EnvironmentManager } from '../components/EnvironmentManager';
   export { ExportPanel } from '../components/ExportPanel';
+  export { GitHubSyncPanel } from '../components/GitHubSyncPanel';
   export { ImportExport } from '../components/ImportExport';
   export { MockServerManager } from '../components/MockServerManager';
   export { ReplayPanel } from '../components/ReplayPanel';
