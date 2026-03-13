@@ -16,8 +16,9 @@ import { MockServerManager } from "@/components/MockServerManager";
 import { ApiDocGenerator } from "@/components/ApiDocGenerator";
 import { GitHubSyncPanel } from "@/components/GitHubSyncPanel";
 import { SettingsPanel } from "@/components/SettingsPanel";
+import { CertificateViewer } from "@/components/CertificateViewer";
 
-type ViewType = "builder" | "websocket" | "sse" | "socketio" | "graphql" | "history" | "collections" | "cookies" | "mocks" | "docs" | "sync" | "diff" | "settings";
+type ViewType = "builder" | "websocket" | "sse" | "socketio" | "graphql" | "history" | "collections" | "cookies" | "mocks" | "docs" | "sync" | "diff" | "certs" | "settings";
 
 interface DashboardState {
   requests: RequestRecord[];
