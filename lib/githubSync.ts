@@ -31,79 +31,33 @@ export interface SyncData {
 const GITHUB_API = "https://api.github.com";
 const SYNC_FILE = "api-debugger-sync.json";
 
-const GITHUB_CLIENT_ID = "Ov23li1HpIeV6p5xdykt";
-
 const GITHUB_SCOPES = ["repo", "user:email"];
 
-export async function initiateGitHubOAuth(): Promise<{ token: string; username: string } | null> {
-  const redirectUrl = chrome.identity.getRedirectURL();
-  const state = Math.random().toString(36).substring(7);
-  
-  const authUrl = new URL("https://github.com/login/oauth/authorize");
-  authUrl.searchParams.set("client_id", GITHUB_CLIENT_ID);
-  authUrl.searchParams.set("redirect_uri", redirectUrl);
-  authUrl.searchParams.set("scope", GITHUB_SCOPES.join(" "));
-  authUrl.searchParams.set("state", state);
+export function getGitHubPATUrl(): string {
+  const description = encodeURIComponent("API Debugger Extension");
+  const scopes = GITHUB_SCOPES.join(",");
+  return `https://github.com/settings/tokens/new?description=${description}&scopes=${scopes}`;
+}
 
-  return new Promise((resolve) => {
-    chrome.identity.launchWebAuthFlow(
-      {
-        url: authUrl.toString(),
-        interactive: true,
+export async function validateGitHubToken(token: string): Promise<{ valid: boolean; username?: string; error?: string }> {
+  try {
+    const response = await fetch(`${GITHUB_API}/user`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
       },
-      async (responseUrl) => {
-        if (!responseUrl) {
-          resolve(null);
-          return;
-        }
+    });
 
-        const url = new URL(responseUrl);
-        const code = url.searchParams.get("code");
-        const returnedState = url.searchParams.get("state");
+    if (!response.ok) {
+      return { valid: false, error: "Invalid token" };
+    }
 
-        if (!code || returnedState !== state) {
-          resolve(null);
-          return;
-        }
-
-        try {
-          const tokenResponse = await fetch("https://github.com/login/oauth/access_token", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-            body: JSON.stringify({
-              client_id: GITHUB_CLIENT_ID,
-              code,
-            }),
-          });
-
-          const tokenData = await tokenResponse.json();
-          
-          if (tokenData.error) {
-            resolve(null);
-            return;
-          }
-
-          const token = tokenData.access_token;
-
-          const userResponse = await fetch(`${GITHUB_API}/user`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              Accept: "application/vnd.github+json",
-            },
-          });
-
-          const userData = await userResponse.json();
-          
-          resolve({ token, username: userData.login });
-        } catch {
-          resolve(null);
-        }
-      }
-    );
-  });
+    const user = await response.json();
+    return { valid: true, username: user.login };
+  } catch {
+    return { valid: false, error: "Validation failed" };
+  }
 }
 
 export class GitHubSync {
