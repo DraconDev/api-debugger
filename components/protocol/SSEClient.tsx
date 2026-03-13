@@ -128,7 +128,7 @@ export function SSEClient() {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full w-full flex flex-col">
       <div className="p-4 border-b border-border">
         <h2 className="text-lg font-semibold mb-3">Server-Sent Events (SSE)</h2>
         

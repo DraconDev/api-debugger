@@ -95,7 +95,7 @@ export function WebSocketClient() {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full w-full">
       {/* Connection Bar */}
       <div className="flex items-center gap-2 p-3 border-b border-border">
         <div
