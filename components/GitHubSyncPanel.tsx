@@ -60,12 +60,6 @@ export function GitHubSyncPanel() {
     }
   };
 
-  const saveConfig = async () => {
-    await setGitHubConfig(config);
-    setSuccess("Configuration saved");
-    setTimeout(() => setSuccess(null), 3000);
-  };
-
   const disconnect = async () => {
     await clearGitHubConfig();
     setConfig({
