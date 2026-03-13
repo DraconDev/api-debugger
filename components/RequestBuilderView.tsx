@@ -140,17 +140,33 @@ export function RequestBuilderView() {
     <div className="flex flex-col h-full">
       {/* URL Bar */}
       <div className="p-3 border-b border-border">
-        <UrlEditor
-          method={config.method}
-          url={config.url}
-          params={config.params}
-          onMethodChange={(method) => updateConfig("method", method)}
-          onUrlChange={(url) => updateConfig("url", url)}
-          onParamsChange={(params) => updateConfig("params", params)}
-          onSend={sendRequest}
-          isSending={isSending}
-        />
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <UrlEditor
+              method={config.method}
+              url={config.url}
+              params={config.params}
+              onMethodChange={(method) => updateConfig("method", method)}
+              onUrlChange={(url) => updateConfig("url", url)}
+              onParamsChange={(params) => updateConfig("params", params)}
+              onSend={sendRequest}
+              isSending={isSending}
+            />
+          </div>
+          <button
+            onClick={() => setShowTemplates(!showTemplates)}
+            className={`px-3 py-2 text-xs rounded border border-border hover:bg-accent ${showTemplates ? "bg-accent" : ""}`}
+          >
+            Templates
+          </button>
+        </div>
       </div>
+
+      {showTemplates && (
+        <div className="h-64 border-b border-border">
+          <RequestTemplates onSelect={handleTemplateSelect} />
+        </div>
+      )}
 
       <div className="flex-1 flex overflow-hidden">
         {/* Request Panel */}
