@@ -12,6 +12,7 @@ import {
 } from "@/components/request";
 import { ScriptEditor } from "@/components/request/ScriptEditorPanel";
 import { TestRunner } from "@/components/testing";
+import { RequestTemplates } from "@/components/RequestTemplates";
 import { useRuntimeVariables, interpolateVariables } from "@/hooks/useRuntimeVariables";
 import { executePreRequestScript, executePostResponseScript, applyScriptModifications } from "@/lib/scriptExecutor";
 import type { RequestConfig, CapturedResponse, VariableExtraction, ScriptExecutionResult } from "@/types";
