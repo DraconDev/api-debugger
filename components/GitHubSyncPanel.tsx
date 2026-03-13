@@ -146,23 +146,6 @@ export function GitHubSyncPanel() {
     }
   }, [config, isConnected]);
 
-  const createDefaultRepo = async () => {
-    if (!isConnected) return;
-    
-    setIsSyncing(true);
-    setError(null);
-    
-    try {
-      const sync = new GitHubSync(config);
-      await sync.createRepoIfNotExists();
-      setSuccess(`Repository "${config.repo}" created or verified`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create repository");
-    } finally {
-      setIsSyncing(false);
-    }
-  };
-
   return (
     <div className="h-full flex flex-col">
       <div className="p-4 border-b border-border">
