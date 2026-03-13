@@ -64,7 +64,7 @@ export class GitHubSync {
       const response = await this.request("/user");
       const user = await response.json();
       
-      const repoResponse = await this.request(`/repos/${this.config.owner}/${this.config.repo}`);
+      await this.request(`/repos/${this.config.owner}/${this.config.repo}`);
       
       return { valid: true, user: user.login };
     } catch (error) {
