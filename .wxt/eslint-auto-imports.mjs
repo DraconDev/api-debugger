@@ -3,6 +3,7 @@ const globals = {
   "AIMessage": true,
   "AIProvider": true,
   "AIResponse": true,
+  "ApiDocGenerator": true,
   "AutoMount": true,
   "AutoMountOptions": true,
   "Browser": true,
