@@ -151,7 +151,7 @@ function createPmApi(
       },
       body: {
         get mode() { return "raw"; },
-        get raw() { return context.request.body; },
+        get raw() { return context.request.body || ""; },
         set raw(value: string) { context.request.body = value; },
       },
     },
