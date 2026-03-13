@@ -1,11 +1,22 @@
 @import '@dracon/wxt-shared/styles/globals.css';
 
-/* Force dark mode for dashboard */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
 html, body {
   @apply dark;
 }
 
-/* Custom scrollbar for dark theme */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
