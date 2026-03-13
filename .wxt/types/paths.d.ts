@@ -6,7 +6,6 @@ declare module "wxt/browser" {
     | ""
     | "/"
     | "/_locales/en/messages.json"
-    | "/auth-callback.html"
     | "/background.js"
     | "/dashboard.html"
     | "/icon/128.png"

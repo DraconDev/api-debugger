@@ -43,8 +43,4 @@ declare module '#imports' {
   export { RuntimeVariablesProvider, useRuntimeVariables, interpolateVariables } from '../hooks/useRuntimeVariables';
   export { useTheme, ThemeToggle } from '../hooks/useTheme';
   export { createAIClient, getAvailableModels, validateApiKey, AIProvider, AIConfig, AIMessage, AIResponse } from '../utils/ai-client';
-  export { ext, config, apiClient, authFlow, authStore, getAuthState, isAuthenticated, openLogin, openDashboard, logout, getUser, subscribe, DraconConfig, Environment } from '../utils/api';
-  export { isContentScript, isExtensionContext, getExtensionUrl, sendMessageToActiveTab, executeInActiveTab, openInNewTab } from '../utils/extension';
-  export { default as features, isEnabled, enable, disable, toggle, getAllFeatures, resetFeatures, createFeatureHook } from '../utils/features';
-  export { defaultSettings, settingsStore, defaultMyData, myDataStore, MyExtensionSettings, MyDataStore } from '../utils/store';
 }
