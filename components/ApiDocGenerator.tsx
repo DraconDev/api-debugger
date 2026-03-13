@@ -57,11 +57,11 @@ export function ApiDocGenerator({ collections, savedRequests }: ApiDocGeneratorP
     let doc = "";
 
     if (outputFormat === "markdown") {
-      doc = generateMarkdown(collection, endpoints);
+      doc = generateMarkdown(collection || null, endpoints);
     } else if (outputFormat === "openapi") {
-      doc = generateOpenAPI(collection, endpoints);
+      doc = generateOpenAPI(collection || null, endpoints);
     } else if (outputFormat === "html") {
-      doc = generateHTML(collection, endpoints);
+      doc = generateHTML(collection || null, endpoints);
     }
 
     setGeneratedDoc(doc);
