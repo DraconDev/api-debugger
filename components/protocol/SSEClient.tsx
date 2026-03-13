@@ -129,10 +129,10 @@ export function SSEClient() {
 
   return (
     <div className="h-full w-full flex flex-col">
-      <div className="p-4 border-b border-border">
-        <h2 className="text-lg font-semibold mb-3">Server-Sent Events (SSE)</h2>
+      <div className="p-4 border-b border-border bg-muted/30">
+        <h2 className="text-lg font-semibold mb-3">Server-Sent Events</h2>
         
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <input
             type="text"
             value={url}
@@ -140,20 +140,20 @@ export function SSEClient() {
             onKeyDown={(e) => e.key === "Enter" && !isConnected && connect()}
             placeholder="https://api.example.com/events"
             disabled={isConnected}
-            className="flex-1 px-3 py-2 bg-input border border-border rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+            className="flex-1 px-3 py-2 bg-input border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
           />
           {!isConnected ? (
             <button
               onClick={connect}
               disabled={!url}
-              className="px-4 py-2 bg-primary text-primary-foreground text-sm rounded hover:bg-primary/90 disabled:opacity-50"
+              className="px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 disabled:opacity-50 transition-colors"
             >
               Connect
             </button>
           ) : (
             <button
               onClick={disconnect}
-              className="px-4 py-2 bg-destructive text-destructive-foreground text-sm rounded hover:bg-destructive/90"
+              className="px-4 py-2 bg-destructive text-destructive-foreground text-sm font-medium rounded-md hover:bg-destructive/90 transition-colors"
             >
               Disconnect
             </button>
@@ -161,45 +161,49 @@ export function SSEClient() {
         </div>
 
         <div className="flex items-center gap-4 mt-3">
-          <label className="flex items-center gap-2 text-xs text-muted-foreground">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
             <input
               type="checkbox"
               checked={reconnect}
               onChange={(e) => setReconnect(e.target.checked)}
-              className="rounded border-border"
+              className="w-4 h-4 rounded border-border"
             />
             Auto-reconnect
           </label>
-          <label className="flex items-center gap-2 text-xs text-muted-foreground">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
             <input
               type="checkbox"
               checked={autoScroll}
               onChange={(e) => setAutoScroll(e.target.checked)}
-              className="rounded border-border"
+              className="w-4 h-4 rounded border-border"
             />
             Auto-scroll
           </label>
+          <div className="flex items-center gap-2 ml-auto">
+            <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground"}`} />
+            <span className="text-xs text-muted-foreground">{isConnected ? "Connected" : "Disconnected"}</span>
+          </div>
         </div>
       </div>
 
-      <div className="p-2 border-b border-border flex items-center gap-2">
+      <div className="p-3 border-b border-border flex items-center gap-2">
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search events..."
-          className="flex-1 px-2 py-1.5 bg-input border border-border rounded text-xs"
+          className="flex-1 px-3 py-2 bg-input border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring"
         />
         <button
           onClick={clearEvents}
-          className="px-3 py-1.5 text-xs bg-secondary hover:bg-secondary/80 rounded text-secondary-foreground"
+          className="px-3 py-2 text-sm bg-secondary hover:bg-secondary/80 rounded-md text-secondary-foreground transition-colors"
         >
           Clear
         </button>
         <button
           onClick={exportEvents}
           disabled={events.length === 0}
-          className="px-3 py-1.5 text-xs bg-secondary hover:bg-secondary/80 rounded text-secondary-foreground disabled:opacity-50"
+          className="px-3 py-2 text-sm bg-secondary hover:bg-secondary/80 rounded-md text-secondary-foreground disabled:opacity-50 transition-colors"
         >
           Export
         </button>
