@@ -575,24 +575,24 @@ function RequestListItem({
       ? "text-blue-500"
       : "text-emerald-500";
 
-  const methodColor =
+  const methodBgColor =
     request.method === "GET"
-      ? "text-emerald-500"
+      ? "bg-emerald-500/10 text-emerald-600"
       : request.method === "POST"
-      ? "text-amber-500"
+      ? "bg-amber-500/10 text-amber-600"
       : request.method === "PUT"
-      ? "text-blue-500"
+      ? "bg-blue-500/10 text-blue-600"
       : request.method === "DELETE"
-      ? "text-red-500"
-      : "text-muted-foreground";
+      ? "bg-red-500/10 text-red-600"
+      : "bg-muted text-muted-foreground";
 
   return (
     <div
-      className={`group px-3 py-2 border-b border-border cursor-pointer transition-colors ${
-        selected ? "bg-accent" : "hover:bg-accent/50"
+      className={`group px-3 py-2.5 border-b border-border cursor-pointer transition-colors ${
+        selected ? "bg-accent/80" : "hover:bg-accent/30"
       }`}
     >
-      <div className="flex items-center gap-2 mb-1">
+      <div className="flex items-center gap-2 mb-1.5">
         <input
           type="checkbox"
           checked={checked}
@@ -601,24 +601,30 @@ function RequestListItem({
             onToggleSelect();
           }}
           onClick={(e) => e.stopPropagation()}
-          className="rounded border-border"
+          className="w-4 h-4 rounded border-border"
         />
-        <span className={`font-mono text-xs font-medium ${methodColor}`}>
+        <span className={`font-mono text-[11px] font-semibold px-1.5 py-0.5 rounded ${methodBgColor}`}>
           {request.method}
         </span>
-        <span className={`font-mono text-xs ${statusColor}`}>
+        <span className={`font-mono text-xs font-medium ${statusColor}`}>
           {request.statusCode}
         </span>
-        <span className="text-xs text-muted-foreground ml-auto">{request.duration.toFixed(0)}ms</span>
+        <span className="text-[10px] text-muted-foreground ml-auto tabular-nums">{request.duration.toFixed(0)}ms</span>
       </div>
-      <div className="text-xs text-muted-foreground truncate pl-6" onClick={onClick}>{request.url}</div>
-      <div className="flex items-center gap-2 mt-1 pl-6 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div 
+        className="text-xs text-muted-foreground truncate pl-6 hover:text-foreground transition-colors" 
+        onClick={onClick}
+        title={request.url}
+      >
+        {request.url}
+      </div>
+      <div className="flex items-center gap-2 mt-1.5 pl-6 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
           onClick={(e) => {
             e.stopPropagation();
             onDelete();
           }}
-          className="text-xs text-muted-foreground hover:text-destructive"
+          className="text-[10px] text-muted-foreground hover:text-destructive transition-colors"
         >
           Delete
         </button>
