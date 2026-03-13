@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import {
   UrlEditor,
   HeadersEditor,
@@ -15,7 +15,7 @@ import { TestRunner } from "@/components/testing";
 import { RequestTemplates } from "@/components/RequestTemplates";
 import { useRuntimeVariables, interpolateVariables } from "@/hooks/useRuntimeVariables";
 import { executePreRequestScript, executePostResponseScript, applyScriptModifications } from "@/lib/scriptExecutor";
-import type { RequestConfig, CapturedResponse, VariableExtraction, ScriptExecutionResult } from "@/types";
+import type { RequestConfig, CapturedResponse } from "@/types";
 
 const DEFAULT_CONFIG: RequestConfig = {
   method: "GET",
