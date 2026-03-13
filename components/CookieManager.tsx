@@ -124,14 +124,14 @@ export function CookieManager() {
   const saveCookie = async () => {
     const url = `https://${formData.domain.startsWith(".") ? formData.domain.slice(1) : formData.domain}`;
     
-    const cookieDetails: chrome.cookies.CookieDetails = {
+    const cookieDetails: chrome.cookies.Details = {
       url,
       name: formData.name,
       value: formData.value,
       path: formData.path,
       secure: formData.secure,
       httpOnly: formData.httpOnly,
-      sameSite: formData.sameSite,
+      sameSite: formData.sameSite as "lax" | "strict" | "no_restriction" | undefined,
     };
 
     if (formData.expirationDate) {
