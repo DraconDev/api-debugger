@@ -1,296 +1,97 @@
 # API Debugger - Project Summary
 
-## What We Built
+## Goal
 
-A complete browser-first API debugging tool with the following components:
+Build a browser-first API debugging Chrome extension that competes with Postman, Insomnia, and other API tools. The extension should capture HTTP requests, provide a full request builder, support multiple protocols (REST, WebSocket, GraphQL, SSE, Socket.IO), offer AI-powered analysis (BYOK), and provide a premium user experience - all without requiring an account.
 
-### 1. Browser Extension (`apps/extension`)
-- **Request Capture**: Automatic HTTP/HTTPS request interception
-- **Request History**: View and search captured requests
-- **Request Details**: Inspect headers, body, timing, response
-- **Request Replay**: Edit and resend requests
-- **Diff Engine**: Compare original vs replayed responses
-- **Diagnostics**: Automatic failure analysis for common issues
-- **Collections**: Save and organize requests
-- **Export**: Copy as cURL, Fetch, or JSON
+## Philosophy
 
-### 2. Local Agent (`apps/agent`)
-- Access localhost endpoints
-- Access private network IPs
-- Lightweight Node.js server
-- CORS proxy for extension
+- **Extension-only approach** - no backend services needed
+- **AI-first approach with BYOK** (Bring Your Own Key) for OpenAI, Anthropic, and Gemini
+- **GitHub sync for backup/version control** - major competitive advantage
+- **Privacy-first**: "Your AI, Your Keys, Your Data - We're Just The Tool"
+- **No account required** - everything stored locally
 
-### 3. Backend API (`apps/api`)
-- User authentication (JWT)
-- Collection storage
-- Cloud sync service
-- RESTful API endpoints
-
-### 4. AI Service (`apps/ai-service`)
-- Request analysis
-- Explanation generation
-- Data sanitization
-- LLM integration scaffold
-
-## Project Stats
-
-- **Total Files**: ~40 source files
-- **Lines of Code**: ~3,000+
-- **Components**: 4 major services
-- **Features**: 15+ core features
-- **Diagnostics Rules**: 10+ failure patterns
-
-## File Structure
+## Architecture
 
 ```
 api-debugger/
-├── apps/
-│   ├── extension/           # Browser extension (main app)
-│   │   ├── manifest.json    # Extension config
-│   │   ├── background.js    # Service worker
-│   │   ├── panel/           # UI
-│   │   │   ├── index.html
-│   │   │   └── panel.js
-│   │   └── utils/           # Helper modules
-│   │       ├── diff.js
-│   │       ├── diagnostics.js
-│   │       ├── export.js
-│   │       ├── collections.js
-│   │       ├── sync.js
-│   │       └── agent.js
-│   ├── agent/               # Local agent binary
-│   │   ├── bin/
-│   │   │   └── apidbg.js    # CLI entry point
-│   │   └── src/
-│   │       └── index.js     # Agent server
-│   ├── api/                 # Backend API
-│   │   └── src/
-│   │       ├── index.js     # API server
-│   │       ├── routes/      # API endpoints
-│   │       └── services/    # Business logic
-│   └── ai-service/          # AI explanation service
-│       └── src/
-│           ├── index.js     # AI server
-│           ├── routes/
-│           └── services/
-├── docs/                    # Documentation
-│   ├── QUICKSTART.md
-│   ├── TESTING.md
-│   └── DEVELOPER.md
-└── README.md                # Main documentation
+├── entrypoints/
+│   ├── background.ts          # Service worker - request capture, mock interception
+│   ├── popup/                 # Extension popup UI
+│   └── dashboard/             # Full-screen dashboard
+├── components/
+│   ├── request/               # Request builder components
+│   ├── protocol/              # WebSocket, SSE, Socket.IO, GraphQL clients
+│   ├── CookieManager.tsx
+│   ├── MockServerManager.tsx
+│   ├── CollectionRunner.tsx
+│   ├── ApiDocGenerator.tsx
+│   ├── GitHubSyncPanel.tsx
+│   ├── CertificateViewer.tsx
+│   ├── RequestTemplates.tsx
+│   └── ...
+├── hooks/
+│   ├── useRuntimeVariables.tsx
+│   ├── useTheme.tsx
+│   └── useKeyboardShortcuts.ts
+├── lib/
+│   ├── scriptExecutor.ts      # Pre/post script execution
+│   └── githubSync.ts          # GitHub API integration
+└── types/index.ts
 ```
 
-## Key Features Implemented
+## Storage
 
-### ✅ Request Capture
-- Automatic interception via chrome.webRequest API
-- Captures method, URL, headers, body, status, timing
-- Stores last 200 requests
+- `chrome.storage.sync`: Collections, environments, saved requests, settings, AI keys, GitHub config (syncs across devices)
+- `chrome.storage.local`: Request history, mock servers, cert history (device-specific)
 
-### ✅ Request Inspector
-- View full request details
-- Headers table view
-- Body preview
-- Response headers
-- Timing information
+## Completed Features
 
-### ✅ Diagnostics Engine
-Detects and explains:
-- 401 Unauthorized (missing/invalid auth)
-- 403 Forbidden (permission denied)
-- 404 Not Found
-- 400 Bad Request
-- 500-504 Server Errors
-- CORS issues
-- Content-type mismatches
-- JSON parse errors
-- Rate limiting (429)
-- Slow responses
+| Feature | Description |
+|---------|-------------|
+| **Request Builder** | Full HTTP client with auth, body editors, code generation |
+| **Request Capture** | Auto-capture browser requests with filters |
+| **Protocols** | REST, WebSocket, GraphQL, SSE, Socket.IO |
+| **Collections & Environments** | Organize requests, `{{variable}}` syntax, extraction |
+| **Testing** | Pre/post scripts with Postman-compatible `pm` API |
+| **Mock Servers** | Create mock endpoints, intercept requests |
+| **AI Integration** | BYOK for OpenAI, Anthropic, Gemini |
+| **GitHub Sync** | Push/pull to user's own repo for backup |
+| **API Doc Generator** | Generate Markdown, OpenAPI 3.0, HTML |
+| **Cookie Manager** | View/edit/delete cookies per domain |
+| **Timing Breakdown** | DNS, connect, TLS, TTFB, download waterfall |
+| **Bulk Operations** | Multi-select, bulk delete, export |
+| **Request Chaining** | Extract values from responses |
+| **Collection Runner** | Execute all requests in collection |
+| **Diff Viewer** | Side-by-side comparison |
+| **Certificate Viewer** | Inspect SSL/TLS certificates |
+| **Request Templates** | Quick-start templates for common APIs |
+| **Improved Popup** | Capture toggle, quick actions, deep linking |
 
-### ✅ Request Replay
-- Edit method, URL, headers, body
-- Send replayed request
-- View response
-- Compare with original
+## Competitive Advantages
 
-### ✅ Diff Engine
-- Status comparison
-- Header diff (added/removed/changed)
-- Visual highlighting
+- **Auto-capture browser requests** - unique to extensions
+- **SSE support** - none of the competitors have it
+- **Socket.IO support** - limited competitor support
+- **No account required** - full functionality without login
+- **GitHub sync for free** - backup/version control
+- **BYOK AI** - no extra subscription
+- **Full privacy** - we never see user data
 
-### ✅ Export
-- Copy as cURL command
-- Copy as Fetch API code
-- Copy as JSON
-- Clipboard integration
+## Build & Test
 
-### ✅ Collections
-- Create collections
-- Save requests to collections
-- View and manage collections
-- Replay saved requests
-
-### ✅ Local Agent
-- Access localhost
-- Access private networks
-- Port discovery
-- Request proxying
-
-### ✅ Cloud Sync
-- User registration/login
-- JWT authentication
-- Collection sync
-- Push/pull changes
-
-### ✅ AI Explanations
-- Request analysis
-- Structured explanations
-- Data sanitization
-- Confidence scores
-
-## Technology Stack
-
-- **Extension**: Vanilla JavaScript, Chrome Extension APIs
-- **Agent**: Node.js, Express
-- **API**: Node.js, Express, JWT
-- **AI Service**: Node.js, Express
-- **Storage**: chrome.storage.local, in-memory (backend)
-
-## How It Works
-
-### Request Flow
-```
-User browses website
-    ↓
-Extension captures requests
-    ↓
-Store in chrome.storage
-    ↓
-User opens extension
-    ↓
-View request history
-    ↓
-Inspect request details
-    ↓
-Replay/edit request
-    ↓
-View results and diff
+```bash
+npm run build    # Build extension (~575KB)
+npm test         # Run tests (32 passing)
 ```
 
-### Architecture
-```
-Browser Extension
-    ↓
-Background Service Worker (capture + storage)
-    ↓
-Panel UI (display + interaction)
-    ↓
-Utility Modules (diff, diagnostics, export, etc.)
-    ↓
-External Services (agent, api, ai-service)
-```
+## What We're NOT
 
-## Testing Performed
-
-### Manual Testing
-- ✅ Extension loads in Chrome/Edge
-- ✅ Requests captured correctly
-- ✅ Details display properly
-- ✅ Replay works for various request types
-- ✅ Diff shows changes correctly
-- ✅ Diagnostics identify failures
-- ✅ Export generates valid output
-- ✅ Collections CRUD operations work
-- ✅ Agent handles localhost requests
-- ✅ API auth and sync function
-
-### Edge Cases Tested
-- Empty history
-- Large request bodies
-- Special characters
-- Concurrent requests
-- Multiple tabs
-- Extension reload
-
-## Documentation Provided
-
-1. **README.md** - Complete user documentation
-2. **QUICKSTART.md** - 5-minute setup guide
-3. **TESTING.md** - Manual testing checklist
-4. **DEVELOPER.md** - Architecture and development guide
-5. **Blueprint docs** - Phase-by-phase plans
-
-## What's Next
-
-### Immediate Improvements
-- [ ] Add unit tests
-- [ ] Add integration tests
-- [ ] Add CI/CD pipeline
-- [ ] Improve error handling
-- [ ] Add more diagnostic rules
-
-### Future Features
-- [ ] WebSocket debugging
-- [ ] GraphQL support
-- [ ] gRPC support
-- [ ] OpenAPI integration
-- [ ] Request recording
-- [ ] Team collaboration
-- [ ] Custom themes
-- [ ] Keyboard shortcuts
-- [ ] Environment variables
-- [ ] Mock server
-
-## Deployment
-
-### Extension
-- Load unpacked for development
-- Chrome Web Store for distribution
-
-### Agent
-- Run locally: `npm start`
-- Install globally: `npm link`
-
-### API/AI Service
-- Run locally: `npm start`
-- Deploy to cloud provider (Heroku, Railway, etc.)
-
-## Known Limitations
-
-1. **Response Body**: Chrome webRequest API limits response body capture
-2. **WebSocket**: Not currently supported
-3. **Storage**: In-memory on backend (lost on restart)
-4. **Auth**: Base64 password hashing (upgrade to bcrypt)
-5. **Rate Limiting**: No rate limiting on APIs
-
-## Security Notes
-
-- Sensitive data stored locally by default
-- Agent only allows HTTP/HTTPS
-- AI service redacts auth headers
-- JWT tokens expire after 7 days
-- CORS restricted to extension origins
-
-## Performance
-
-- Request capture: < 10ms overhead
-- Replay: Network dependent
-- UI render: < 50ms for 200 requests
-- Memory: < 100MB for extension
-- Agent: < 50MB
-
-## Support
-
-- **Docs**: See README.md and docs/ folder
-- **Testing**: See TESTING.md
-- **Development**: See DEVELOPER.md
-
-## License
-
-MIT License - Free to use and modify.
+- A SaaS platform with cloud backend
+- A team collaboration tool (share via GitHub instead)
+- A subscription service
 
 ---
 
-**Status**: ✅ MVP Complete and Functional
-
-All planned phases (0-10) have been implemented and tested.
+**Status**: Feature-complete, ready for polish and testing
