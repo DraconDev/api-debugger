@@ -257,6 +257,12 @@ export default function Dashboard() {
             label="Docs"
           />
           <NavItem
+            active={view === "sync"}
+            onClick={() => setView("sync")}
+            icon={<SyncIcon />}
+            label="Sync"
+          />
+          <NavItem
             active={view === "diff"}
             onClick={() => setView("diff")}
             icon={<DiffIcon />}
