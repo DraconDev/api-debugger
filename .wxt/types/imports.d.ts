@@ -8,12 +8,12 @@ declare global {
   const CollectionsView: typeof import('/home/dracon/Dev/extensions/api-debugger/components/CollectionsView').CollectionsView
   const ContentScriptContext: typeof import('wxt/utils/content-script-context').ContentScriptContext
   const CookieManager: typeof import('/home/dracon/Dev/extensions/api-debugger/components/CookieManager').CookieManager
-  const DEFAULT_SHORTCUTS: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useKeyboardShortcuts').DEFAULT_SHORTCUTS
   const DiagnosticsPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/DiagnosticsPanel').DiagnosticsPanel
   const EnvironmentManager: typeof import('/home/dracon/Dev/extensions/api-debugger/components/EnvironmentManager').EnvironmentManager
   const ExportPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ExportPanel').ExportPanel
   const GitHubSyncPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/GitHubSyncPanel').GitHubSyncPanel
   const ImportExport: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ImportExport').ImportExport
+  const ImportModal: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ImportModal').ImportModal
   const InvalidMatchPattern: typeof import('wxt/utils/match-patterns').InvalidMatchPattern
   const MatchPattern: typeof import('wxt/utils/match-patterns').MatchPattern
   const MockServerManager: typeof import('/home/dracon/Dev/extensions/api-debugger/components/MockServerManager').MockServerManager

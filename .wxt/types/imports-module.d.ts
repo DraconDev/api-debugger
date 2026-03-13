@@ -29,6 +29,7 @@ declare module '#imports' {
   export { ExportPanel } from '../components/ExportPanel';
   export { GitHubSyncPanel } from '../components/GitHubSyncPanel';
   export { ImportExport } from '../components/ImportExport';
+  export { ImportModal } from '../components/ImportModal';
   export { MockServerManager } from '../components/MockServerManager';
   export { ReplayPanel } from '../components/ReplayPanel';
   export { RequestBody } from '../components/RequestBody';
@@ -41,7 +42,7 @@ declare module '#imports' {
   export { SettingsPanel } from '../components/SettingsPanel';
   export { ShortcutsModal } from '../components/ShortcutsModal';
   export { WelcomeScreen, SAMPLE_COLLECTIONS } from '../components/WelcomeScreen';
-  export { useKeyboardShortcuts, DEFAULT_SHORTCUTS } from '../hooks/useKeyboardShortcuts';
+  export { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
   export { RuntimeVariablesProvider, useRuntimeVariables, interpolateVariables } from '../hooks/useRuntimeVariables';
   export { useTheme, ThemeToggle } from '../hooks/useTheme';
   export { createAIClient, getAvailableModels, validateApiKey, AIProvider, AIConfig, AIMessage, AIResponse } from '../utils/ai-client';
