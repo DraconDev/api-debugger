@@ -2,7 +2,7 @@
   "name": "@dracon/api-debugger",
   "description": "API Debugger - Browser-first API debugging tool",
   "private": true,
-  "version": "0.1.281",
+  "version": "0.1.282",
   "type": "module",
   "scripts": {
     "dev": "wxt",
@@ -18,13 +18,9 @@
     "postinstall": "wxt prepare",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write \"**/*.{ts,tsx,json,css}\"",
-    "icons": "node scripts/generate-icons.js",
-    "start:agent": "cd apps/agent && npm start",
-    "start:api": "cd apps/api && npm start",
-    "start:ai": "cd apps/ai-service && npm start"
+    "icons": "node scripts/generate-icons.js"
   },
   "dependencies": {
-    "@dracon/wxt-shared": "file:../wxt-shared",
     "@radix-ui/themes": "^3.1.6",
     "@types/webextension-polyfill": "^0.12.4",
     "clsx": "^2.1.1",
