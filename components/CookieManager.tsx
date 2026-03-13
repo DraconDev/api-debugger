@@ -124,18 +124,18 @@ export function CookieManager() {
   const saveCookie = async () => {
     const url = `https://${formData.domain.startsWith(".") ? formData.domain.slice(1) : formData.domain}`;
     
-    const cookieDetails = {
+    const cookieDetails: Record<string, unknown> = {
       url,
       name: formData.name,
       value: formData.value,
       path: formData.path,
       secure: formData.secure,
       httpOnly: formData.httpOnly,
-      sameSite: formData.sameSite as "lax" | "strict" | "no_restriction" | undefined,
+      sameSite: formData.sameSite,
     };
 
     if (formData.expirationDate) {
-      (cookieDetails as chrome.cookies.Details & { expirationDate: number }).expirationDate = Math.floor(new Date(formData.expirationDate).getTime() / 1000);
+      cookieDetails.expirationDate = Math.floor(new Date(formData.expirationDate).getTime() / 1000);
     }
 
     try {
