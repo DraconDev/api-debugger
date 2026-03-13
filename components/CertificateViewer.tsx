@@ -257,7 +257,6 @@ async function extractCertInfo(url: string): Promise<CertificateInfo> {
   }).catch(() => null);
 
   const now = new Date();
-  const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
   
   const mockCert: CertificateInfo = {
     subject: `CN=${urlObj.hostname}`,
