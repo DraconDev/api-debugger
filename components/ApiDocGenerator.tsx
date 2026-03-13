@@ -237,7 +237,17 @@ function generateOpenAPI(collection: Collection | null, endpoints: ApiEndpoint[]
   const title = collection?.name || "API";
   const description = collection?.description || "Generated from API Debugger";
 
-  const spec: Record<string, unknown> = {
+  interface OpenApiSpec {
+    openapi: string;
+    info: {
+      title: string;
+      description: string;
+      version: string;
+    };
+    paths: Record<string, Record<string, unknown>>;
+  }
+
+  const spec: OpenApiSpec = {
     openapi: "3.0.0",
     info: {
       title,
