@@ -1,116 +1,5 @@
 import { useState, useMemo } from "react";
-
-interface JsonViewerProps {
-  data: unknown;
-  depth?: number;
-}
-
-export function JsonViewer({ data, depth = 0 }: JsonViewerProps) {
-  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
-
-  const toggleCollapse = (path: string) => {
-    const newCollapsed = new Set(collapsed);
-    if (newCollapsed.has(path)) {
-      newCollapsed.delete(path);
-    } else {
-      newCollapsed.add(path);
-    }
-    setCollapsed(newCollapsed);
-  };
-
-  const renderValue = (value: unknown, path: string): React.ReactNode => {
-    if (value === null) {
-      return <span className="text-purple-400">null</span>;
-    }
-
-    if (typeof value === "boolean") {
-      return <span className="text-amber-400">{value.toString()}</span>;
-    }
-
-    if (typeof value === "number") {
-      return <span className="text-blue-400">{value}</span>;
-    }
-
-    if (typeof value === "string") {
-      return <span className="text-emerald-400">"{escapeString(value)}"</span>;
-    }
-
-    if (Array.isArray(value)) {
-      if (value.length === 0) {
-        return <span className="text-muted-foreground">[]</span>;
-      }
-
-      const isCollapsed = collapsed.has(path);
-
-      return (
-        <span>
-          <span
-            className="cursor-pointer select-none text-muted-foreground hover:text-foreground"
-            onClick={() => toggleCollapse(path)}
-          >
-            {isCollapsed ? "▶ [...]" : "▼ ["}
-          </span>
-          {!isCollapsed && (
-            <>
-              {value.map((item, index) => (
-                <div key={index} style={{ marginLeft: `${(depth + 1) * 16}px` }}>
-                  {renderValue(item, `${path}[${index}]`)}
-                  {index < value.length - 1 && <span className="text-muted-foreground">,</span>}
-                </div>
-              ))}
-              <span style={{ marginLeft: `${depth * 16}px` }} className="text-muted-foreground">
-                ]
-              </span>
-            </>
-          )}
-        </span>
-      );
-    }
-
-    if (typeof value === "object") {
-      const entries = Object.entries(value as Record<string, unknown>);
-      if (entries.length === 0) {
-        return <span className="text-muted-foreground">{"{}"}</span>;
-      }
-
-      const isCollapsed = collapsed.has(path);
-
-      return (
-        <span>
-          <span
-            className="cursor-pointer select-none text-muted-foreground hover:text-foreground"
-            onClick={() => toggleCollapse(path)}
-          >
-            {isCollapsed ? "▶ {...}" : "▼ {"}
-          </span>
-          {!isCollapsed && (
-            <>
-              {entries.map(([k, v], index) => (
-                <div key={k} style={{ marginLeft: `${(depth + 1) * 16}px` }}>
-                  <span className="text-primary">"{k}"</span>
-                  <span className="text-muted-foreground">: </span>
-                  {renderValue(v, `${path}.${k}`)}
-                  {index < entries.length - 1 && <span className="text-muted-foreground">,</span>}
-                </div>
-              ))}
-              <span style={{ marginLeft: `${depth * 16}px` }} className="text-muted-foreground">
-                {"}"}
-              </span>
-            </>
-          )}
-        </span>
-      );
-    }
-
-    return <span>{String(value)}</span>;
-  };
-
-  return (
-    <div className="font-mono text-xs leading-relaxed">
-      {renderValue(data, "root")}
-    </div>
-  );
-}
+import { JsonViewerWithSearch } from "@/components/response/JsonViewer";
 
 interface XmlViewerProps {
   xml: string;
@@ -133,15 +22,6 @@ function XmlViewer({ xml }: XmlViewerProps) {
       dangerouslySetInnerHTML={{ __html: highlighted }}
     />
   );
-}
-
-function escapeString(str: string): string {
-  return str
-    .replace(/\\/g, "\\\\")
-    .replace(/"/g, '\\"')
-    .replace(/\n/g, "\\n")
-    .replace(/\r/g, "\\r")
-    .replace(/\t/g, "\\t");
 }
 
 type ContentKind = "json" | "xml" | "html" | "image" | "text";
@@ -180,17 +60,6 @@ export function ResponseViewer({ body, contentType, statusCode, headers }: Respo
   const contentKind = detectContentKind(body, contentType);
   const [viewMode, setViewMode] = useState<ViewMode>("pretty");
 
-  const parsedData = useMemo(() => {
-    if (contentKind === "json") {
-      try {
-        return JSON.parse(body);
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  }, [body, contentKind]);
-
   const availableModes: ViewMode[] = useMemo(() => {
     const modes: ViewMode[] = [];
     if (contentKind === "html") {
@@ -214,16 +83,20 @@ export function ResponseViewer({ body, contentType, statusCode, headers }: Respo
     }
   }, [isImage, body, contentType]);
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(body);
+  };
+
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between px-3 py-2 border-b border-border">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/30">
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium">Response Body</span>
-          <span className="px-1.5 py-0.5 text-xs rounded bg-muted text-muted-foreground">
+          <span className="px-1.5 py-0.5 text-[10px] rounded bg-muted text-muted-foreground font-mono">
             {contentKind.toUpperCase()}
           </span>
           {statusCode && (
-            <span className={`px-1.5 py-0.5 text-xs rounded ${
+            <span className={`px-1.5 py-0.5 text-[10px] rounded font-mono ${
               statusCode >= 200 && statusCode < 300 ? "bg-emerald-500/20 text-emerald-500" :
               statusCode >= 400 ? "bg-red-500/20 text-red-500" :
               "bg-amber-500/20 text-amber-500"
@@ -239,8 +112,8 @@ export function ResponseViewer({ body, contentType, statusCode, headers }: Respo
                 <button
                   key={mode}
                   onClick={() => setViewMode(mode)}
-                  className={`px-2 py-0.5 text-xs rounded ${
-                    viewMode === mode ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                  className={`px-2 py-1 text-xs rounded-md transition-colors ${
+                    viewMode === mode ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent"
                   }`}
                 >
                   {mode.charAt(0).toUpperCase() + mode.slice(1)}
@@ -248,13 +121,20 @@ export function ResponseViewer({ body, contentType, statusCode, headers }: Respo
               ))}
             </div>
           )}
-          <span className="text-xs text-muted-foreground">
+          <button
+            onClick={copyToClipboard}
+            className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded"
+            title="Copy response"
+          >
+            <CopyIcon className="w-4 h-4" />
+          </button>
+          <span className="text-xs text-muted-foreground tabular-nums">
             {formatBytes(body.length)}
           </span>
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto bg-zinc-950">
+      <div className="flex-1 overflow-auto">
         {isImage ? (
           <div className="flex items-center justify-center h-full p-4 bg-[repeating-conic-gradient(#333_0%_25%,#222_0%_50%)] bg-[length:16px_16px]">
             {imageUrl ? (
@@ -278,17 +158,15 @@ export function ResponseViewer({ body, contentType, statusCode, headers }: Respo
             sandbox="allow-same-origin"
             title="HTML Preview"
           />
-        ) : contentKind === "json" && viewMode === "pretty" && parsedData ? (
-          <div className="p-3">
-            <JsonViewer data={parsedData} />
-          </div>
+        ) : contentKind === "json" && viewMode === "pretty" ? (
+          <JsonViewerWithSearch body={body} />
         ) : contentKind === "xml" && viewMode === "pretty" ? (
-          <div className="p-3">
+          <div className="p-4">
             <XmlViewer xml={body} />
           </div>
         ) : (
-          <div className="p-3">
-            <pre className="text-xs font-mono text-foreground whitespace-pre-wrap break-all">
+          <div className="p-4">
+            <pre className="text-sm font-mono text-foreground whitespace-pre-wrap break-all">
               {body}
             </pre>
           </div>
@@ -298,10 +176,10 @@ export function ResponseViewer({ body, contentType, statusCode, headers }: Respo
       {headers && Object.keys(headers).length > 0 && (
         <div className="border-t border-border max-h-32 overflow-auto">
           <details className="text-xs">
-            <summary className="px-3 py-1.5 cursor-pointer hover:bg-muted/50 text-muted-foreground">
+            <summary className="px-4 py-2 cursor-pointer hover:bg-muted/50 text-muted-foreground">
               Response Headers ({Object.keys(headers).length})
             </summary>
-            <div className="px-3 py-2 space-y-1 bg-muted/30">
+            <div className="px-4 py-2 space-y-1 bg-muted/30">
               {Object.entries(headers).map(([key, value]) => (
                 <div key={key} className="flex gap-2">
                   <span className="text-primary font-medium">{key}:</span>
@@ -313,6 +191,14 @@ export function ResponseViewer({ body, contentType, statusCode, headers }: Respo
         </div>
       )}
     </div>
+  );
+}
+
+function CopyIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+    </svg>
   );
 }
 
