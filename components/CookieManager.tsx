@@ -124,7 +124,7 @@ export function CookieManager() {
   const saveCookie = async () => {
     const url = `https://${formData.domain.startsWith(".") ? formData.domain.slice(1) : formData.domain}`;
     
-    const cookieDetails: chrome.cookies.Details = {
+    const cookieDetails = {
       url,
       name: formData.name,
       value: formData.value,
@@ -135,11 +135,11 @@ export function CookieManager() {
     };
 
     if (formData.expirationDate) {
-      cookieDetails.expirationDate = Math.floor(new Date(formData.expirationDate).getTime() / 1000);
+      (cookieDetails as chrome.cookies.Details & { expirationDate: number }).expirationDate = Math.floor(new Date(formData.expirationDate).getTime() / 1000);
     }
 
     try {
-      await chrome.cookies.set(cookieDetails);
+      await chrome.cookies.set(cookieDetails as chrome.cookies.Details);
       setEditingCookie(null);
       setIsNewCookie(false);
       setFormData(emptyCookie);
