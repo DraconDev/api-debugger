@@ -113,12 +113,10 @@ export function CollectionRunner({ requests, onRequestSend }: CollectionRunnerPr
     }
 
     setIsRunning(false);
-    setCurrentIndex(-1);
   }, [requests, onRequestSend, delay]);
 
   const stopRunning = () => {
     setIsRunning(false);
-    setCurrentIndex(-1);
   };
 
   const stats = {
