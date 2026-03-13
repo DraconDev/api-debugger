@@ -20,7 +20,6 @@ interface RunResult {
 export function CollectionRunner({ requests, onRequestSend }: CollectionRunnerProps) {
   const [results, setResults] = useState<RunResult[]>([]);
   const [isRunning, setIsRunning] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(-1);
   const [runtimeVariables, setRuntimeVariables] = useState<Record<string, string>>({});
   const [delay, setDelay] = useState(0);
 
@@ -34,7 +33,6 @@ export function CollectionRunner({ requests, onRequestSend }: CollectionRunnerPr
       status: "pending",
     })));
     setRuntimeVariables({});
-    setCurrentIndex(0);
 
     const vars: Record<string, string> = {};
 
