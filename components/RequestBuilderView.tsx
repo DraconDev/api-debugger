@@ -123,6 +123,11 @@ export function RequestBuilderView() {
     setConfig((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleTemplateSelect = (templateConfig: RequestConfig) => {
+    setConfig(templateConfig);
+    setShowTemplates(false);
+  };
+
   const statusColor = response
     ? response.status >= 400
       ? "text-red-500"
