@@ -429,8 +429,18 @@ export default function Dashboard() {
                     <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
                   </div>
                 ) : filteredRequests.length === 0 ? (
-                  <div className="p-4 text-center text-muted-foreground text-sm">
-                    {state.searchQuery ? "No matching requests" : "No requests captured yet"}
+                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-6">
+                    <div className="w-16 h-16 mb-4 rounded-full bg-muted flex items-center justify-center">
+                      <HistoryIcon className="w-8 h-8 opacity-50" />
+                    </div>
+                    <p className="text-sm font-medium">
+                      {state.searchQuery ? "No matching requests" : "No requests yet"}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1 text-center">
+                      {state.searchQuery 
+                        ? "Try a different search term" 
+                        : "Browse the web to capture API requests"}
+                    </p>
                   </div>
                 ) : (
                   filteredRequests.map((request) => (
