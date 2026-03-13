@@ -367,15 +367,15 @@ export function RequestBuilderView() {
           )}
 
           {/* Response Tabs */}
-          <div className="flex border-b border-border">
+          <div className="flex border-b border-border bg-muted/30">
             {(["body", "headers", "timing", "tests", "code", "ai"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setResponseTab(tab)}
-                className={`px-4 py-2 text-xs capitalize ${
+                className={`px-4 py-2.5 text-xs font-medium capitalize transition-colors ${
                   responseTab === tab
-                    ? "text-foreground border-b-2 border-primary"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "text-foreground bg-background border-b-2 border-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/50"
                 }`}
               >
                 {tab}
@@ -384,23 +384,27 @@ export function RequestBuilderView() {
           </div>
 
           {/* Response Content */}
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-auto">
             {!response && !error && (
               <div className="flex items-center justify-center h-full text-muted-foreground">
                 <div className="text-center">
-                  <SendIcon className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                  <p className="text-sm">Send a request to see the response</p>
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+                    <SendIcon className="w-8 h-8 opacity-50" />
+                  </div>
+                  <p className="text-sm font-medium">No response yet</p>
+                  <p className="text-xs text-muted-foreground mt-1">Send a request to see the response</p>
                 </div>
               </div>
             )}
 
             {error && (
               <div className="flex items-center justify-center h-full">
-                <div className="text-center p-4">
-                  <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-red-500/10 flex items-center justify-center">
-                    <ErrorIcon className="w-6 h-6 text-red-500" />
+                <div className="text-center p-6">
+                  <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-destructive/10 flex items-center justify-center">
+                    <ErrorIcon className="w-7 h-7 text-destructive" />
                   </div>
-                  <p className="text-sm text-destructive">{error}</p>
+                  <p className="text-sm font-medium text-foreground">Request Failed</p>
+                  <p className="text-xs text-muted-foreground mt-1">{error}</p>
                 </div>
               </div>
             )}
@@ -414,7 +418,7 @@ export function RequestBuilderView() {
             )}
 
             {response && responseTab === "headers" && (
-              <div className="p-3 overflow-auto">
+              <div className="p-4 overflow-auto">
                 <div className="space-y-1">
                   {response.headers.map(([name, value], i) => (
                     <div key={i} className="flex text-xs">
