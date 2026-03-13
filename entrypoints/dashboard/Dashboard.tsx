@@ -453,6 +453,8 @@ export default function Dashboard() {
           />
         )}
 
+        {view === "sync" && <GitHubSyncPanel />}
+
         {view === "settings" && <SettingsView />}
       </main>
     </div>
