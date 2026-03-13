@@ -26,7 +26,7 @@ export function DiffViewer({ left, right, leftLabel = "Before", rightLabel = "Af
   }, [diff]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full w-full">
       {/* Stats */}
       <div className="flex items-center gap-4 px-3 py-2 border-b border-border text-xs">
         <span className="font-medium">Changes:</span>
