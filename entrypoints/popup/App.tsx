@@ -63,24 +63,6 @@ function App() {
   const errorCount = requests.filter((r) => r.statusCode >= 400).length;
   const successCount = requests.filter((r) => r.statusCode < 400).length;
 
-  const methodColor = (method: string) => {
-    switch (method) {
-      case "GET": return "text-emerald-500 bg-emerald-500/10";
-      case "POST": return "text-amber-500 bg-amber-500/10";
-      case "PUT": return "text-blue-500 bg-blue-500/10";
-      case "PATCH": return "text-cyan-500 bg-cyan-500/10";
-      case "DELETE": return "text-red-500 bg-red-500/10";
-      default: return "text-muted-foreground bg-muted";
-    }
-  };
-
-  const statusColor = (code: number) => {
-    if (code >= 500) return "text-red-500";
-    if (code >= 400) return "text-amber-500";
-    if (code >= 300) return "text-blue-500";
-    return "text-emerald-500";
-  };
-
   return (
     <div className="w-96 bg-background text-foreground dark">
       {/* Header */}
