@@ -1,44 +1,150 @@
 import { useEffect, useCallback } from "react";
+import { KEYBOARD_SHORTCUTS, matchesShortcut } from "@/lib/shortcuts";
 
-interface KeyboardShortcut {
-  key: string;
-  ctrl?: boolean;
-  shift?: boolean;
-  alt?: boolean;
-  action: () => void;
-  description: string;
+interface UseKeyboardShortcutsProps {
+  onSendRequest?: () => void;
+  onCancelRequest?: () => void;
+  onSaveRequest?: () => void;
+  onSaveRequestAs?: () => void;
+  onNewRequest?: () => void;
+  onOpenCollection?: () => void;
+  onCommandPalette?: () => void;
+  onSearch?: () => void;
+  onSearchResponse?: () => void;
+  onShowShortcuts?: () => void;
+  onFocusUrl?: () => void;
+  onFocusBody?: () => void;
+  onCloseTab?: () => void;
+  onSwitchTab?: (index: number) => void;
 }
 
-export function useKeyboardShortcuts(shortcuts: KeyboardShortcut[]) {
+export function useKeyboardShortcuts({
+  onSendRequest,
+  onCancelRequest,
+  onSaveRequest,
+  onSaveRequestAs,
+  onNewRequest,
+  onOpenCollection,
+  onCommandPalette,
+  onSearch,
+  onSearchResponse,
+  onShowShortcuts,
+  onFocusUrl,
+  onFocusBody,
+  onCloseTab,
+  onSwitchTab,
+}: UseKeyboardShortcutsProps = {}) {
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      for (const shortcut of shortcuts) {
-        const ctrlMatch = shortcut.ctrl ? event.ctrlKey || event.metaKey : true;
-        const shiftMatch = shortcut.shift ? event.shiftKey : !event.shiftKey;
-        const altMatch = shortcut.alt ? event.altKey : !event.altKey;
-        const keyMatch = event.key.toLowerCase() === shortcut.key.toLowerCase();
+      const target = event.target as HTMLElement;
+      
+      if (
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.isContentEditable
+      ) {
+        if (event.key === "Escape") {
+          target.blur();
+          return;
+        }
+        
+        if (event.key !== "Escape" && !event.ctrlKey && !event.metaKey) {
+          return;
+        }
+      }
 
-        if (ctrlMatch && shiftMatch && altMatch && keyMatch) {
+      for (const shortcut of KEYBOARD_SHORTCUTS) {
+        if (matchesShortcut(event, shortcut)) {
           event.preventDefault();
-          shortcut.action();
+          event.stopPropagation();
+
+          switch (shortcut.action) {
+            case "sendRequest":
+              onSendRequest?.();
+              break;
+            case "cancelRequest":
+              onCancelRequest?.();
+              break;
+            case "saveRequest":
+              onSaveRequest?.();
+              break;
+            case "saveRequestAs":
+              onSaveRequestAs?.();
+              break;
+            case "newRequest":
+              onNewRequest?.();
+              break;
+            case "openCollection":
+              onOpenCollection?.();
+              break;
+            case "commandPalette":
+              onCommandPalette?.();
+              break;
+            case "search":
+              onSearch?.();
+              break;
+            case "searchResponse":
+              onSearchResponse?.();
+              break;
+            case "showShortcuts":
+              onShowShortcuts?.();
+              break;
+            case "focusUrl":
+              onFocusUrl?.();
+              break;
+            case "focusBody":
+              onFocusBody?.();
+              break;
+            case "closeTab":
+              onCloseTab?.();
+              break;
+            case "switchTab1":
+              onSwitchTab?.(0);
+              break;
+            case "switchTab2":
+              onSwitchTab?.(1);
+              break;
+            case "switchTab3":
+              onSwitchTab?.(2);
+              break;
+            case "switchTab4":
+              onSwitchTab?.(3);
+              break;
+            case "switchTab5":
+              onSwitchTab?.(4);
+              break;
+          }
+
           return;
         }
       }
     },
-    [shortcuts]
+    [
+      onSendRequest,
+      onCancelRequest,
+      onSaveRequest,
+      onSaveRequestAs,
+      onNewRequest,
+      onOpenCollection,
+      onCommandPalette,
+      onSearch,
+      onSearchResponse,
+      onShowShortcuts,
+      onFocusUrl,
+      onFocusBody,
+      onCloseTab,
+      onSwitchTab,
+    ]
   );
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, [handleKeyDown]);
-}
 
-export const DEFAULT_SHORTCUTS = [
-  { key: "r", ctrl: true, description: "Refresh" },
-  { key: "f", ctrl: true, description: "Focus search" },
-  { key: "Enter", ctrl: true, description: "Send request" },
-  { key: "s", ctrl: true, description: "Save to collection" },
-  { key: "Delete", ctrl: true, shift: true, description: "Clear history" },
-  { key: "Escape", description: "Close panel" },
-];
+  return {
+    shortcuts: KEYBOARD_SHORTCUTS,
+  };
+}
