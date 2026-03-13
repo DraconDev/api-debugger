@@ -123,7 +123,7 @@ export function GraphQLClient({ endpoint: initialEndpoint }: GraphQLClientProps)
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full w-full">
       {/* Endpoint */}
       <div className="flex items-center gap-2 p-3 border-b border-border">
         <span className="text-xs text-muted-foreground">GraphQL</span>

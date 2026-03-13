@@ -179,7 +179,7 @@ export function GitHubSyncPanel() {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full w-full flex flex-col">
       <div className="p-4 border-b border-border">
         <h2 className="text-lg font-semibold mb-1">GitHub Sync</h2>
         <p className="text-sm text-muted-foreground">

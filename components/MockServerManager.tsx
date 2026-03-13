@@ -163,7 +163,7 @@ export function MockServerManager() {
   }, []);
 
   return (
-    <div className="h-full flex">
+    <div className="h-full w-full flex">
       <div className="w-64 border-r border-border flex flex-col">
         <div className="p-3 border-b border-border flex items-center justify-between">
           <h2 className="text-sm font-medium">Mock Servers</h2>
