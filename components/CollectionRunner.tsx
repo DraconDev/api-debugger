@@ -42,7 +42,6 @@ export function CollectionRunner({ requests, onRequestSend }: CollectionRunnerPr
       setResults((prev) => prev.map((r, idx) => 
         idx === i ? { ...r, status: "running", startTime: Date.now() } : r
       ));
-      setCurrentIndex(i);
 
       if (delay > 0 && i > 0) {
         await new Promise((resolve) => setTimeout(resolve, delay));
