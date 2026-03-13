@@ -172,39 +172,39 @@ export function RequestBuilderView() {
         {/* Request Panel */}
         <div className="w-1/2 flex flex-col border-r border-border">
           {/* Request Tabs */}
-          <div className="flex border-b border-border">
+          <div className="flex border-b border-border bg-muted/30">
             {(["params", "headers", "body", "auth", "scripts", "extractions"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 text-xs capitalize ${
+                className={`px-4 py-2.5 text-xs font-medium capitalize transition-colors ${
                   activeTab === tab
-                    ? "text-foreground border-b-2 border-primary"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "text-foreground bg-background border-b-2 border-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/50"
                 }`}
               >
                 {tab === "extractions" ? "Vars" : tab}
                 {tab === "params" && config.params.filter((p) => p.enabled !== false).length > 0 && (
-                  <span className="ml-1 text-xs">({config.params.filter((p) => p.enabled !== false).length})</span>
+                  <span className="ml-1.5 text-[10px] text-primary font-normal">({config.params.filter((p) => p.enabled !== false).length})</span>
                 )}
                 {tab === "headers" && config.headers.filter((h) => h.enabled !== false).length > 0 && (
-                  <span className="ml-1 text-xs">({config.headers.filter((h) => h.enabled !== false).length})</span>
+                  <span className="ml-1.5 text-[10px] text-primary font-normal">({config.headers.filter((h) => h.enabled !== false).length})</span>
                 )}
                 {tab === "scripts" && (config.preRequestScript || config.postResponseScript) && (
-                  <span className="ml-1 text-xs text-primary">•</span>
+                  <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-primary inline-block" />
                 )}
                 {tab === "extractions" && (config.extractions || []).filter((e) => e.enabled !== false).length > 0 && (
-                  <span className="ml-1 text-xs">({(config.extractions || []).filter((e) => e.enabled !== false).length})</span>
+                  <span className="ml-1.5 text-[10px] text-primary font-normal">({(config.extractions || []).filter((e) => e.enabled !== false).length})</span>
                 )}
               </button>
             ))}
           </div>
 
           {/* Request Content */}
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-auto">
             {activeTab === "params" && (
-              <div className="p-3">
-                <div className="text-xs text-muted-foreground mb-2">
+              <div className="p-4">
+                <div className="text-xs text-muted-foreground mb-3">
                   Query parameters will be appended to the URL
                 </div>
                 <div className="space-y-2">
@@ -218,7 +218,7 @@ export function RequestBuilderView() {
                           newParams[index] = { ...param, enabled: e.target.checked };
                           updateConfig("params", newParams);
                         }}
-                        className="w-3 h-3"
+                        className="w-4 h-4 rounded border-border"
                       />
                       <input
                         type="text"
@@ -229,7 +229,7 @@ export function RequestBuilderView() {
                           updateConfig("params", newParams);
                         }}
                         placeholder="Parameter name"
-                        className="flex-1 px-2 py-1.5 text-xs bg-input border border-border rounded"
+                        className="flex-1 px-3 py-2 text-sm bg-input border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
                       />
                       <input
                         type="text"
@@ -240,7 +240,7 @@ export function RequestBuilderView() {
                           updateConfig("params", newParams);
                         }}
                         placeholder="Value"
-                        className="flex-1 px-2 py-1.5 text-xs bg-input border border-border rounded"
+                        className="flex-1 px-3 py-2 text-sm bg-input border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
                       />
                       <button
                         onClick={() => {
