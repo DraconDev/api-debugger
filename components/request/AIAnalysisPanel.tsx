@@ -64,20 +64,53 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
 
   if (!aiSettings) {
     return (
-      <div className="p-4 text-center">
-        <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
-          <SparklesIcon className="w-6 h-6 text-white" />
+      <div className="p-4">
+        <div className="text-center mb-4">
+          <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
+            <SparklesIcon className="w-6 h-6 text-white" />
+          </div>
+          <h3 className="font-medium mb-1">AI Analysis</h3>
+          <p className="text-sm text-muted-foreground">
+            Bring your own API key
+          </p>
         </div>
-        <h3 className="font-medium mb-2">AI Analysis</h3>
-        <p className="text-sm text-muted-foreground mb-3">
-          Configure your AI API key in Settings to enable intelligent request analysis.
-        </p>
+        
+        <div className="p-3 bg-muted/50 rounded-lg border border-border mb-3">
+          <p className="text-xs text-muted-foreground mb-2">
+            <strong className="text-foreground">Your AI, Your Keys, Your Data.</strong>
+          </p>
+          <p className="text-xs text-muted-foreground">
+            We never see your AI calls. Use your own OpenAI, Anthropic, or Gemini keys.
+          </p>
+        </div>
+
+        <div className="space-y-2 text-xs">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            Use company keys
+          </div>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            No extra subscription
+          </div>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            Full privacy - we never log
+          </div>
+        </div>
+
         <a
-          href={chrome.runtime.getURL("/popup.html")}
+          href={chrome.runtime.getURL("/dashboard.html?view=settings")}
           target="_blank"
-          className="text-sm text-primary hover:underline"
+          className="mt-4 block w-full py-2 text-center text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
         >
-          Open Settings
+          Configure AI Keys
         </a>
       </div>
     );
