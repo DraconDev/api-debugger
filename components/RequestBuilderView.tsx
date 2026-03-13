@@ -137,7 +137,7 @@ export function RequestBuilderView() {
     : "";
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full w-full">
       {/* URL Bar */}
       <div className="p-3 border-b border-border">
         <div className="flex gap-2">
