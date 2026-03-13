@@ -8,7 +8,6 @@ export function executePreRequestScript(
 ): ScriptExecutionResult {
   const logs: string[] = [];
   const modifiedVars: Record<string, string> = { ...variables };
-  let modifiedRequest: Partial<RequestConfig> | undefined;
 
   const context: ScriptContext = {
     request: {
@@ -25,8 +24,7 @@ export function executePreRequestScript(
 
   const pm = createPmApi(
     context,
-    logs,
-    (req) => { modifiedRequest = req; }
+    logs
   );
 
   try {
@@ -37,7 +35,18 @@ export function executePreRequestScript(
       success: true,
       logs,
       variables: modifiedVars,
-      modifiedRequest,
+      modifiedRequest: {
+        method: context.request.method,
+        url: context.request.url,
+        headers: Object.entries(context.request.headers).map(([name, value]) => ({
+          name,
+          value,
+          enabled: true,
+        })),
+        body: {
+          raw: context.request.body,
+        },
+      },
     };
   } catch (error) {
     return {
