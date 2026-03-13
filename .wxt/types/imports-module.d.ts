@@ -20,6 +20,7 @@ declare module '#imports' {
   export { fakeBrowser } from 'wxt/testing';
   export { ApiDocGenerator } from '../components/ApiDocGenerator';
   export { CaptureFilter } from '../components/CaptureFilter';
+  export { CertificateViewer } from '../components/CertificateViewer';
   export { CollectionRunner } from '../components/CollectionRunner';
   export { CollectionsView } from '../components/CollectionsView';
   export { CookieManager } from '../components/CookieManager';
@@ -35,6 +36,7 @@ declare module '#imports' {
   export { RequestDetail } from '../components/RequestDetail';
   export { RequestHeaders } from '../components/RequestHeaders';
   export { RequestList } from '../components/RequestList';
+  export { RequestTemplates } from '../components/RequestTemplates';
   export { SaveToCollection } from '../components/SaveToCollection';
   export { SettingsPanel } from '../components/SettingsPanel';
   export { useKeyboardShortcuts, DEFAULT_SHORTCUTS } from '../hooks/useKeyboardShortcuts';

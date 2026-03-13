@@ -3,6 +3,7 @@ export {}
 declare global {
   const ApiDocGenerator: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ApiDocGenerator').ApiDocGenerator
   const CaptureFilter: typeof import('/home/dracon/Dev/extensions/api-debugger/components/CaptureFilter').CaptureFilter
+  const CertificateViewer: typeof import('/home/dracon/Dev/extensions/api-debugger/components/CertificateViewer').CertificateViewer
   const CollectionRunner: typeof import('/home/dracon/Dev/extensions/api-debugger/components/CollectionRunner').CollectionRunner
   const CollectionsView: typeof import('/home/dracon/Dev/extensions/api-debugger/components/CollectionsView').CollectionsView
   const ContentScriptContext: typeof import('wxt/utils/content-script-context').ContentScriptContext
@@ -22,6 +23,7 @@ declare global {
   const RequestDetail: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestDetail').RequestDetail
   const RequestHeaders: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestHeaders').RequestHeaders
   const RequestList: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestList').RequestList
+  const RequestTemplates: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestTemplates').RequestTemplates
   const RuntimeVariablesProvider: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useRuntimeVariables').RuntimeVariablesProvider
   const SaveToCollection: typeof import('/home/dracon/Dev/extensions/api-debugger/components/SaveToCollection').SaveToCollection
   const SettingsPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/SettingsPanel').SettingsPanel
