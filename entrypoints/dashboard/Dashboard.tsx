@@ -271,6 +271,12 @@ export default function Dashboard() {
             label="Diff"
           />
           <NavItem
+            active={view === "certs"}
+            onClick={() => setView("certs")}
+            icon={<CertIcon />}
+            label="Certs"
+          />
+          <NavItem
             active={view === "settings"}
             onClick={() => setView("settings")}
             icon={<SettingsIcon />}
