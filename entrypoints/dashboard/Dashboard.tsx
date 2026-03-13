@@ -509,26 +509,33 @@ function NavItem({
   icon,
   label,
   count,
+  collapsed,
 }: {
   active: boolean;
   onClick: () => void;
   icon: React.ReactNode;
   label: string;
   count?: number;
+  collapsed?: boolean;
 }) {
   return (
     <button
       onClick={onClick}
+      title={collapsed ? label : undefined}
       className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
         active
           ? "bg-accent text-accent-foreground"
           : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-      }`}
+      } ${collapsed ? "justify-center" : ""}`}
     >
       {icon}
-      <span className="flex-1 text-left">{label}</span>
-      {count !== undefined && (
-        <span className="text-xs bg-muted px-1.5 py-0.5 rounded">{count}</span>
+      {!collapsed && (
+        <>
+          <span className="flex-1 text-left">{label}</span>
+          {count !== undefined && (
+            <span className="text-xs bg-muted px-1.5 py-0.5 rounded">{count}</span>
+          )}
+        </>
       )}
     </button>
   );
