@@ -899,104 +899,79 @@ function SettingsView() {
   const [settingsTab, setSettingsTab] = useState<"ai" | "environments" | "filters" | "shortcuts">("ai");
 
   return (
-    <div className="flex-1 flex flex-col">
-      <div className="p-4 border-b border-border">
-        <h2 className="text-lg font-semibold">Settings</h2>
+    <div className="flex-1 flex">
+      {/* Settings Tabs */}
+      <div className="w-48 border-r border-border p-2 space-y-1">
+        <button
+          onClick={() => setSettingsTab("ai")}
+          className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm ${
+            settingsTab === "ai" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+          }`}
+        >
+          <SparklesIcon className="w-4 h-4" />
+          AI Settings
+        </button>
+        <button
+          onClick={() => setSettingsTab("environments")}
+          className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm ${
+            settingsTab === "environments" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+          }`}
+        >
+          <GlobeIcon className="w-4 h-4" />
+          Environments
+        </button>
+        <button
+          onClick={() => setSettingsTab("filters")}
+          className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm ${
+            settingsTab === "filters" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+          }`}
+        >
+          <FilterIcon className="w-4 h-4" />
+          Capture Filters
+        </button>
+        <button
+          onClick={() => setSettingsTab("shortcuts")}
+          className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm ${
+            settingsTab === "shortcuts" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+          }`}
+        >
+          <KeyboardIcon className="w-4 h-4" />
+          Shortcuts
+        </button>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* Settings Tabs */}
-        <div className="w-48 border-r border-border p-2 space-y-1">
-          <button
-            onClick={() => setSettingsTab("ai")}
-            className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm ${
-              settingsTab === "ai" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
-            }`}
-          >
-            <SparklesIcon className="w-4 h-4" />
-            AI Settings
-          </button>
-          <button
-            onClick={() => setSettingsTab("environments")}
-            className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm ${
-              settingsTab === "environments" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
-            }`}
-          >
-            <GlobeIcon className="w-4 h-4" />
-            Environments
-          </button>
-          <button
-            onClick={() => setSettingsTab("filters")}
-            className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm ${
-              settingsTab === "filters" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
-            }`}
-          >
-            <FilterIcon className="w-4 h-4" />
-            Capture Filters
-          </button>
-          <button
-            onClick={() => setSettingsTab("shortcuts")}
-            className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm ${
-              settingsTab === "shortcuts" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
-            }`}
-          >
-            <KeyboardIcon className="w-4 h-4" />
-            Shortcuts
-          </button>
-        </div>
+      {/* Settings Content */}
+      <div className="flex-1 overflow-auto">
+        {settingsTab === "ai" && <SettingsPanel />}
 
-        {/* Settings Content */}
-        <div className="flex-1 overflow-auto">
-          {settingsTab === "ai" && (
-            <div className="p-6">
-              <h3 className="font-medium mb-3">AI Integration</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Configure AI providers for intelligent request analysis and debugging suggestions.
-              </p>
-              <a
-                href={chrome.runtime.getURL("/popup.html")}
-                target="_blank"
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-primary hover:bg-primary/90 rounded text-primary-foreground"
-              >
-                Open AI Settings
-                <ExternalLinkIcon className="w-4 h-4" />
-              </a>
+        {settingsTab === "environments" && <EnvironmentManager />}
+
+        {settingsTab === "filters" && <CaptureFilter />}
+
+        {settingsTab === "shortcuts" && (
+          <div className="p-6">
+            <h3 className="font-medium mb-4">Keyboard Shortcuts</h3>
+            <div className="space-y-3">
+              {[
+                { key: "Ctrl+R", action: "Refresh request list" },
+                { key: "Ctrl+F", action: "Focus search" },
+                { key: "Ctrl+Enter", action: "Send request" },
+                { key: "Ctrl+S", action: "Save to collection" },
+                { key: "Ctrl+Shift+Delete", action: "Clear history" },
+                { key: "Escape", action: "Close panel" },
+              ].map(({ key, action }) => (
+                <div key={key} className="flex items-center justify-between py-2 border-b border-border">
+                  <span className="text-sm text-muted-foreground">{action}</span>
+                  <kbd className="px-3 py-1 text-xs bg-muted rounded font-mono">{key}</kbd>
+                </div>
+              ))}
             </div>
-          )}
 
-          {settingsTab === "environments" && (
-            <EnvironmentManager />
-          )}
-
-          {settingsTab === "filters" && (
-            <CaptureFilter />
-          )}
-
-          {settingsTab === "shortcuts" && (
-            <div className="p-6">
-              <h3 className="font-medium mb-4">Keyboard Shortcuts</h3>
-              <div className="space-y-3">
-                {[
-                  { key: "Ctrl+R", action: "Refresh request list" },
-                  { key: "Ctrl+F", action: "Focus search" },
-                  { key: "Ctrl+Enter", action: "Send request" },
-                  { key: "Ctrl+S", action: "Save to collection" },
-                  { key: "Ctrl+Shift+Delete", action: "Clear history" },
-                  { key: "Escape", action: "Close panel" },
-                ].map(({ key, action }) => (
-                  <div key={key} className="flex items-center justify-between py-2 border-b border-border">
-                    <span className="text-sm text-muted-foreground">{action}</span>
-                    <kbd className="px-3 py-1 text-xs bg-muted rounded font-mono">{key}</kbd>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-6">
-                <ThemeToggle />
-              </div>
+            <div className="mt-6">
+              <ThemeToggle />
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
