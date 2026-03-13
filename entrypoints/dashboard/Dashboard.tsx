@@ -173,20 +173,29 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen bg-background text-foreground dark">
       {/* Sidebar */}
-      <aside className="w-56 flex-shrink-0 bg-card border-r border-border flex flex-col">
+      <aside className={`${sidebarCollapsed ? "w-14" : "w-56"} flex-shrink-0 bg-card border-r border-border flex flex-col transition-all duration-200`}>
         {/* Logo */}
-        <div className="p-4 border-b border-border">
+        <div className="p-3 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img
               src={chrome.runtime.getURL("/icon/32.png")}
               alt="API Debugger"
-              className="w-8 h-8 rounded-lg"
+              className="w-8 h-8 rounded-lg cursor-pointer"
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             />
-            <div>
-              <h1 className="font-semibold text-sm">API Debugger</h1>
-              <p className="text-xs text-muted-foreground">v0.1.0</p>
-            </div>
+            {!sidebarCollapsed && (
+              <div>
+                <h1 className="font-semibold text-sm">API Debugger</h1>
+                <p className="text-xs text-muted-foreground">v0.1.0</p>
+              </div>
+            )}
           </div>
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="p-1 hover:bg-accent rounded text-muted-foreground"
+          >
+            <ChevronIcon className={`w-4 h-4 transition-transform ${sidebarCollapsed ? "rotate-180" : ""}`} />
+          </button>
         </div>
 
         {/* Navigation */}
@@ -196,43 +205,53 @@ export default function Dashboard() {
             onClick={() => setView("builder")}
             icon={<PlusIcon />}
             label="New Request"
+            collapsed={sidebarCollapsed}
           />
-          <div className="pt-2 pb-1">
-            <span className="px-3 text-xs text-muted-foreground">Protocols</span>
-          </div>
+          {!sidebarCollapsed && (
+            <div className="pt-2 pb-1">
+              <span className="px-3 text-xs text-muted-foreground">Protocols</span>
+            </div>
+          )}
           <NavItem
             active={view === "websocket"}
             onClick={() => setView("websocket")}
             icon={<WebSocketIcon />}
             label="WebSocket"
+            collapsed={sidebarCollapsed}
           />
           <NavItem
             active={view === "sse"}
             onClick={() => setView("sse")}
             icon={<SSEIcon />}
             label="SSE"
+            collapsed={sidebarCollapsed}
           />
           <NavItem
             active={view === "socketio"}
             onClick={() => setView("socketio")}
             icon={<SocketIOIcon />}
             label="Socket.IO"
+            collapsed={sidebarCollapsed}
           />
           <NavItem
             active={view === "graphql"}
             onClick={() => setView("graphql")}
             icon={<GraphQLIcon />}
             label="GraphQL"
+            collapsed={sidebarCollapsed}
           />
-          <div className="pt-2 pb-1">
-            <span className="px-3 text-xs text-muted-foreground">Tools</span>
-          </div>
+          {!sidebarCollapsed && (
+            <div className="pt-2 pb-1">
+              <span className="px-3 text-xs text-muted-foreground">Tools</span>
+            </div>
+          )}
           <NavItem
             active={view === "history"}
             onClick={() => setView("history")}
             icon={<HistoryIcon />}
             label="History"
             count={state.requests.length}
+            collapsed={sidebarCollapsed}
           />
           <NavItem
             active={view === "collections"}
@@ -240,57 +259,67 @@ export default function Dashboard() {
             icon={<FolderIcon />}
             label="Collections"
             count={state.collections.length}
+            collapsed={sidebarCollapsed}
           />
           <NavItem
             active={view === "cookies"}
             onClick={() => setView("cookies")}
             icon={<CookieIcon />}
             label="Cookies"
+            collapsed={sidebarCollapsed}
           />
           <NavItem
             active={view === "mocks"}
             onClick={() => setView("mocks")}
             icon={<MockIcon />}
             label="Mocks"
+            collapsed={sidebarCollapsed}
           />
           <NavItem
             active={view === "docs"}
             onClick={() => setView("docs")}
             icon={<DocsIcon />}
             label="Docs"
+            collapsed={sidebarCollapsed}
           />
           <NavItem
             active={view === "sync"}
             onClick={() => setView("sync")}
             icon={<SyncIcon />}
             label="Sync"
+            collapsed={sidebarCollapsed}
           />
           <NavItem
             active={view === "diff"}
             onClick={() => setView("diff")}
             icon={<DiffIcon />}
             label="Diff"
+            collapsed={sidebarCollapsed}
           />
           <NavItem
             active={view === "certs"}
             onClick={() => setView("certs")}
             icon={<CertIcon />}
             label="Certs"
+            collapsed={sidebarCollapsed}
           />
           <NavItem
             active={view === "settings"}
             onClick={() => setView("settings")}
             icon={<SettingsIcon />}
             label="Settings"
+            collapsed={sidebarCollapsed}
           />
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-border">
-          <div className="text-xs text-muted-foreground">
-            {state.requests.length} requests captured
+        {!sidebarCollapsed && (
+          <div className="p-4 border-t border-border">
+            <div className="text-xs text-muted-foreground">
+              {state.requests.length} requests captured
+            </div>
           </div>
-        </div>
+        )}
       </aside>
 
       {/* Main Content */}
