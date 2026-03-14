@@ -143,9 +143,45 @@ export default function Dashboard() {
             url: r.url,
             headers: r.headers || [],
             params: [],
-            body: r.body || { raw: "" },
-            bodyType: r.body?.mode === "raw" ? "raw" : "none",
-            auth: r.auth || { type: "none" },
+            body: {
+              raw: r.body?.raw,
+              json:
+                r.body?.mode === "raw" && r.body?.raw?.startsWith("{")
+                  ? r.body.raw
+                  : undefined,
+              formData: r.body?.formData?.map((f) => ({
+                name: f.key,
+                value: f.value,
+                type: f.type as "text" | "file",
+              })),
+              urlEncoded: r.body?.urlEncoded?.map((u) => ({
+                name: u.key,
+                value: u.value,
+              })),
+            },
+            bodyType:
+              r.body?.mode === "raw"
+                ? "raw"
+                : r.body?.mode === "formdata"
+                  ? "form-data"
+                  : r.body?.mode === "urlencoded"
+                    ? "x-www-form-urlencoded"
+                    : "none",
+            auth:
+              r.auth?.type === "apikey"
+                ? {
+                    type: "api-key" as const,
+                    apiKey: {
+                      key: r.auth.apikey?.key || "",
+                      value: r.auth.apikey?.value || "",
+                      addTo: r.auth.apikey?.addTo || ("header" as const),
+                    },
+                  }
+                : r.auth?.type === "bearer"
+                  ? { type: "bearer" as const, bearer: r.auth.bearer }
+                  : r.auth?.type === "basic"
+                    ? { type: "basic" as const, basic: r.auth.basic }
+                    : { type: "none" as const },
           },
           request: {
             id: r.id,
