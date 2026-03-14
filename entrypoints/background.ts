@@ -302,6 +302,10 @@ export default defineBackground(() => {
   chrome.webRequest.onCompleted.addListener(
     async (details) => {
       try {
+        if (!shouldCapture(details.url)) {
+          return;
+        }
+
         const base = partial.get(details.requestId) || {};
         partial.delete(details.requestId);
 
