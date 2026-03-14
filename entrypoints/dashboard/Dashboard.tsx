@@ -552,6 +552,13 @@ export default function Dashboard() {
             collapsed={sidebarCollapsed}
           />
           <NavItem
+            active={view === "workflows"}
+            onClick={() => setView("workflows")}
+            icon={<WorkflowIcon />}
+            label="Workflows"
+            collapsed={sidebarCollapsed}
+          />
+          <NavItem
             active={view === "cookies"}
             onClick={() => setView("cookies")}
             icon={<CookieIcon />}
