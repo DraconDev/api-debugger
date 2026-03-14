@@ -292,7 +292,7 @@ Keep response under 150 words.`;
           )}
 
           {aiError && (
-            <div className="text-xs text-red-500 p-2 bg-red-50 rounded">
+            <div className="text-xs text-destructive p-2 bg-destructive/10 rounded-md">
               {aiError}
             </div>
           )}
