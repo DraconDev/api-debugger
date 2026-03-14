@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 interface WSMessage {
   id: string;
@@ -53,7 +53,11 @@ export function WebSocketClient() {
 
       wsRef.current = ws;
     } catch (err) {
-      addMessage("system", "Failed to connect: " + (err instanceof Error ? err.message : "Unknown error"));
+      addMessage(
+        "system",
+        "Failed to connect: " +
+          (err instanceof Error ? err.message : "Unknown error"),
+      );
     }
   };
 
@@ -71,7 +75,11 @@ export function WebSocketClient() {
       addMessage("sent", inputMessage);
       setInputMessage("");
     } catch (err) {
-      addMessage("system", "Failed to send: " + (err instanceof Error ? err.message : "Unknown error"));
+      addMessage(
+        "system",
+        "Failed to send: " +
+          (err instanceof Error ? err.message : "Unknown error"),
+      );
     }
   };
 
@@ -134,24 +142,37 @@ export function WebSocketClient() {
               <WebSocketIcon className="w-7 h-7 opacity-50" />
             </div>
             <p className="text-sm font-medium">No messages yet</p>
-            <p className="text-xs text-muted-foreground mt-1">Connect and send a message to get started</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Connect and send a message to get started
+            </p>
           </div>
         ) : (
           messages.map((msg) => (
-            <div key={msg.id} className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors">
+            <div
+              key={msg.id}
+              className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors"
+            >
               <span className="text-[10px] text-muted-foreground w-16 flex-shrink-0 tabular-nums">
                 {formatTimestamp(msg.timestamp)}
               </span>
-              <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${
-                msg.type === "sent" 
-                  ? "bg-blue-500/20 text-blue-400" 
-                  : msg.type === "received" 
-                  ? "bg-emerald-500/20 text-emerald-400" 
-                  : "bg-muted text-muted-foreground"
-              }`}>
-                {msg.type === "sent" ? "↑ SENT" : msg.type === "received" ? "↓ RECV" : "• SYS"}
+              <span
+                className={`text-xs px-1.5 py-0.5 rounded font-medium ${
+                  msg.type === "sent"
+                    ? "bg-blue-500/20 text-blue-400"
+                    : msg.type === "received"
+                      ? "bg-emerald-500/20 text-emerald-400"
+                      : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {msg.type === "sent"
+                  ? "↑ SENT"
+                  : msg.type === "received"
+                    ? "↓ RECV"
+                    : "• SYS"}
               </span>
-              <pre className={`flex-1 text-xs font-mono ${getMessageColor(msg.type)} whitespace-pre-wrap break-all`}>
+              <pre
+                className={`flex-1 text-xs font-mono ${getMessageColor(msg.type)} whitespace-pre-wrap break-all`}
+              >
                 {msg.content}
               </pre>
             </div>
@@ -197,7 +218,13 @@ export function WebSocketClient() {
 
 function WebSocketIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
       <path d="M4 4h16v16H4z" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M9 9h6M9 12h6M9 15h6" strokeLinecap="round" />
     </svg>
