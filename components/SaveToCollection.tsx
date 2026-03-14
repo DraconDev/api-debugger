@@ -62,11 +62,17 @@ export function SaveToCollection({ request, onSave }: SaveToCollectionProps) {
       collectionId,
       name: name || `${request.method} ${new URL(request.url).pathname}`,
       request,
-      tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
+      tags: tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
       createdAt: Date.now(),
     };
 
-    const result = await chrome.storage.sync.get(["apiDebugger_savedRequests", "apiDebugger_collections"]);
+    const result = await chrome.storage.sync.get([
+      "apiDebugger_savedRequests",
+      "apiDebugger_collections",
+    ]);
     const existingRequests = result.apiDebugger_savedRequests || [];
     const existingCollections = result.apiDebugger_collections || [];
 
@@ -76,11 +82,15 @@ export function SaveToCollection({ request, onSave }: SaveToCollectionProps) {
     });
 
     // Update collection count
-    const collectionIndex = existingCollections.findIndex((c: Collection) => c.id === collectionId);
+    const collectionIndex = existingCollections.findIndex(
+      (c: Collection) => c.id === collectionId,
+    );
     if (collectionIndex !== -1) {
       existingCollections[collectionIndex].requestCount++;
       existingCollections[collectionIndex].updatedAt = Date.now();
-      await chrome.storage.sync.set({ apiDebugger_collections: existingCollections });
+      await chrome.storage.sync.set({
+        apiDebugger_collections: existingCollections,
+      });
     }
 
     setSaved(true);
@@ -93,7 +103,7 @@ export function SaveToCollection({ request, onSave }: SaveToCollectionProps) {
       <h3 className="text-xs font-medium mb-2">Save to Collection</h3>
 
       {saved ? (
-        <div className="text-xs text-green-600">✓ Request saved!</div>
+        <div className="text-xs text-emerald-500">✓ Request saved!</div>
       ) : (
         <div className="space-y-2">
           <input
