@@ -1,5 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
-import type { RequestRecord, Collection, SavedRequest } from "@/types";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import type {
+  RequestRecord,
+  Collection,
+  SavedRequest,
+  Environment,
+} from "@/types";
 import { RequestBuilderView } from "@/components/RequestBuilderView";
 import { EnvironmentManager } from "@/components/EnvironmentManager";
 import { CaptureFilter } from "@/components/CaptureFilter";
@@ -11,14 +16,34 @@ import { GraphQLClient } from "@/components/protocol/GraphQLClient";
 import { DiffViewer } from "@/components/diff/DiffViewer";
 import { ThemeToggle } from "@/hooks/useTheme";
 import { RuntimeVariablesProvider } from "@/hooks/useRuntimeVariables";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { CollectionRunner } from "@/components/CollectionRunner";
 import { MockServerManager } from "@/components/MockServerManager";
 import { ApiDocGenerator } from "@/components/ApiDocGenerator";
 import { GitHubSyncPanel } from "@/components/GitHubSyncPanel";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { CertificateViewer } from "@/components/CertificateViewer";
+import { WelcomeScreen, SAMPLE_COLLECTIONS } from "@/components/WelcomeScreen";
+import { ImportModal } from "@/components/ImportModal";
+import { ShortcutsModal } from "@/components/ShortcutsModal";
+import { importContent, type ImportResult } from "@/lib/importers";
+import { generateId } from "@/lib/importers/types";
 
-type ViewType = "builder" | "websocket" | "sse" | "socketio" | "graphql" | "history" | "collections" | "cookies" | "mocks" | "docs" | "sync" | "diff" | "certs" | "settings";
+type ViewType =
+  | "builder"
+  | "websocket"
+  | "sse"
+  | "socketio"
+  | "graphql"
+  | "history"
+  | "collections"
+  | "cookies"
+  | "mocks"
+  | "docs"
+  | "sync"
+  | "diff"
+  | "certs"
+  | "settings";
 
 interface DashboardState {
   requests: RequestRecord[];
@@ -61,8 +86,13 @@ export default function Dashboard() {
   const loadData = async () => {
     setState((s) => ({ ...s, isLoading: true }));
     try {
-      const historyRes = await chrome.runtime.sendMessage({ type: "GET_REQUESTS" });
-      const storageRes = await chrome.storage.sync.get(["apiDebugger_collections", "apiDebugger_savedRequests"]);
+      const historyRes = await chrome.runtime.sendMessage({
+        type: "GET_REQUESTS",
+      });
+      const storageRes = await chrome.storage.sync.get([
+        "apiDebugger_collections",
+        "apiDebugger_savedRequests",
+      ]);
 
       setState((s) => ({
         ...s,
@@ -84,7 +114,7 @@ export default function Dashboard() {
       (r) =>
         r.url.toLowerCase().includes(q) ||
         r.method.toLowerCase().includes(q) ||
-        String(r.statusCode).includes(q)
+        String(r.statusCode).includes(q),
     );
   }, [state.requests, state.searchQuery]);
 
@@ -95,7 +125,12 @@ export default function Dashboard() {
 
   const clearHistory = async () => {
     await chrome.runtime.sendMessage({ type: "CLEAR_REQUESTS" });
-    setState((s) => ({ ...s, requests: [], selectedRequestId: null, selectedRequestIds: new Set() }));
+    setState((s) => ({
+      ...s,
+      requests: [],
+      selectedRequestId: null,
+      selectedRequestIds: new Set(),
+    }));
   };
 
   const deleteRequest = (id: string) => {
@@ -104,7 +139,8 @@ export default function Dashboard() {
     setState((s) => ({
       ...s,
       requests: s.requests.filter((r) => r.id !== id),
-      selectedRequestId: s.selectedRequestId === id ? null : s.selectedRequestId,
+      selectedRequestId:
+        s.selectedRequestId === id ? null : s.selectedRequestId,
       selectedRequestIds: newSelectedIds,
     }));
   };
@@ -132,20 +168,26 @@ export default function Dashboard() {
 
   const deleteSelectedRequests = async () => {
     const idsToDelete = state.selectedRequestIds;
-    const remainingRequests = state.requests.filter((r) => !idsToDelete.has(r.id));
-    
+    const remainingRequests = state.requests.filter(
+      (r) => !idsToDelete.has(r.id),
+    );
+
     await chrome.storage.local.set({ requests: remainingRequests });
-    
+
     setState((s) => ({
       ...s,
       requests: remainingRequests,
-      selectedRequestId: idsToDelete.has(s.selectedRequestId || "") ? null : s.selectedRequestId,
+      selectedRequestId: idsToDelete.has(s.selectedRequestId || "")
+        ? null
+        : s.selectedRequestId,
       selectedRequestIds: new Set(),
     }));
   };
 
   const exportSelectedRequests = () => {
-    const selectedRequests = state.requests.filter((r) => state.selectedRequestIds.has(r.id));
+    const selectedRequests = state.requests.filter((r) =>
+      state.selectedRequestIds.has(r.id),
+    );
     const exportData = {
       version: "1.0",
       exportedAt: new Date().toISOString(),
@@ -160,8 +202,10 @@ export default function Dashboard() {
         },
       })),
     };
-    
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -173,7 +217,9 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen bg-background text-foreground dark">
       {/* Sidebar */}
-      <aside className={`${sidebarCollapsed ? "w-14" : "w-56"} flex-shrink-0 bg-card border-r border-border flex flex-col transition-all duration-200`}>
+      <aside
+        className={`${sidebarCollapsed ? "w-14" : "w-56"} flex-shrink-0 bg-card border-r border-border flex flex-col transition-all duration-200`}
+      >
         {/* Logo */}
         <div className="p-3 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -194,7 +240,9 @@ export default function Dashboard() {
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             className="p-1 hover:bg-accent rounded text-muted-foreground"
           >
-            <ChevronIcon className={`w-4 h-4 transition-transform ${sidebarCollapsed ? "rotate-180" : ""}`} />
+            <ChevronIcon
+              className={`w-4 h-4 transition-transform ${sidebarCollapsed ? "rotate-180" : ""}`}
+            />
           </button>
         </div>
 
@@ -209,7 +257,9 @@ export default function Dashboard() {
           />
           {!sidebarCollapsed && (
             <div className="pt-2 pb-1">
-              <span className="px-3 text-xs text-muted-foreground">Protocols</span>
+              <span className="px-3 text-xs text-muted-foreground">
+                Protocols
+              </span>
             </div>
           )}
           <NavItem
@@ -434,11 +484,13 @@ export default function Dashboard() {
                       <HistoryIcon className="w-8 h-8 opacity-50" />
                     </div>
                     <p className="text-sm font-medium">
-                      {state.searchQuery ? "No matching requests" : "No requests yet"}
+                      {state.searchQuery
+                        ? "No matching requests"
+                        : "No requests yet"}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1 text-center">
-                      {state.searchQuery 
-                        ? "Try a different search term" 
+                      {state.searchQuery
+                        ? "Try a different search term"
                         : "Browse the web to capture API requests"}
                     </p>
                   </div>
@@ -487,7 +539,11 @@ export default function Dashboard() {
             savedRequests={state.savedRequests}
             selectedCollectionId={state.selectedCollectionId}
             onSelectCollection={(id) =>
-              setState((s) => ({ ...s, selectedCollectionId: id, selectedRequestId: null }))
+              setState((s) => ({
+                ...s,
+                selectedCollectionId: id,
+                selectedRequestId: null,
+              }))
             }
           />
         )}
@@ -543,7 +599,9 @@ function NavItem({
         <>
           <span className="flex-1 text-left">{label}</span>
           {count !== undefined && (
-            <span className="text-xs bg-muted px-1.5 py-0.5 rounded">{count}</span>
+            <span className="text-xs bg-muted px-1.5 py-0.5 rounded">
+              {count}
+            </span>
           )}
         </>
       )}
@@ -570,21 +628,21 @@ function RequestListItem({
     request.statusCode >= 500
       ? "text-red-500"
       : request.statusCode >= 400
-      ? "text-amber-500"
-      : request.statusCode >= 300
-      ? "text-blue-500"
-      : "text-emerald-500";
+        ? "text-amber-500"
+        : request.statusCode >= 300
+          ? "text-blue-500"
+          : "text-emerald-500";
 
   const methodBgColor =
     request.method === "GET"
       ? "bg-emerald-500/10 text-emerald-600"
       : request.method === "POST"
-      ? "bg-amber-500/10 text-amber-600"
-      : request.method === "PUT"
-      ? "bg-blue-500/10 text-blue-600"
-      : request.method === "DELETE"
-      ? "bg-red-500/10 text-red-600"
-      : "bg-muted text-muted-foreground";
+        ? "bg-amber-500/10 text-amber-600"
+        : request.method === "PUT"
+          ? "bg-blue-500/10 text-blue-600"
+          : request.method === "DELETE"
+            ? "bg-red-500/10 text-red-600"
+            : "bg-muted text-muted-foreground";
 
   return (
     <div
@@ -603,16 +661,20 @@ function RequestListItem({
           onClick={(e) => e.stopPropagation()}
           className="w-4 h-4 rounded border-border"
         />
-        <span className={`font-mono text-[11px] font-semibold px-1.5 py-0.5 rounded ${methodBgColor}`}>
+        <span
+          className={`font-mono text-[11px] font-semibold px-1.5 py-0.5 rounded ${methodBgColor}`}
+        >
           {request.method}
         </span>
         <span className={`font-mono text-xs font-medium ${statusColor}`}>
           {request.statusCode}
         </span>
-        <span className="text-[10px] text-muted-foreground ml-auto tabular-nums">{request.duration.toFixed(0)}ms</span>
+        <span className="text-[10px] text-muted-foreground ml-auto tabular-nums">
+          {request.duration.toFixed(0)}ms
+        </span>
       </div>
-      <div 
-        className="text-xs text-muted-foreground truncate pl-6 hover:text-foreground transition-colors" 
+      <div
+        className="text-xs text-muted-foreground truncate pl-6 hover:text-foreground transition-colors"
         onClick={onClick}
         title={request.url}
       >
@@ -634,7 +696,9 @@ function RequestListItem({
 }
 
 function RequestDetailView({ request }: { request: RequestRecord }) {
-  const [activeTab, setActiveTab] = useState<"headers" | "body" | "response" | "timing">("headers");
+  const [activeTab, setActiveTab] = useState<
+    "headers" | "body" | "response" | "timing"
+  >("headers");
 
   return (
     <>
@@ -646,12 +710,12 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
               request.method === "GET"
                 ? "text-emerald-500"
                 : request.method === "POST"
-                ? "text-amber-500"
-                : request.method === "PUT"
-                ? "text-blue-500"
-                : request.method === "DELETE"
-                ? "text-red-500"
-                : "text-muted-foreground"
+                  ? "text-amber-500"
+                  : request.method === "PUT"
+                    ? "text-blue-500"
+                    : request.method === "DELETE"
+                      ? "text-red-500"
+                      : "text-muted-foreground"
             }`}
           >
             {request.method}
@@ -661,18 +725,21 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
               request.statusCode >= 500
                 ? "text-red-500"
                 : request.statusCode >= 400
-                ? "text-amber-500"
-                : request.statusCode >= 300
-                ? "text-blue-500"
-                : "text-emerald-500"
+                  ? "text-amber-500"
+                  : request.statusCode >= 300
+                    ? "text-blue-500"
+                    : "text-emerald-500"
             }`}
           >
             {request.statusCode}
           </span>
         </div>
-        <div className="font-mono text-xs text-muted-foreground break-all">{request.url}</div>
+        <div className="font-mono text-xs text-muted-foreground break-all">
+          {request.url}
+        </div>
         <div className="text-xs text-muted-foreground mt-2">
-          {new Date(request.timeStamp).toLocaleString()} · {request.duration.toFixed(0)}ms
+          {new Date(request.timeStamp).toLocaleString()} ·{" "}
+          {request.duration.toFixed(0)}ms
         </div>
       </div>
 
@@ -697,20 +764,32 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
       <div className="flex-1 overflow-auto p-4">
         {activeTab === "headers" && (
           <div className="space-y-1">
-            <h3 className="text-xs font-medium text-muted-foreground mb-2">Request Headers</h3>
+            <h3 className="text-xs font-medium text-muted-foreground mb-2">
+              Request Headers
+            </h3>
             {request.requestHeaders?.map((h, i) => (
               <div key={i} className="flex text-xs">
-                <span className="text-primary w-40 flex-shrink-0 truncate">{h.name}</span>
-                <span className="text-muted-foreground truncate">{h.value}</span>
+                <span className="text-primary w-40 flex-shrink-0 truncate">
+                  {h.name}
+                </span>
+                <span className="text-muted-foreground truncate">
+                  {h.value}
+                </span>
               </div>
             ))}
             {request.responseHeaders && (
               <>
-                <h3 className="text-xs font-medium text-muted-foreground mb-2 mt-4">Response Headers</h3>
+                <h3 className="text-xs font-medium text-muted-foreground mb-2 mt-4">
+                  Response Headers
+                </h3>
                 {request.responseHeaders.map((h, i) => (
                   <div key={i} className="flex text-xs">
-                    <span className="text-primary w-40 flex-shrink-0 truncate">{h.name}</span>
-                    <span className="text-muted-foreground truncate">{h.value}</span>
+                    <span className="text-primary w-40 flex-shrink-0 truncate">
+                      {h.name}
+                    </span>
+                    <span className="text-muted-foreground truncate">
+                      {h.value}
+                    </span>
                   </div>
                 ))}
               </>
@@ -725,7 +804,9 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
                 {request.requestBodyText}
               </pre>
             ) : (
-              <div className="text-sm text-muted-foreground">No request body</div>
+              <div className="text-sm text-muted-foreground">
+                No request body
+              </div>
             )}
           </div>
         )}
@@ -737,7 +818,9 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
                 {request.responseBodyText}
               </pre>
             ) : (
-              <div className="text-sm text-muted-foreground">No response body captured</div>
+              <div className="text-sm text-muted-foreground">
+                No response body captured
+              </div>
             )}
           </div>
         )}
@@ -746,11 +829,15 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Total Duration</span>
-              <span className="font-mono text-foreground">{request.duration.toFixed(2)}ms</span>
+              <span className="font-mono text-foreground">
+                {request.duration.toFixed(2)}ms
+              </span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Status Code</span>
-              <span className="font-mono text-foreground">{request.statusCode}</span>
+              <span className="font-mono text-foreground">
+                {request.statusCode}
+              </span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Tab ID</span>
@@ -758,7 +845,9 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Request Type</span>
-              <span className="font-mono text-foreground">{request.type || "main_frame"}</span>
+              <span className="font-mono text-foreground">
+                {request.type || "main_frame"}
+              </span>
             </div>
           </div>
         )}
@@ -779,7 +868,9 @@ function CollectionsView({
   onSelectCollection: (id: string | null) => void;
 }) {
   const [isRunning, setIsRunning] = useState(false);
-  const selectedCollection = collections.find((c) => c.id === selectedCollectionId);
+  const selectedCollection = collections.find(
+    (c) => c.id === selectedCollectionId,
+  );
   const collectionRequests = selectedCollectionId
     ? savedRequests.filter((r) => r.collectionId === selectedCollectionId)
     : [];
@@ -788,7 +879,7 @@ function CollectionsView({
     if (!config) {
       throw new Error("No request config");
     }
-    
+
     const headers: Record<string, string> = {};
     config.headers.forEach((h) => {
       if (h.enabled !== false && h.name) {
@@ -799,9 +890,14 @@ function CollectionsView({
     if (config.auth.type === "bearer" && config.auth.bearer?.token) {
       headers["Authorization"] = "Bearer " + config.auth.bearer.token;
     } else if (config.auth.type === "basic" && config.auth.basic) {
-      const encoded = btoa(config.auth.basic.username + ":" + config.auth.basic.password);
+      const encoded = btoa(
+        config.auth.basic.username + ":" + config.auth.basic.password,
+      );
       headers["Authorization"] = "Basic " + encoded;
-    } else if (config.auth.type === "api-key" && config.auth.apiKey?.addTo === "header") {
+    } else if (
+      config.auth.type === "api-key" &&
+      config.auth.apiKey?.addTo === "header"
+    ) {
       headers[config.auth.apiKey.key] = config.auth.apiKey.value;
     }
 
@@ -821,7 +917,10 @@ function CollectionsView({
       if (enabledParams.length > 0) {
         const sep = url.includes("?") ? "&" : "?";
         const queryString = enabledParams
-          .map((p) => encodeURIComponent(p.name) + "=" + encodeURIComponent(p.value))
+          .map(
+            (p) =>
+              encodeURIComponent(p.name) + "=" + encodeURIComponent(p.value),
+          )
           .join("&");
         url = url + sep + queryString;
       }
@@ -831,7 +930,8 @@ function CollectionsView({
     const response = await fetch(url, {
       method: config.method,
       headers,
-      body: config.method !== "GET" && config.method !== "HEAD" ? body : undefined,
+      body:
+        config.method !== "GET" && config.method !== "HEAD" ? body : undefined,
     });
 
     const responseBody = await response.text();
@@ -859,7 +959,9 @@ function CollectionsView({
         </div>
         <div className="p-2 space-y-1">
           {collections.length === 0 ? (
-            <div className="p-4 text-sm text-muted-foreground text-center">No collections yet</div>
+            <div className="p-4 text-sm text-muted-foreground text-center">
+              No collections yet
+            </div>
           ) : (
             collections.map((col) => (
               <button
@@ -877,7 +979,10 @@ function CollectionsView({
                 <FolderIcon className="w-4 h-4" />
                 <span className="flex-1 text-left truncate">{col.name}</span>
                 <span className="text-xs bg-muted px-1.5 py-0.5 rounded">
-                  {savedRequests.filter((r) => r.collectionId === col.id).length}
+                  {
+                    savedRequests.filter((r) => r.collectionId === col.id)
+                      .length
+                  }
                 </span>
               </button>
             ))
@@ -899,7 +1004,9 @@ function CollectionsView({
                 <div>
                   <h2 className="font-medium">{selectedCollection.name}</h2>
                   {selectedCollection.description && (
-                    <p className="text-sm text-muted-foreground mt-1">{selectedCollection.description}</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {selectedCollection.description}
+                    </p>
                   )}
                 </div>
                 {collectionRequests.length > 0 && (
@@ -929,15 +1036,19 @@ function CollectionsView({
                             req.request.method === "GET"
                               ? "text-emerald-500"
                               : req.request.method === "POST"
-                              ? "text-amber-500"
-                              : "text-muted-foreground"
+                                ? "text-amber-500"
+                                : "text-muted-foreground"
                           }`}
                         >
                           {req.request.method}
                         </span>
-                        <span className="text-sm text-foreground">{req.name}</span>
+                        <span className="text-sm text-foreground">
+                          {req.name}
+                        </span>
                       </div>
-                      <div className="text-xs text-muted-foreground truncate mt-1">{req.request.url}</div>
+                      <div className="text-xs text-muted-foreground truncate mt-1">
+                        {req.request.url}
+                      </div>
                     </div>
                   ))
                 )}
@@ -958,7 +1069,9 @@ function CollectionsView({
 }
 
 function SettingsView() {
-  const [settingsTab, setSettingsTab] = useState<"ai" | "environments" | "filters" | "shortcuts">("ai");
+  const [settingsTab, setSettingsTab] = useState<
+    "ai" | "environments" | "filters" | "shortcuts"
+  >("ai");
 
   return (
     <div className="flex-1 flex">
@@ -967,7 +1080,9 @@ function SettingsView() {
         <button
           onClick={() => setSettingsTab("ai")}
           className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm ${
-            settingsTab === "ai" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+            settingsTab === "ai"
+              ? "bg-accent text-accent-foreground"
+              : "hover:bg-accent/50"
           }`}
         >
           <SparklesIcon className="w-4 h-4" />
@@ -976,7 +1091,9 @@ function SettingsView() {
         <button
           onClick={() => setSettingsTab("environments")}
           className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm ${
-            settingsTab === "environments" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+            settingsTab === "environments"
+              ? "bg-accent text-accent-foreground"
+              : "hover:bg-accent/50"
           }`}
         >
           <GlobeIcon className="w-4 h-4" />
@@ -985,7 +1102,9 @@ function SettingsView() {
         <button
           onClick={() => setSettingsTab("filters")}
           className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm ${
-            settingsTab === "filters" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+            settingsTab === "filters"
+              ? "bg-accent text-accent-foreground"
+              : "hover:bg-accent/50"
           }`}
         >
           <FilterIcon className="w-4 h-4" />
@@ -994,7 +1113,9 @@ function SettingsView() {
         <button
           onClick={() => setSettingsTab("shortcuts")}
           className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm ${
-            settingsTab === "shortcuts" ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+            settingsTab === "shortcuts"
+              ? "bg-accent text-accent-foreground"
+              : "hover:bg-accent/50"
           }`}
         >
           <KeyboardIcon className="w-4 h-4" />
@@ -1022,9 +1143,16 @@ function SettingsView() {
                 { key: "Ctrl+Shift+Delete", action: "Clear history" },
                 { key: "Escape", action: "Close panel" },
               ].map(({ key, action }) => (
-                <div key={key} className="flex items-center justify-between py-2 border-b border-border">
-                  <span className="text-sm text-muted-foreground">{action}</span>
-                  <kbd className="px-3 py-1 text-xs bg-muted rounded font-mono">{key}</kbd>
+                <div
+                  key={key}
+                  className="flex items-center justify-between py-2 border-b border-border"
+                >
+                  <span className="text-sm text-muted-foreground">
+                    {action}
+                  </span>
+                  <kbd className="px-3 py-1 text-xs bg-muted rounded font-mono">
+                    {key}
+                  </kbd>
                 </div>
               ))}
             </div>
@@ -1043,7 +1171,12 @@ function SettingsView() {
 
 function HistoryIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className="w-4 h-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1056,7 +1189,12 @@ function HistoryIcon() {
 
 function ChevronIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1069,7 +1207,12 @@ function ChevronIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 function PlusIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className="w-4 h-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1082,7 +1225,12 @@ function PlusIcon() {
 
 function FolderIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1095,7 +1243,12 @@ function FolderIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 function PlayIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1114,7 +1267,12 @@ function PlayIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 function CookieIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className="w-4 h-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1127,7 +1285,12 @@ function CookieIcon() {
 
 function MockIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className="w-4 h-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1140,7 +1303,12 @@ function MockIcon() {
 
 function DocsIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className="w-4 h-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1153,7 +1321,12 @@ function DocsIcon() {
 
 function SyncIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className="w-4 h-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1166,7 +1339,12 @@ function SyncIcon() {
 
 function SettingsIcon() {
   return (
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className="w-4 h-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1185,7 +1363,12 @@ function SettingsIcon() {
 
 function SearchIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1198,7 +1381,12 @@ function SearchIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 function RefreshIcon({ className = "w-3 h-3" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1211,7 +1399,12 @@ function RefreshIcon({ className = "w-3 h-3" }: { className?: string }) {
 
 function TrashIcon({ className = "w-3 h-3" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1224,7 +1417,12 @@ function TrashIcon({ className = "w-3 h-3" }: { className?: string }) {
 
 function ExportIcon({ className = "w-3 h-3" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1237,7 +1435,12 @@ function ExportIcon({ className = "w-3 h-3" }: { className?: string }) {
 
 function CheckIcon({ className = "w-3 h-3" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1250,7 +1453,12 @@ function CheckIcon({ className = "w-3 h-3" }: { className?: string }) {
 
 function CodeIcon({ className = "w-8 h-8" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1263,7 +1471,12 @@ function CodeIcon({ className = "w-8 h-8" }: { className?: string }) {
 
 function SparklesIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1276,7 +1489,12 @@ function SparklesIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 function GlobeIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1289,7 +1507,12 @@ function GlobeIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 function FilterIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1302,7 +1525,12 @@ function FilterIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 function KeyboardIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1315,7 +1543,12 @@ function KeyboardIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 function WebSocketIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1328,7 +1561,12 @@ function WebSocketIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 function SSEIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1341,7 +1579,12 @@ function SSEIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 function SocketIOIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1354,7 +1597,12 @@ function SocketIOIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 function GraphQLIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1367,7 +1615,12 @@ function GraphQLIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 function DiffIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -1380,7 +1633,12 @@ function DiffIcon({ className = "w-4 h-4" }: { className?: string }) {
 
 function CertIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
