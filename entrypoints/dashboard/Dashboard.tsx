@@ -768,6 +768,32 @@ export default function Dashboard() {
 
         {view === "settings" && <SettingsView />}
       </main>
+
+      {/* Modals */}
+      {showWelcome && (
+        <WelcomeScreen
+          onCreateRequest={() => {
+            dismissWelcome();
+            setView("builder");
+          }}
+          onImportFile={() => {
+            dismissWelcome();
+            setShowImport(true);
+          }}
+          onLoadSample={loadSampleCollection}
+        />
+      )}
+
+      {showImport && (
+        <ImportModal
+          onClose={() => setShowImport(false)}
+          onImport={handleImport}
+        />
+      )}
+
+      {showShortcuts && (
+        <ShortcutsModal onClose={() => setShowShortcuts(false)} />
+      )}
     </div>
   );
 }
