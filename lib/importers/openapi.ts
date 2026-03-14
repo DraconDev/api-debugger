@@ -305,7 +305,7 @@ function getAuthFromSecurity(
 }
 
 function parseYaml(content: string): OpenAPISpec {
-  const result: OpenAPISpec = {};
+  const result: Record<string, unknown> = {};
   const lines = content.split("\n");
   let currentPath: string[] = [];
   let indent = 0;
@@ -341,7 +341,7 @@ function parseYaml(content: string): OpenAPISpec {
     }
   }
 
-  return result;
+  return result as OpenAPISpec;
 }
 
 function parseYamlValue(value: string): unknown {
