@@ -46,7 +46,9 @@ export function parseHar(content: string): ImportResult {
     return {
       type: "requests",
       name: "Import Failed",
-      errors: [`Failed to parse HAR file: ${error instanceof Error ? error.message : "Invalid JSON"}`],
+      errors: [
+        `Failed to parse HAR file: ${error instanceof Error ? error.message : "Invalid JSON"}`,
+      ],
       requests: [],
     };
   }
@@ -55,7 +57,7 @@ export function parseHar(content: string): ImportResult {
 
   const requests: ImportRequest[] = entries
     .filter((entry) => entry.request)
-    .map((entry, index) => parseHarEntry(entry, index));
+    .map((entry) => parseHarEntry(entry));
 
   return {
     type: "requests",
@@ -64,7 +66,7 @@ export function parseHar(content: string): ImportResult {
   };
 }
 
-function parseHarEntry(entry: HarEntry, index: number): ImportRequest {
+function parseHarEntry(entry: HarEntry): ImportRequest {
   const { request } = entry;
 
   const headers = (request.headers || []).map((h) => ({
@@ -83,7 +85,11 @@ function parseHarEntry(entry: HarEntry, index: number): ImportRequest {
         raw: request.postData.text || "",
       };
       if (!headers.find((h) => h.name.toLowerCase() === "content-type")) {
-        headers.push({ name: "Content-Type", value: "application/json", enabled: true });
+        headers.push({
+          name: "Content-Type",
+          value: "application/json",
+          enabled: true,
+        });
       }
     } else if (mimeType.includes("application/x-www-form-urlencoded")) {
       body = {
@@ -131,7 +137,7 @@ function getUrlPath(url: string): string {
 }
 
 function filterHeaders(
-  headers: Array<{ name: string; value: string; enabled: boolean }>
+  headers: Array<{ name: string; value: string; enabled: boolean }>,
 ): Array<{ name: string; value: string; enabled: boolean }> {
   const skipHeaders = new Set([
     "host",

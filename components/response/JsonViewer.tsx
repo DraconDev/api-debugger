@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 
 interface JsonViewerProps {
   data: unknown;
@@ -7,7 +7,12 @@ interface JsonViewerProps {
   onCopy?: (value: string) => void;
 }
 
-export function JsonViewer({ data, depth = 0, searchTerm, onCopy }: JsonViewerProps) {
+export function JsonViewer({
+  data,
+  depth = 0,
+  searchTerm,
+  onCopy,
+}: JsonViewerProps) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [copiedPath, setCopiedPath] = useState<string | null>(null);
 
@@ -23,12 +28,15 @@ export function JsonViewer({ data, depth = 0, searchTerm, onCopy }: JsonViewerPr
     });
   }, []);
 
-  const handleCopy = useCallback((value: string, path: string) => {
-    navigator.clipboard.writeText(value);
-    setCopiedPath(path);
-    onCopy?.(value);
-    setTimeout(() => setCopiedPath(null), 2000);
-  }, [onCopy]);
+  const handleCopy = useCallback(
+    (value: string, path: string) => {
+      navigator.clipboard.writeText(value);
+      setCopiedPath(path);
+      onCopy?.(value);
+      setTimeout(() => setCopiedPath(null), 2000);
+    },
+    [onCopy],
+  );
 
   if (data === null) {
     return <span className="text-purple-400">null</span>;
@@ -54,7 +62,9 @@ export function JsonViewer({ data, depth = 0, searchTerm, onCopy }: JsonViewerPr
         </span>
       );
     }
-    return <span className="text-emerald-400">&quot;{escapeHtml(data)}&quot;</span>;
+    return (
+      <span className="text-emerald-400">&quot;{escapeHtml(data)}&quot;</span>
+    );
   }
 
   if (Array.isArray(data)) {
@@ -79,11 +89,23 @@ export function JsonViewer({ data, depth = 0, searchTerm, onCopy }: JsonViewerPr
             {data.map((item, index) => (
               <div key={index} className="group relative">
                 <span className="text-gray-500 mr-2">{index}:</span>
-                <JsonViewer data={item} depth={depth + 1} searchTerm={searchTerm} onCopy={onCopy} />
-                {index < data.length - 1 && <span className="text-gray-400">,</span>}
+                <JsonViewer
+                  data={item}
+                  depth={depth + 1}
+                  searchTerm={searchTerm}
+                  onCopy={onCopy}
+                />
+                {index < data.length - 1 && (
+                  <span className="text-gray-400">,</span>
+                )}
                 <button
                   className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 px-1 text-[10px] text-primary hover:bg-primary/10 rounded"
-                  onClick={() => handleCopy(JSON.stringify(item, null, 2), `${path}[${index}]`)}
+                  onClick={() =>
+                    handleCopy(
+                      JSON.stringify(item, null, 2),
+                      `${path}[${index}]`,
+                    )
+                  }
                 >
                   {copiedPath === `${path}[${index}]` ? "✓" : "Copy"}
                 </button>
@@ -119,18 +141,38 @@ export function JsonViewer({ data, depth = 0, searchTerm, onCopy }: JsonViewerPr
         {isExpanded ? (
           <div className="ml-4 border-l border-border pl-2">
             {entries.map(([key, value], index) => {
-              const isMatch = searchTerm && key.toLowerCase().includes(searchTerm.toLowerCase());
+              const isMatch =
+                searchTerm &&
+                key.toLowerCase().includes(searchTerm.toLowerCase());
               return (
                 <div key={key} className="group relative">
-                  <span className={isMatch ? "text-yellow-400 bg-yellow-400/20 px-0.5 rounded" : "text-cyan-400"}>
+                  <span
+                    className={
+                      isMatch
+                        ? "text-yellow-400 bg-yellow-400/20 px-0.5 rounded"
+                        : "text-cyan-400"
+                    }
+                  >
                     {escapeHtml(key)}
                   </span>
                   <span className="text-gray-400">: </span>
-                  <JsonViewer data={value} depth={depth + 1} searchTerm={searchTerm} onCopy={onCopy} />
-                  {index < entries.length - 1 && <span className="text-gray-400">,</span>}
+                  <JsonViewer
+                    data={value}
+                    depth={depth + 1}
+                    searchTerm={searchTerm}
+                    onCopy={onCopy}
+                  />
+                  {index < entries.length - 1 && (
+                    <span className="text-gray-400">,</span>
+                  )}
                   <button
                     className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 px-1 text-[10px] text-primary hover:bg-primary/10 rounded"
-                    onClick={() => handleCopy(JSON.stringify(value, null, 2), `${path}.${key}`)}
+                    onClick={() =>
+                      handleCopy(
+                        JSON.stringify(value, null, 2),
+                        `${path}.${key}`,
+                      )
+                    }
                   >
                     {copiedPath === `${path}.${key}` ? "✓" : "Copy"}
                   </button>
@@ -161,17 +203,19 @@ function highlightMatch(text: string, term: string): React.ReactNode {
   const lowerText = text.toLowerCase();
   const lowerTerm = term.toLowerCase();
   const index = lowerText.indexOf(lowerTerm);
-  
+
   if (index === -1) return escapeHtml(text);
-  
+
   const before = text.slice(0, index);
   const match = text.slice(index, index + term.length);
   const after = text.slice(index + term.length);
-  
+
   return (
     <>
       {escapeHtml(before)}
-      <span className="bg-yellow-400/30 text-yellow-300">{escapeHtml(match)}</span>
+      <span className="bg-yellow-400/30 text-yellow-300">
+        {escapeHtml(match)}
+      </span>
       {escapeHtml(after)}
     </>
   );
@@ -223,7 +267,9 @@ export function JsonViewerWithSearch({ body }: JsonViewerWithSearchProps) {
         </button>
         <button
           onClick={() => {
-            const blob = new Blob([JSON.stringify(parsed, null, 2)], { type: "application/json" });
+            const blob = new Blob([JSON.stringify(parsed, null, 2)], {
+              type: "application/json",
+            });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
@@ -237,10 +283,12 @@ export function JsonViewerWithSearch({ body }: JsonViewerWithSearchProps) {
           <DownloadIcon className="w-4 h-4" />
         </button>
         {copyMessage && (
-          <span className="text-xs text-emerald-500 ml-auto">{copyMessage}</span>
+          <span className="text-xs text-emerald-500 ml-auto">
+            {copyMessage}
+          </span>
         )}
       </div>
-      
+
       {showSearch && (
         <div className="p-2 border-b border-border">
           <input
@@ -253,7 +301,7 @@ export function JsonViewerWithSearch({ body }: JsonViewerWithSearchProps) {
           />
         </div>
       )}
-      
+
       <div className="flex-1 overflow-auto p-4 font-mono text-sm">
         <JsonViewer data={parsed} searchTerm={searchTerm} onCopy={handleCopy} />
       </div>
@@ -263,24 +311,54 @@ export function JsonViewerWithSearch({ body }: JsonViewerWithSearchProps) {
 
 function SearchIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      />
     </svg>
   );
 }
 
 function CopyIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+      />
     </svg>
   );
 }
 
 function DownloadIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+      />
     </svg>
   );
 }

@@ -1,7 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { importContent, detectImportFormat } from "@/lib/importers";
-import type { ImportResult, ImportRequest } from "@/lib/importers";
-import type { Collection, SavedRequest, Environment } from "@/types";
+import type { ImportResult } from "@/lib/importers";
 
 interface ImportModalProps {
   onClose: () => void;
@@ -90,7 +89,9 @@ export function ImportModal({ onClose, onImport }: ImportModalProps) {
       setFilename(name);
       previewImport(text, name);
     } catch (err) {
-      setError(`Failed to fetch: ${err instanceof Error ? err.message : "Unknown error"}`);
+      setError(
+        `Failed to fetch: ${err instanceof Error ? err.message : "Unknown error"}`,
+      );
     } finally {
       setImporting(false);
     }
@@ -98,7 +99,7 @@ export function ImportModal({ onClose, onImport }: ImportModalProps) {
 
   const handleImport = useCallback(() => {
     if (!preview) return;
-    
+
     setImporting(true);
     try {
       onImport(preview);
@@ -113,7 +114,10 @@ export function ImportModal({ onClose, onImport }: ImportModalProps) {
   const detectedFormat = content ? detectImportFormat(content, filename) : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      onClick={onClose}
+    >
       <div
         className="bg-card border border-border rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
@@ -150,10 +154,12 @@ export function ImportModal({ onClose, onImport }: ImportModalProps) {
               ref={fileInputRef}
               type="file"
               accept=".json,.yaml,.yml,.har"
-              onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+              onChange={(e) =>
+                e.target.files?.[0] && handleFile(e.target.files[0])
+              }
               className="hidden"
             />
-            
+
             <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
               <UploadIcon className="w-6 h-6 text-muted-foreground" />
             </div>
@@ -188,7 +194,9 @@ export function ImportModal({ onClose, onImport }: ImportModalProps) {
               <div className="flex items-center gap-2 text-sm">
                 <CheckIcon className="w-4 h-4 text-emerald-500" />
                 <span className="font-medium">Detected format:</span>
-                <span className="text-muted-foreground capitalize">{detectedFormat}</span>
+                <span className="text-muted-foreground capitalize">
+                  {detectedFormat}
+                </span>
               </div>
             </div>
           )}
@@ -200,9 +208,13 @@ export function ImportModal({ onClose, onImport }: ImportModalProps) {
 
               {preview.collections && preview.collections.length > 0 && (
                 <div className="mb-3">
-                  <p className="text-xs text-muted-foreground mb-1">Collections ({preview.collections.length})</p>
+                  <p className="text-xs text-muted-foreground mb-1">
+                    Collections ({preview.collections.length})
+                  </p>
                   {preview.collections.map((c) => (
-                    <div key={c.id} className="text-sm font-medium">{c.name}</div>
+                    <div key={c.id} className="text-sm font-medium">
+                      {c.name}
+                    </div>
                   ))}
                 </div>
               )}
@@ -214,14 +226,23 @@ export function ImportModal({ onClose, onImport }: ImportModalProps) {
                   </p>
                   <div className="max-h-40 overflow-auto space-y-1">
                     {preview.requests.slice(0, 10).map((r) => (
-                      <div key={r.id} className="flex items-center gap-2 text-xs">
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${
-                          r.method === "GET" ? "bg-emerald-500/20 text-emerald-600" :
-                          r.method === "POST" ? "bg-amber-500/20 text-amber-600" :
-                          r.method === "PUT" ? "bg-blue-500/20 text-blue-600" :
-                          r.method === "DELETE" ? "bg-red-500/20 text-red-600" :
-                          "bg-muted text-muted-foreground"
-                        }`}>
+                      <div
+                        key={r.id}
+                        className="flex items-center gap-2 text-xs"
+                      >
+                        <span
+                          className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${
+                            r.method === "GET"
+                              ? "bg-emerald-500/20 text-emerald-600"
+                              : r.method === "POST"
+                                ? "bg-amber-500/20 text-amber-600"
+                                : r.method === "PUT"
+                                  ? "bg-blue-500/20 text-blue-600"
+                                  : r.method === "DELETE"
+                                    ? "bg-red-500/20 text-red-600"
+                                    : "bg-muted text-muted-foreground"
+                          }`}
+                        >
                           {r.method}
                         </span>
                         <span className="truncate">{r.name}</span>
@@ -238,9 +259,13 @@ export function ImportModal({ onClose, onImport }: ImportModalProps) {
 
               {preview.environments && preview.environments.length > 0 && (
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">Environments ({preview.environments.length})</p>
+                  <p className="text-xs text-muted-foreground mb-1">
+                    Environments ({preview.environments.length})
+                  </p>
                   {preview.environments.map((e) => (
-                    <div key={e.id} className="text-sm font-medium">{e.name} ({e.values.length} variables)</div>
+                    <div key={e.id} className="text-sm font-medium">
+                      {e.name} ({e.values.length} variables)
+                    </div>
                   ))}
                 </div>
               )}
@@ -275,24 +300,54 @@ export function ImportModal({ onClose, onImport }: ImportModalProps) {
 
 function CloseIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M6 18L18 6M6 6l12 12"
+      />
     </svg>
   );
 }
 
 function UploadIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+      />
     </svg>
   );
 }
 
 function CheckIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M5 13l4 4L19 7"
+      />
     </svg>
   );
 }
