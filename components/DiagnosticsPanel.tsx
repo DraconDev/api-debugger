@@ -307,7 +307,7 @@ Keep response under 150 words.`;
 
       {/* Prompt to configure AI if not set up */}
       {!aiSettings && (
-        <div className="mt-3 pt-3 border-t text-xs text-muted-foreground">
+        <div className="mt-3 pt-3 border-t border-border text-xs text-muted-foreground">
           <span
             className="text-primary cursor-pointer hover:underline"
             onClick={() => {
