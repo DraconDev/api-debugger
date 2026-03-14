@@ -31,6 +31,7 @@ declare global {
   const ShortcutsModal: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ShortcutsModal').ShortcutsModal
   const ThemeToggle: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useTheme').ThemeToggle
   const WelcomeScreen: typeof import('/home/dracon/Dev/extensions/api-debugger/components/WelcomeScreen').WelcomeScreen
+  const WorkflowSimulator: typeof import('/home/dracon/Dev/extensions/api-debugger/components/WorkflowSimulator').WorkflowSimulator
   const browser: typeof import('wxt/browser').browser
   const createAIClient: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/ai-client').createAIClient
   const createIframeUi: typeof import('wxt/utils/content-script-ui/iframe').createIframeUi
@@ -89,6 +90,9 @@ declare global {
   // @ts-ignore
   export type { ScriptPublicPath, InjectScriptOptions } from 'wxt/utils/inject-script'
   import('wxt/utils/inject-script')
+  // @ts-ignore
+  export type { WorkflowConfig, WorkflowAssertion, WorkflowStep, WorkflowCondition, WorkflowResult, AssertionResult, LoadTestMetrics } from '/home/dracon/Dev/extensions/api-debugger/components/WorkflowSimulator'
+  import('/home/dracon/Dev/extensions/api-debugger/components/WorkflowSimulator')
   // @ts-ignore
   export type { AIProvider, AIConfig, AIMessage, AIResponse } from '/home/dracon/Dev/extensions/api-debugger/utils/ai-client'
   import('/home/dracon/Dev/extensions/api-debugger/utils/ai-client')
