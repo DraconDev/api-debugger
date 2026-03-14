@@ -1433,10 +1433,10 @@ function SettingsView() {
 
 // Icons
 
-function HistoryIcon() {
+function HistoryIcon({ className = "w-4 h-4" }: { className?: string } = {}) {
   return (
     <svg
-      className="w-4 h-4"
+      className={className}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
