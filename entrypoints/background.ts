@@ -385,6 +385,9 @@ export default defineBackground(() => {
   });
 });
 
+// TODO: Mock servers require declarativeNetRequest API in MV3
+// The webRequest blocking API is not available for regular extensions
+// To implement mock servers, use chrome.declarativeNetRequest instead
 let mockServers: import("@/types").MockServer[] = [];
 
 chrome.storage.local.get(["apiDebugger_mockServers"]).then((result) => {
