@@ -18,7 +18,10 @@ export function ReplayPanel({ request }: ReplayPanelProps) {
   const [method, setMethod] = useState(request.method);
   const [url, setUrl] = useState(request.url);
   const [headersText, setHeadersText] = useState(() => {
-    return request.requestHeaders?.map((h) => `${h.name}: ${h.value}`).join("\n") || "";
+    return (
+      request.requestHeaders?.map((h) => `${h.name}: ${h.value}`).join("\n") ||
+      ""
+    );
   });
   const [body, setBody] = useState(request.requestBodyText || "");
   const [isReplaying, setIsReplaying] = useState(false);
@@ -109,7 +112,7 @@ export function ReplayPanel({ request }: ReplayPanelProps) {
         </button>
 
         {error && (
-          <div className="p-2 text-xs bg-red-50 border border-red-200 rounded text-red-700">
+          <div className="p-2 text-xs bg-destructive/10 border border-destructive/20 rounded-md text-destructive">
             {error}
           </div>
         )}
@@ -117,7 +120,11 @@ export function ReplayPanel({ request }: ReplayPanelProps) {
         {response && (
           <div className="p-2 bg-muted rounded text-xs">
             <div className="flex justify-between mb-2">
-              <span className={response.status < 400 ? "text-green-600" : "text-red-600"}>
+              <span
+                className={
+                  response.status < 400 ? "text-green-600" : "text-red-600"
+                }
+              >
                 {response.status} {response.statusText}
               </span>
               <span className="text-muted-foreground">
