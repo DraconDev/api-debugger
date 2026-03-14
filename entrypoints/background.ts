@@ -253,12 +253,19 @@ export default defineBackground(() => {
       for (const server of mockServers) {
         if (!server.enabled) continue;
 
+        let parsedUrl: URL | undefined;
+        try {
+          parsedUrl = new URL(details.url);
+        } catch {
+          continue;
+        }
+
         for (const endpoint of server.endpoints) {
           if (!endpoint.enabled) continue;
 
           if (
             details.method === endpoint.method &&
-            url.pathname === endpoint.path
+            parsedUrl.pathname === endpoint.path
           ) {
             return {
               redirectUrl: `data:${endpoint.contentType};base64,${btoa(endpoint.body)}`,
