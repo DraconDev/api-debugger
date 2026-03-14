@@ -250,31 +250,7 @@ export default defineBackground(() => {
   chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
       if (!shouldCapture(details.url)) {
-        return {};
-      }
-
-      for (const server of mockServers) {
-        if (!server.enabled) continue;
-
-        let parsedUrl: URL | undefined;
-        try {
-          parsedUrl = new URL(details.url);
-        } catch {
-          continue;
-        }
-
-        for (const endpoint of server.endpoints) {
-          if (!endpoint.enabled) continue;
-
-          if (
-            details.method === endpoint.method &&
-            parsedUrl.pathname === endpoint.path
-          ) {
-            return {
-              redirectUrl: `data:${endpoint.contentType};base64,${btoa(endpoint.body)}`,
-            };
-          }
-        }
+        return;
       }
 
       partial.set(details.requestId, {
@@ -284,11 +260,9 @@ export default defineBackground(() => {
           details as chrome.webRequest.WebRequestBodyDetails,
         ),
       });
-
-      return {};
     },
     { urls: ["<all_urls>"] },
-    ["requestBody", "blocking"],
+    ["requestBody"],
   );
 
   chrome.webRequest.onBeforeSendHeaders.addListener(
