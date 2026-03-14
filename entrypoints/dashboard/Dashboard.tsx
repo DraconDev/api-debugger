@@ -18,6 +18,7 @@ import { ThemeToggle } from "@/hooks/useTheme";
 import { RuntimeVariablesProvider } from "@/hooks/useRuntimeVariables";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { CollectionRunner } from "@/components/CollectionRunner";
+import { WorkflowSimulator } from "@/components/WorkflowSimulator";
 import { MockServerManager } from "@/components/MockServerManager";
 import { ApiDocGenerator } from "@/components/ApiDocGenerator";
 import { GitHubSyncPanel } from "@/components/GitHubSyncPanel";
