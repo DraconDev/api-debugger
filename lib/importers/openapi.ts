@@ -1,9 +1,4 @@
-import type {
-  ImportResult,
-  ImportCollection,
-  ImportRequest,
-  ImportEnvironment,
-} from "./types";
+import type { ImportResult, ImportCollection, ImportRequest } from "./types";
 import { generateId } from "./types";
 
 interface OpenAPIInfo {
