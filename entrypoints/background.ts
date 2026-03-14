@@ -32,8 +32,35 @@ export default defineBackground(() => {
 
   const partial = new Map<string, PartialRequest>();
 
+  const DEFAULT_EXCLUDE_PATTERNS = [
+    /^chrome-extension:\/\//i,
+    /^chrome:\/\//i,
+    /^about:/i,
+    /^data:/i,
+    /^blob:/i,
+    /^file:\/\//i,
+    /\.(tsx?|jsx?|css|html|map|woff2?|ttf|eot|svg|png|gif|jpg|jpeg|ico|webp)$/i,
+    /\/node_modules\//i,
+    /\/__vite_ping/i,
+    /\/@vite\//i,
+    /\/@fs\//i,
+    /\/@id\//i,
+    /hot-update/i,
+  ];
+
+  function shouldCapture(url: string): boolean {
+    for (const pattern of DEFAULT_EXCLUDE_PATTERNS) {
+      if (pattern.test(url)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   // Helper functions
-  function serializeRequestBody(details: chrome.webRequest.WebRequestBodyDetails): string | null {
+  function serializeRequestBody(
+    details: chrome.webRequest.WebRequestBodyDetails,
+  ): string | null {
     const body = details.requestBody;
     if (!body) return null;
 
@@ -74,7 +101,9 @@ export default defineBackground(() => {
     await chrome.storage.local.set({ requests: list });
   }
 
-  async function sendRequest(config: import("@/types").RequestConfig): Promise<import("@/types").CapturedResponse> {
+  async function sendRequest(
+    config: import("@/types").RequestConfig,
+  ): Promise<import("@/types").CapturedResponse> {
     const start = performance.now();
 
     const headers: Record<string, string> = {};
@@ -87,9 +116,14 @@ export default defineBackground(() => {
     if (config.auth.type === "bearer" && config.auth.bearer?.token) {
       headers["Authorization"] = "Bearer " + config.auth.bearer.token;
     } else if (config.auth.type === "basic" && config.auth.basic) {
-      const encoded = btoa(config.auth.basic.username + ":" + config.auth.basic.password);
+      const encoded = btoa(
+        config.auth.basic.username + ":" + config.auth.basic.password,
+      );
       headers["Authorization"] = "Basic " + encoded;
-    } else if (config.auth.type === "api-key" && config.auth.apiKey?.addTo === "header") {
+    } else if (
+      config.auth.type === "api-key" &&
+      config.auth.apiKey?.addTo === "header"
+    ) {
       headers[config.auth.apiKey.key] = config.auth.apiKey.value;
     }
 
@@ -101,9 +135,12 @@ export default defineBackground(() => {
       }
     } else if (config.bodyType === "raw" && config.body.raw) {
       body = config.body.raw;
-    } else if (config.bodyType === "x-www-form-urlencoded" && config.body.urlEncoded) {
+    } else if (
+      config.bodyType === "x-www-form-urlencoded" &&
+      config.body.urlEncoded
+    ) {
       body = new URLSearchParams(
-        config.body.urlEncoded.map((f) => [f.name, f.value])
+        config.body.urlEncoded.map((f) => [f.name, f.value]),
       ).toString();
       if (!headers["Content-Type"]) {
         headers["Content-Type"] = "application/x-www-form-urlencoded";
@@ -111,9 +148,17 @@ export default defineBackground(() => {
     }
 
     let url = config.url;
-    if (config.auth.type === "api-key" && config.auth.apiKey?.addTo === "query") {
+    if (
+      config.auth.type === "api-key" &&
+      config.auth.apiKey?.addTo === "query"
+    ) {
       const sep = url.includes("?") ? "&" : "?";
-      url = url + sep + config.auth.apiKey.key + "=" + encodeURIComponent(config.auth.apiKey.value);
+      url =
+        url +
+        sep +
+        config.auth.apiKey.key +
+        "=" +
+        encodeURIComponent(config.auth.apiKey.value);
     }
 
     if (config.params.length > 0) {
@@ -121,7 +166,10 @@ export default defineBackground(() => {
       if (enabledParams.length > 0) {
         const sep = url.includes("?") ? "&" : "?";
         const queryString = enabledParams
-          .map((p) => encodeURIComponent(p.name) + "=" + encodeURIComponent(p.value))
+          .map(
+            (p) =>
+              encodeURIComponent(p.name) + "=" + encodeURIComponent(p.value),
+          )
           .join("&");
         url = url + sep + queryString;
       }
@@ -130,7 +178,8 @@ export default defineBackground(() => {
     const response = await fetch(url, {
       method: config.method,
       headers,
-      body: config.method !== "GET" && config.method !== "HEAD" ? body : undefined,
+      body:
+        config.method !== "GET" && config.method !== "HEAD" ? body : undefined,
     });
 
     const responseBody = await response.text();
@@ -141,13 +190,19 @@ export default defineBackground(() => {
     response.headers.forEach((v, k) => headerPairs.push([k, v]));
 
     let timing: import("@/types").TimingBreakdown | undefined;
-    const entries = performance.getEntriesByName(url, "resource") as PerformanceResourceTiming[];
+    const entries = performance.getEntriesByName(
+      url,
+      "resource",
+    ) as PerformanceResourceTiming[];
     if (entries.length > 0) {
       const entry = entries[entries.length - 1];
       timing = {
         dns: entry.domainLookupEnd - entry.domainLookupStart,
         connect: entry.connectEnd - entry.connectStart,
-        tls: entry.secureConnectionStart > 0 ? entry.connectEnd - entry.secureConnectionStart : 0,
+        tls:
+          entry.secureConnectionStart > 0
+            ? entry.connectEnd - entry.secureConnectionStart
+            : 0,
         ttfb: entry.responseStart - entry.requestStart,
         download: entry.responseEnd - entry.responseStart,
         total: entry.duration,
@@ -155,7 +210,8 @@ export default defineBackground(() => {
     }
 
     const record: RequestRecord = {
-      id: "manual_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9),
+      id:
+        "manual_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9),
       url,
       method: config.method,
       statusCode: response.status,
@@ -163,7 +219,10 @@ export default defineBackground(() => {
       startTime: start,
       timeStamp: Date.now(),
       duration,
-      requestHeaders: Object.entries(headers).map(([name, value]) => ({ name, value })),
+      requestHeaders: Object.entries(headers).map(([name, value]) => ({
+        name,
+        value,
+      })),
       requestBody: null,
       requestBodyText: body || null,
       responseBodyText: responseBody,
@@ -186,33 +245,38 @@ export default defineBackground(() => {
 
   // Request lifecycle hooks
   chrome.webRequest.onBeforeRequest.addListener(
-  (details) => {
-    const url = new URL(details.url);
-    
-    for (const server of mockServers) {
-      if (!server.enabled) continue;
-      
-      for (const endpoint of server.endpoints) {
-        if (!endpoint.enabled) continue;
-        
-        if (details.method === endpoint.method && url.pathname === endpoint.path) {
-          return {
-            redirectUrl: `data:${endpoint.contentType};base64,${btoa(endpoint.body)}`,
-          };
+    (details) => {
+      const url = new URL(details.url);
+
+      for (const server of mockServers) {
+        if (!server.enabled) continue;
+
+        for (const endpoint of server.endpoints) {
+          if (!endpoint.enabled) continue;
+
+          if (
+            details.method === endpoint.method &&
+            url.pathname === endpoint.path
+          ) {
+            return {
+              redirectUrl: `data:${endpoint.contentType};base64,${btoa(endpoint.body)}`,
+            };
+          }
         }
       }
-    }
-    
-    partial.set(details.requestId, {
-      startTime: details.timeStamp,
-      requestBody: details.requestBody?.formData || undefined,
-      requestBodyText: serializeRequestBody(details as chrome.webRequest.WebRequestBodyDetails),
-    });
-    
-    return {};
-  },
+
+      partial.set(details.requestId, {
+        startTime: details.timeStamp,
+        requestBody: details.requestBody?.formData || undefined,
+        requestBodyText: serializeRequestBody(
+          details as chrome.webRequest.WebRequestBodyDetails,
+        ),
+      });
+
+      return {};
+    },
     { urls: ["<all_urls>"] },
-    ["requestBody", "blocking"]
+    ["requestBody", "blocking"],
   );
 
   chrome.webRequest.onBeforeSendHeaders.addListener(
@@ -222,7 +286,7 @@ export default defineBackground(() => {
       partial.set(details.requestId, p);
     },
     { urls: ["<all_urls>"] },
-    ["requestHeaders"]
+    ["requestHeaders"],
   );
 
   chrome.webRequest.onHeadersReceived.addListener(
@@ -232,7 +296,7 @@ export default defineBackground(() => {
       partial.set(details.requestId, p);
     },
     { urls: ["<all_urls>"] },
-    ["responseHeaders"]
+    ["responseHeaders"],
   );
 
   chrome.webRequest.onCompleted.addListener(
@@ -242,9 +306,10 @@ export default defineBackground(() => {
         partial.delete(details.requestId);
 
         const start = base.startTime || details.timeStamp;
-        const duration = typeof base.startTime === "number"
-          ? details.timeStamp - base.startTime
-          : 0;
+        const duration =
+          typeof base.startTime === "number"
+            ? details.timeStamp - base.startTime
+            : 0;
 
         const record: RequestRecord = {
           id: details.requestId,
@@ -263,12 +328,17 @@ export default defineBackground(() => {
         };
 
         await addRecord(record);
-        console.log("[API Debugger] Captured:", record.method, record.url, record.statusCode);
+        console.log(
+          "[API Debugger] Captured:",
+          record.method,
+          record.url,
+          record.statusCode,
+        );
       } catch (err) {
         console.error("[API Debugger] Capture error:", err);
       }
     },
-    { urls: ["<all_urls>"] }
+    { urls: ["<all_urls>"] },
   );
 
   // Message handler
@@ -290,7 +360,9 @@ export default defineBackground(() => {
     if (message.type === "SEND_REQUEST") {
       sendRequest(message.payload.config)
         .then((response) => sendResponse({ success: true, response }))
-        .catch((error) => sendResponse({ success: false, error: error.message }));
+        .catch((error) =>
+          sendResponse({ success: false, error: error.message }),
+        );
       return true;
     }
 
@@ -306,7 +378,9 @@ export default defineBackground(() => {
       };
       sendRequest(config)
         .then((response) => sendResponse({ success: true, response }))
-        .catch((error) => sendResponse({ success: false, error: error.message }));
+        .catch((error) =>
+          sendResponse({ success: false, error: error.message }),
+        );
       return true;
     }
 
