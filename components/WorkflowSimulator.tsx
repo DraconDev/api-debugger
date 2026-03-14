@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
 import type { SavedRequest, CapturedResponse } from "@/types";
 import { interpolateVariables } from "@/hooks/useRuntimeVariables";
 
