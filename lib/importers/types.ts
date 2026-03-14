@@ -26,6 +26,7 @@ export interface ImportRequest {
   name: string;
   method: string;
   url: string;
+  collectionId?: string;
   headers: Array<{ name: string; value: string; enabled: boolean }>;
   body?: {
     mode: "raw" | "formdata" | "urlencoded" | "file" | "graphql";
@@ -52,48 +53,55 @@ export interface ImportEnvironment {
   values: Array<{ key: string; value: string; enabled: boolean }>;
 }
 
-export function detectImportFormat(content: string, filename?: string): string | null {
+export function detectImportFormat(
+  content: string,
+  filename?: string,
+): string | null {
   const ext = filename?.split(".").pop()?.toLowerCase();
-  
+
   if (ext === "yaml" || ext === "yml") {
-    if (content.includes("openapi:") || content.includes("'openapi':") || content.includes('"openapi":')) {
+    if (
+      content.includes("openapi:") ||
+      content.includes("'openapi':") ||
+      content.includes('"openapi":')
+    ) {
       return "openapi";
     }
   }
-  
+
   try {
     const parsed = JSON.parse(content);
-    
+
     if (parsed.openapi || parsed.swagger) {
       return "openapi";
     }
-    
+
     if (parsed.info?._postman_id || parsed.info?.schema?.includes("postman")) {
       return "postman";
     }
-    
+
     if (parsed.log?.entries && parsed.log?.version) {
       return "har";
     }
-    
+
     if (parsed.resources && typeof parsed.resources === "object") {
       return "insomnia";
     }
-    
+
     if (content.includes("meta")) {
       return "bruno";
     }
-    
+
     return "json";
   } catch {
     if (content.trim().startsWith("curl")) {
       return "curl";
     }
-    
+
     if (content.includes("openapi:") || content.includes("swagger:")) {
       return "openapi-yaml";
     }
-    
+
     return null;
   }
 }
