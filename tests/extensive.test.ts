@@ -349,8 +349,8 @@ describe("Socket.IO", () => {
 
   it("should handle acknowledgment callback pattern", () => {
     const emitWithAck = (
-      event: string,
-      data: unknown,
+      _event: string,
+      _data: unknown,
       callback: (response: unknown) => void,
     ) => {
       callback({ status: "received" });
