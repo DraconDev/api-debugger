@@ -126,7 +126,7 @@ export function CollectionsView({ onSelectRequest }: CollectionsViewProps) {
                       {saved.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="px-1.5 py-0.5 text-xs bg-muted rounded"
+                          className="px-1.5 py-0.5 text-xs bg-muted rounded-md"
                         >
                           {tag}
                         </span>
@@ -168,13 +168,13 @@ export function CollectionsView({ onSelectRequest }: CollectionsViewProps) {
           <div className="flex gap-2">
             <button
               onClick={createCollection}
-              className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded"
+              className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded-md"
             >
               Create
             </button>
             <button
               onClick={() => setShowNewCollection(false)}
-              className="px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded"
+              className="px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded-md"
             >
               Cancel
             </button>

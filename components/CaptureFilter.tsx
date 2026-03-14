@@ -197,7 +197,7 @@ export function CaptureFilter() {
               placeholder="/api/.*"
               className="flex-1 px-2 py-1 text-xs bg-input border border-border rounded font-mono"
             />
-            <button onClick={addUrlPattern} className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded">
+            <button onClick={addUrlPattern} className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded-md">
               Add
             </button>
           </div>
@@ -227,9 +227,9 @@ export function CaptureFilter() {
               onChange={(e) => setNewIncludeDomain(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && addIncludeDomain()}
               placeholder="api.example.com"
-              className="flex-1 px-2 py-1 text-xs bg-input border border-border rounded"
+              className="flex-1 px-2 py-1 text-xs bg-input border border-border rounded-md"
             />
-            <button onClick={addIncludeDomain} className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded">
+            <button onClick={addIncludeDomain} className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded-md">
               Add
             </button>
           </div>
@@ -259,9 +259,9 @@ export function CaptureFilter() {
               onChange={(e) => setNewExcludeDomain(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && addExcludeDomain()}
               placeholder="analytics.google.com"
-              className="flex-1 px-2 py-1 text-xs bg-input border border-border rounded"
+              className="flex-1 px-2 py-1 text-xs bg-input border border-border rounded-md"
             />
-            <button onClick={addExcludeDomain} className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded">
+            <button onClick={addExcludeDomain} className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded-md">
               Add
             </button>
           </div>

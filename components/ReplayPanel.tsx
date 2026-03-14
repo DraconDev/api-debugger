@@ -85,7 +85,7 @@ export function ReplayPanel({ request }: ReplayPanelProps) {
             type="text"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            className="flex-1 px-2 py-1 text-xs bg-muted rounded"
+            className="flex-1 px-2 py-1 text-xs bg-muted rounded-md"
           />
         </div>
 

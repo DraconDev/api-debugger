@@ -101,7 +101,7 @@ export function SaveToCollection({ request, onSave }: SaveToCollectionProps) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Request name (optional)"
-            className="w-full px-2 py-1 text-xs bg-muted rounded"
+            className="w-full px-2 py-1 text-xs bg-muted rounded-md"
           />
 
           <input
@@ -109,13 +109,13 @@ export function SaveToCollection({ request, onSave }: SaveToCollectionProps) {
             value={tags}
             onChange={(e) => setTags(e.target.value)}
             placeholder="Tags (comma-separated)"
-            className="w-full px-2 py-1 text-xs bg-muted rounded"
+            className="w-full px-2 py-1 text-xs bg-muted rounded-md"
           />
 
           <select
             value={selectedCollectionId}
             onChange={(e) => setSelectedCollectionId(e.target.value)}
-            className="w-full px-2 py-1 text-xs bg-muted rounded"
+            className="w-full px-2 py-1 text-xs bg-muted rounded-md"
           >
             <option value="">Select collection...</option>
             {collections.map((c) => (
@@ -132,19 +132,19 @@ export function SaveToCollection({ request, onSave }: SaveToCollectionProps) {
                 value={newCollectionName}
                 onChange={(e) => setNewCollectionName(e.target.value)}
                 placeholder="New collection name"
-                className="w-full px-2 py-1 text-xs bg-muted rounded"
+                className="w-full px-2 py-1 text-xs bg-muted rounded-md"
                 onKeyDown={(e) => e.key === "Enter" && createCollection()}
               />
               <div className="flex gap-2">
                 <button
                   onClick={createCollection}
-                  className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded"
+                  className="px-2 py-1 text-xs bg-primary text-primary-foreground rounded-md"
                 >
                   Create
                 </button>
                 <button
                   onClick={() => setShowNewCollection(false)}
-                  className="px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded"
+                  className="px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded-md"
                 >
                   Cancel
                 </button>
@@ -153,7 +153,7 @@ export function SaveToCollection({ request, onSave }: SaveToCollectionProps) {
           ) : (
             <button
               onClick={() => setShowNewCollection(true)}
-              className="w-full px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded"
+              className="w-full px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded-md"
             >
               + New Collection
             </button>
