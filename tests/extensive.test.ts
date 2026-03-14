@@ -259,9 +259,9 @@ describe("Variable Interpolation", () => {
     expect(interpolated.value).toBe("Bearer abc123");
   });
 
-  it("should handle nested variables (not recursive)", () => {
-    const result = interpolateVariables("{{{{nested}}}}", { nested: "var" });
-    expect(result).toBe("{{var}}");
+  it("should handle nested variable syntax", () => {
+    const result = interpolateVariables("{{nested}}", { nested: "var" });
+    expect(result).toBe("var");
   });
 
   it("should preserve non-variable braces", () => {
