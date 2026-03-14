@@ -250,7 +250,7 @@ export function JsonViewerWithSearch({ body }: JsonViewerWithSearchProps) {
   }, [parsed]);
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full w-full flex flex-col">
       <div className="flex items-center gap-2 p-2 border-b border-border bg-muted/30">
         <button
           onClick={() => setShowSearch(!showSearch)}

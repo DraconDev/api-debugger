@@ -45,7 +45,7 @@ export function VariableExtractor({ extractions, onChange }: VariableExtractorPr
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full w-full flex flex-col">
       <div className="p-3 border-b border-border">
         <h3 className="text-sm font-medium mb-1">Variable Extraction</h3>
         <p className="text-xs text-muted-foreground">

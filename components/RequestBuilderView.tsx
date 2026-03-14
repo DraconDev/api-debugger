@@ -288,7 +288,7 @@ export function RequestBuilderView() {
             )}
 
             {activeTab === "scripts" && (
-              <div className="h-full flex flex-col">
+              <div className="h-full w-full flex flex-col">
                 <div className="flex-1 border-b border-border">
                   <ScriptEditor
                     script={config.preRequestScript || ""}

@@ -13,7 +13,7 @@ export function ScriptEditor({ script, onChange, title, description, logs, error
   const [showHelp, setShowHelp] = useState(false);
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full w-full flex flex-col">
       <div className="p-3 border-b border-border flex items-center justify-between">
         <div>
           <h3 className="text-sm font-medium">{title}</h3>
