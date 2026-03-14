@@ -1,4 +1,9 @@
-import type { ImportResult, ImportCollection, ImportRequest, ImportEnvironment } from "./types";
+import type {
+  ImportResult,
+  ImportCollection,
+  ImportRequest,
+  ImportEnvironment,
+} from "./types";
 import { generateId } from "./types";
 
 interface PostmanCollection {
@@ -42,7 +47,12 @@ interface PostmanUrl {
 interface PostmanBody {
   mode?: string;
   raw?: string;
-  formdata?: Array<{ key: string; value: string; type?: string; disabled?: boolean }>;
+  formdata?: Array<{
+    key: string;
+    value: string;
+    type?: string;
+    disabled?: boolean;
+  }>;
   urlencoded?: Array<{ key: string; value: string; disabled?: boolean }>;
   graphql?: { query: string; variables?: string };
 }
@@ -67,7 +77,12 @@ interface PostmanResponse {
 interface PostmanEnvironment {
   id?: string;
   name?: string;
-  values?: Array<{ key?: string; value?: string; enabled?: boolean; type?: string }>;
+  values?: Array<{
+    key?: string;
+    value?: string;
+    enabled?: boolean;
+    type?: string;
+  }>;
 }
 
 export function parsePostmanCollection(content: string): ImportResult {
@@ -79,7 +94,9 @@ export function parsePostmanCollection(content: string): ImportResult {
     return {
       type: "collection",
       name: "Import Failed",
-      errors: [`Failed to parse Postman collection: ${error instanceof Error ? error.message : "Invalid JSON"}`],
+      errors: [
+        `Failed to parse Postman collection: ${error instanceof Error ? error.message : "Invalid JSON"}`,
+      ],
       collections: [],
     };
   }
@@ -106,7 +123,7 @@ export function parsePostmanCollection(content: string): ImportResult {
 function parseItems(
   items: PostmanItem[],
   collectionId: string,
-  defaultAuth?: PostmanAuth
+  defaultAuth?: PostmanAuth,
 ): ImportRequest[] {
   const requests: ImportRequest[] = [];
 
@@ -129,14 +146,15 @@ function parseItems(
 
 function parseRequest(
   item: PostmanItem,
-  collectionId: string,
-  defaultAuth?: PostmanAuth
+  _collectionId: string,
+  defaultAuth?: PostmanAuth,
 ): ImportRequest | null {
   if (!item.request) return null;
 
-  const req = typeof item.request === "string" 
-    ? { method: "GET", url: item.request }
-    : item.request;
+  const req =
+    typeof item.request === "string"
+      ? { method: "GET", url: item.request }
+      : item.request;
 
   const method = req.method?.toUpperCase() || "GET";
   const url = parseUrl(req.url);
@@ -161,7 +179,9 @@ function parseRequest(
     headers,
     body,
     auth,
-    description: item.description || (typeof req.description === "string" ? req.description : undefined),
+    description:
+      item.description ||
+      (typeof req.description === "string" ? req.description : undefined),
   };
 }
 
@@ -245,15 +265,18 @@ function parseAuth(auth: PostmanAuth | undefined): ImportRequest["auth"] {
       };
 
     case "basic":
-      const username = auth.basic?.find((b) => b.key === "username")?.value || "";
-      const password = auth.basic?.find((b) => b.key === "password")?.value || "";
+      const username =
+        auth.basic?.find((b) => b.key === "username")?.value || "";
+      const password =
+        auth.basic?.find((b) => b.key === "password")?.value || "";
       return {
         type: "basic",
         basic: { username, password },
       };
 
     case "apikey":
-      const key = auth.apikey?.find((a) => a.key === "key")?.value || "X-API-Key";
+      const key =
+        auth.apikey?.find((a) => a.key === "key")?.value || "X-API-Key";
       const value = auth.apikey?.find((a) => a.key === "value")?.value || "";
       const addTo = auth.apikey?.find((a) => a.key === "in")?.value || "header";
       return {
@@ -266,7 +289,9 @@ function parseAuth(auth: PostmanAuth | undefined): ImportRequest["auth"] {
       };
 
     case "oauth2":
-      const oauthToken = auth.oauth2?.find((o) => o.key === "accessToken")?.value;
+      const oauthToken = auth.oauth2?.find(
+        (o) => o.key === "accessToken",
+      )?.value;
       if (oauthToken) {
         return {
           type: "bearer",
@@ -289,7 +314,9 @@ export function parsePostmanEnvironment(content: string): ImportResult {
     return {
       type: "environment",
       name: "Import Failed",
-      errors: [`Failed to parse Postman environment: ${error instanceof Error ? error.message : "Invalid JSON"}`],
+      errors: [
+        `Failed to parse Postman environment: ${error instanceof Error ? error.message : "Invalid JSON"}`,
+      ],
       environments: [],
     };
   }
