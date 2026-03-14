@@ -38,6 +38,7 @@ type ViewType =
   | "graphql"
   | "history"
   | "collections"
+  | "workflows"
   | "cookies"
   | "mocks"
   | "docs"
