@@ -58,6 +58,7 @@ interface OpenAPISpec {
   security?: Array<Record<string, unknown>>;
   basePath?: string;
   host?: string;
+  schemes?: string[];
 }
 
 export function parseOpenAPI(content: string): ImportResult {
