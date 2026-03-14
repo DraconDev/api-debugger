@@ -246,7 +246,9 @@ export default defineBackground(() => {
   // Request lifecycle hooks
   chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
-      const url = new URL(details.url);
+      if (!shouldCapture(details.url)) {
+        return {};
+      }
 
       for (const server of mockServers) {
         if (!server.enabled) continue;
