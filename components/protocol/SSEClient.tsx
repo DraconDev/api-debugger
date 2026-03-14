@@ -15,7 +15,7 @@ export function SSEClient() {
   const [searchQuery, setSearchQuery] = useState("");
   const [autoScroll, setAutoScroll] = useState(true);
   const [reconnect, setReconnect] = useState(false);
-  
+
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const eventsEndRef = useRef<HTMLDivElement>(null);
@@ -50,11 +50,12 @@ export function SSEClient() {
       };
 
       eventSource.onerror = (error) => {
-        addEvent({ 
-          type: "error", 
-          data: error instanceof ErrorEvent ? error.message : "Connection error" 
+        addEvent({
+          type: "error",
+          data:
+            error instanceof ErrorEvent ? error.message : "Connection error",
         });
-        
+
         if (eventSource.readyState === EventSource.CLOSED) {
           setIsConnected(false);
           if (reconnect) {
@@ -72,18 +73,17 @@ export function SSEClient() {
 
       eventSource.addEventListener("*", (event) => {
         if (event instanceof MessageEvent) {
-          addEvent({ 
-            type: "message", 
+          addEvent({
+            type: "message",
             data: event.data,
             eventType: (event as MessageEvent).type,
           });
         }
       });
-
     } catch (error) {
-      addEvent({ 
-        type: "error", 
-        data: error instanceof Error ? error.message : "Failed to connect" 
+      addEvent({
+        type: "error",
+        data: error instanceof Error ? error.message : "Failed to connect",
       });
     }
   }, [url, isConnected, addEvent, reconnect]);
@@ -100,14 +100,25 @@ export function SSEClient() {
     addEvent({ type: "close", data: "Disconnected" });
   }, [addEvent]);
 
+  useEffect(() => {
+    return () => {
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
+      eventSourceRef.current?.close();
+      eventSourceRef.current = null;
+    };
+  }, []);
+
   const clearEvents = useCallback(() => {
     setEvents([]);
   }, []);
 
   const filteredEvents = searchQuery
-    ? events.filter((e) =>
-        e.data.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        e.eventType?.toLowerCase().includes(searchQuery.toLowerCase())
+    ? events.filter(
+        (e) =>
+          e.data.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          e.eventType?.toLowerCase().includes(searchQuery.toLowerCase()),
       )
     : events;
 
@@ -118,7 +129,9 @@ export function SSEClient() {
       eventType: e.eventType,
       data: e.data,
     }));
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -131,7 +144,7 @@ export function SSEClient() {
     <div className="h-full w-full flex flex-col">
       <div className="p-4 border-b border-border bg-muted/30">
         <h2 className="text-lg font-semibold mb-3">Server-Sent Events</h2>
-        
+
         <div className="flex gap-3">
           <input
             type="text"
@@ -180,8 +193,12 @@ export function SSEClient() {
             Auto-scroll
           </label>
           <div className="flex items-center gap-2 ml-auto">
-            <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground"}`} />
-            <span className="text-xs text-muted-foreground">{isConnected ? "Connected" : "Disconnected"}</span>
+            <div
+              className={`w-2 h-2 rounded-full ${isConnected ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground"}`}
+            />
+            <span className="text-xs text-muted-foreground">
+              {isConnected ? "Connected" : "Disconnected"}
+            </span>
           </div>
         </div>
       </div>
@@ -214,7 +231,7 @@ export function SSEClient() {
           <div className="flex items-center justify-center h-full text-muted-foreground">
             <div className="text-center">
               <p className="text-sm">
-                {events.length === 0 
+                {events.length === 0
                   ? "Connect to an SSE endpoint to receive events"
                   : "No events match your search"}
               </p>
@@ -229,10 +246,10 @@ export function SSEClient() {
                   event.type === "error"
                     ? "bg-red-500/10 border-red-500"
                     : event.type === "open"
-                    ? "bg-emerald-500/10 border-emerald-500"
-                    : event.type === "close"
-                    ? "bg-amber-500/10 border-amber-500"
-                    : "bg-muted/30 border-primary"
+                      ? "bg-emerald-500/10 border-emerald-500"
+                      : event.type === "close"
+                        ? "bg-amber-500/10 border-amber-500"
+                        : "bg-muted/30 border-primary"
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1">
@@ -244,12 +261,17 @@ export function SSEClient() {
                       {event.eventType}
                     </span>
                   )}
-                  <span className={`text-xs font-medium ${
-                    event.type === "error" ? "text-red-400" :
-                    event.type === "open" ? "text-emerald-400" :
-                    event.type === "close" ? "text-amber-400" :
-                    "text-foreground"
-                  }`}>
+                  <span
+                    className={`text-xs font-medium ${
+                      event.type === "error"
+                        ? "text-red-400"
+                        : event.type === "open"
+                          ? "text-emerald-400"
+                          : event.type === "close"
+                            ? "text-amber-400"
+                            : "text-foreground"
+                    }`}
+                  >
                     {event.type.toUpperCase()}
                   </span>
                 </div>

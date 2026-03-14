@@ -23,7 +23,7 @@ export function SocketIOClient() {
   const [newListenEvent, setNewListenEvent] = useState("");
   const [auth, setAuth] = useState("");
   const [transport, setTransport] = useState<string>("polling");
-  
+
   const socketRef = useRef<Socket | null>(null);
   const eventsEndRef = useRef<HTMLDivElement>(null);
 
@@ -33,16 +33,19 @@ export function SocketIOClient() {
     }
   }, [events, autoScroll]);
 
-  const addEvent = useCallback((event: Omit<SocketEvent, "id" | "timestamp">) => {
-    setEvents((prev) => [
-      ...prev,
-      {
-        ...event,
-        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        timestamp: Date.now(),
-      },
-    ]);
-  }, []);
+  const addEvent = useCallback(
+    (event: Omit<SocketEvent, "id" | "timestamp">) => {
+      setEvents((prev) => [
+        ...prev,
+        {
+          ...event,
+          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          timestamp: Date.now(),
+        },
+      ]);
+    },
+    [],
+  );
 
   const connect = useCallback(() => {
     if (!url || isConnected) return;
@@ -58,7 +61,7 @@ export function SocketIOClient() {
       }
 
       const fullUrl = namespace ? `${url}${namespace}` : url;
-      
+
       const socket = io(fullUrl, {
         auth: authData,
         transports: [transport as "polling" | "websocket"],
@@ -70,13 +73,21 @@ export function SocketIOClient() {
       socketRef.current = socket;
 
       socket.on("connect", () => {
-        addEvent({ type: "connect", data: `Connected (ID: ${socket.id})`, direction: "in" });
+        addEvent({
+          type: "connect",
+          data: `Connected (ID: ${socket.id})`,
+          direction: "in",
+        });
         setIsConnected(true);
         setTransport(socket.io.engine?.transport.name || transport);
       });
 
       socket.on("disconnect", (reason) => {
-        addEvent({ type: "disconnect", data: `Disconnected: ${reason}`, direction: "in" });
+        addEvent({
+          type: "disconnect",
+          data: `Disconnected: ${reason}`,
+          direction: "in",
+        });
         setIsConnected(false);
       });
 
@@ -89,10 +100,9 @@ export function SocketIOClient() {
           addEvent({ type: "event", eventName, data, direction: "in" });
         });
       });
-
     } catch (error) {
-      addEvent({ 
-        type: "error", 
+      addEvent({
+        type: "error",
         data: error instanceof Error ? error.message : "Failed to connect",
         direction: "in",
       });
@@ -105,6 +115,13 @@ export function SocketIOClient() {
       socketRef.current = null;
     }
     setIsConnected(false);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      socketRef.current?.disconnect();
+      socketRef.current = null;
+    };
   }, []);
 
   const emit = useCallback(() => {
@@ -120,22 +137,32 @@ export function SocketIOClient() {
     }
 
     socketRef.current.emit(emitEventName, data);
-    addEvent({ type: "emit", eventName: emitEventName, data, direction: "out" });
+    addEvent({
+      type: "emit",
+      eventName: emitEventName,
+      data,
+      direction: "out",
+    });
     setEmitEventName("");
     setEmitEventData("");
   }, [emitEventName, emitEventData, isConnected, addEvent]);
 
   const addListenEvent = useCallback(() => {
     if (!newListenEvent || listenEvents.includes(newListenEvent)) return;
-    
+
     setListenEvents((prev) => [...prev, newListenEvent]);
-    
+
     if (socketRef.current && isConnected) {
       socketRef.current.on(newListenEvent, (data: unknown) => {
-        addEvent({ type: "event", eventName: newListenEvent, data, direction: "in" });
+        addEvent({
+          type: "event",
+          eventName: newListenEvent,
+          data,
+          direction: "in",
+        });
       });
     }
-    
+
     setNewListenEvent("");
   }, [newListenEvent, listenEvents, isConnected, addEvent]);
 
@@ -151,9 +178,12 @@ export function SocketIOClient() {
   }, []);
 
   const filteredEvents = searchQuery
-    ? events.filter((e) =>
-        e.eventName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        JSON.stringify(e.data).toLowerCase().includes(searchQuery.toLowerCase())
+    ? events.filter(
+        (e) =>
+          e.eventName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          JSON.stringify(e.data)
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()),
       )
     : events;
 
@@ -165,7 +195,9 @@ export function SocketIOClient() {
       direction: e.direction,
       data: e.data,
     }));
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -366,21 +398,25 @@ export function SocketIOClient() {
                     event.type === "error"
                       ? "bg-red-500/10 border-red-500"
                       : event.type === "connect"
-                      ? "bg-emerald-500/10 border-emerald-500"
-                      : event.type === "disconnect"
-                      ? "bg-amber-500/10 border-amber-500"
-                      : event.direction === "out"
-                      ? "bg-blue-500/10 border-blue-500"
-                      : "bg-muted/30 border-primary"
+                        ? "bg-emerald-500/10 border-emerald-500"
+                        : event.type === "disconnect"
+                          ? "bg-amber-500/10 border-amber-500"
+                          : event.direction === "out"
+                            ? "bg-blue-500/10 border-blue-500"
+                            : "bg-muted/30 border-primary"
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs text-muted-foreground">
                       {new Date(event.timestamp).toLocaleTimeString()}
                     </span>
-                    <span className={`text-xs ${
-                      event.direction === "out" ? "text-blue-400" : "text-muted-foreground"
-                    }`}>
+                    <span
+                      className={`text-xs ${
+                        event.direction === "out"
+                          ? "text-blue-400"
+                          : "text-muted-foreground"
+                      }`}
+                    >
                       {event.direction === "out" ? "↑" : "↓"}
                     </span>
                     {event.eventName && (
@@ -388,18 +424,23 @@ export function SocketIOClient() {
                         {event.eventName}
                       </span>
                     )}
-                    <span className={`text-xs font-medium ${
-                      event.type === "error" ? "text-red-400" :
-                      event.type === "connect" ? "text-emerald-400" :
-                      event.type === "disconnect" ? "text-amber-400" :
-                      "text-foreground"
-                    }`}>
+                    <span
+                      className={`text-xs font-medium ${
+                        event.type === "error"
+                          ? "text-red-400"
+                          : event.type === "connect"
+                            ? "text-emerald-400"
+                            : event.type === "disconnect"
+                              ? "text-amber-400"
+                              : "text-foreground"
+                      }`}
+                    >
                       {event.type.toUpperCase()}
                     </span>
                   </div>
                   <pre className="text-xs font-mono text-muted-foreground whitespace-pre-wrap break-all">
-                    {typeof event.data === "object" 
-                      ? JSON.stringify(event.data, null, 2) 
+                    {typeof event.data === "object"
+                      ? JSON.stringify(event.data, null, 2)
                       : String(event.data)}
                   </pre>
                 </div>
