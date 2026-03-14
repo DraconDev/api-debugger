@@ -238,6 +238,7 @@ export function JsonViewerWithSearch({ body }: JsonViewerWithSearchProps) {
   }
 
   const handleCopy = useCallback((value: string) => {
+    navigator.clipboard.writeText(value);
     setCopyMessage("Copied!");
     setTimeout(() => setCopyMessage(null), 2000);
   }, []);
