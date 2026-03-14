@@ -122,7 +122,9 @@ export function ReplayPanel({ request }: ReplayPanelProps) {
             <div className="flex justify-between mb-2">
               <span
                 className={
-                  response.status < 400 ? "text-green-600" : "text-red-600"
+                  response.status < 400
+                    ? "text-emerald-500"
+                    : "text-destructive"
                 }
               >
                 {response.status} {response.statusText}
