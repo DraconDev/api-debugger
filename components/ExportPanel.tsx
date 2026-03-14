@@ -59,7 +59,7 @@ export function ExportPanel({ request }: ExportPanelProps) {
   };
 
   return (
-    <div className="p-3 border-b">
+    <div className="p-3 border-b border-border">
       <h3 className="text-xs font-medium mb-2">Export</h3>
       <div className="flex gap-2">
         <button

@@ -243,7 +243,7 @@ Keep response under 150 words.`;
   };
 
   return (
-    <div className="p-3 border-b">
+    <div className="p-3 border-b border-border">
       <h3 className="text-xs font-medium mb-2">Diagnostics</h3>
       <div className="space-y-2">
         {diagnostics.map((diag, index) => (
@@ -271,7 +271,7 @@ Keep response under 150 words.`;
 
       {/* AI Explanation Section */}
       {aiSettings && (
-        <div className="mt-3 pt-3 border-t">
+        <div className="mt-3 pt-3 border-t border-border">
           <div className="flex items-center justify-between mb-2">
             <h4 className="text-xs font-medium">AI Analysis</h4>
             {!aiExplanation && !isLoadingAI && (

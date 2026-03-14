@@ -89,7 +89,7 @@ export function SaveToCollection({ request, onSave }: SaveToCollectionProps) {
   };
 
   return (
-    <div className="p-3 border-t">
+    <div className="p-3 border-t border-border">
       <h3 className="text-xs font-medium mb-2">Save to Collection</h3>
 
       {saved ? (

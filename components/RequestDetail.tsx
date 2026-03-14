@@ -22,7 +22,7 @@ export function RequestDetail({ request, onBack }: RequestDetailProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="p-3 border-b">
+      <div className="p-3 border-b border-border">
         <button
           onClick={onBack}
           className="text-xs text-muted-foreground hover:text-foreground mb-2"
@@ -42,7 +42,7 @@ export function RequestDetail({ request, onBack }: RequestDetailProps) {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b">
+      <div className="flex border-b border-border">
         <button
           onClick={() => setActiveTab("headers")}
           className={`px-3 py-2 text-xs ${
@@ -89,7 +89,7 @@ export function RequestDetail({ request, onBack }: RequestDetailProps) {
       </div>
 
       {/* Panels */}
-      <div className="border-t overflow-auto max-h-[300px]">
+      <div className="border-t border-border overflow-auto max-h-[300px]">
         {request.statusCode >= 400 && <DiagnosticsPanel request={request} />}
         <ExportPanel request={request} />
         <ReplayPanel request={request} />

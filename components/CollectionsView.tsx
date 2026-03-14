@@ -83,7 +83,7 @@ export function CollectionsView({ onSelectRequest }: CollectionsViewProps) {
 
     return (
       <div className="flex flex-col h-full">
-        <div className="p-3 border-b">
+        <div className="p-3 border-b border-border">
           <button
             onClick={() => setSelectedCollection(null)}
             className="text-xs text-muted-foreground hover:text-foreground mb-2"
