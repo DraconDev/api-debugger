@@ -808,6 +808,70 @@ export default function Dashboard() {
 
         {view === "sync" && <GitHubSyncPanel />}
 
+        {view === "workflows" && (
+          <WorkflowSimulator
+            requests={state.savedRequests}
+            onRequestSend={async (config) => {
+              if (!config) throw new Error("No config");
+              const headers: Record<string, string> = {};
+              config.headers.forEach((h) => {
+                if (h.enabled !== false && h.name) {
+                  headers[h.name] = h.value;
+                }
+              });
+              if (config.auth.type === "bearer" && config.auth.bearer?.token) {
+                headers["Authorization"] = "Bearer " + config.auth.bearer.token;
+              }
+              let body: string | undefined;
+              if (config.bodyType === "json" && config.body.json) {
+                body = config.body.json;
+                if (!headers["Content-Type"])
+                  headers["Content-Type"] = "application/json";
+              } else if (config.bodyType === "raw" && config.body.raw) {
+                body = config.body.raw;
+              }
+              let url = config.url;
+              if (config.params.length > 0) {
+                const enabledParams = config.params.filter(
+                  (p) => p.enabled !== false,
+                );
+                if (enabledParams.length > 0) {
+                  const sep = url.includes("?") ? "&" : "?";
+                  url +=
+                    sep +
+                    enabledParams
+                      .map(
+                        (p) =>
+                          `${encodeURIComponent(p.name)}=${encodeURIComponent(p.value)}`,
+                      )
+                      .join("&");
+                }
+              }
+              const start = performance.now();
+              const response = await fetch(url, {
+                method: config.method,
+                headers,
+                body:
+                  config.method !== "GET" && config.method !== "HEAD"
+                    ? body
+                    : undefined,
+              });
+              const responseBody = await response.text();
+              const duration = performance.now() - start;
+              const headerPairs: [string, string][] = [];
+              response.headers.forEach((v, k) => headerPairs.push([k, v]));
+              return {
+                status: response.status,
+                statusText: response.statusText,
+                headers: headerPairs,
+                body: responseBody,
+                duration,
+                size: responseBody.length,
+              };
+            }}
+          />
+        )}
+
         {view === "settings" && <SettingsView />}
       </main>
 
