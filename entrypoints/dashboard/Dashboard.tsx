@@ -114,6 +114,8 @@ export default function Dashboard() {
           description: c.description,
           createdAt: Date.now(),
           updatedAt: Date.now(),
+          requestCount:
+            result.requests?.filter((r) => r.collectionId === c.id).length || 0,
         }));
 
         const saved = await chrome.storage.sync.get("apiDebugger_collections");
@@ -130,10 +132,12 @@ export default function Dashboard() {
       }
 
       if (result.requests && result.requests.length > 0) {
+        const collectionId =
+          state.collections[0]?.id || result.collections?.[0]?.id || "";
         const newRequests: SavedRequest[] = result.requests.map((r) => ({
           id: r.id,
           name: r.name,
-          collectionId: r.collectionId || state.collections[0]?.id || null,
+          collectionId: r.collectionId || collectionId,
           requestConfig: {
             method: r.method as "GET" | "POST" | "PUT" | "DELETE" | "PATCH",
             url: r.url,
@@ -143,8 +147,22 @@ export default function Dashboard() {
             bodyType: r.body?.mode === "raw" ? "raw" : "none",
             auth: r.auth || { type: "none" },
           },
+          request: {
+            id: r.id,
+            url: r.url,
+            method: r.method,
+            statusCode: 0,
+            tabId: 0,
+            startTime: Date.now(),
+            timeStamp: Date.now(),
+            duration: 0,
+            requestHeaders: r.headers || [],
+            requestBody: null,
+            requestBodyText: r.body?.raw || null,
+            responseHeaders: [],
+          },
+          tags: [],
           createdAt: Date.now(),
-          updatedAt: Date.now(),
         }));
 
         const saved = await chrome.storage.sync.get(
@@ -167,6 +185,7 @@ export default function Dashboard() {
           id: e.id,
           name: e.name,
           variables: e.values,
+          isActive: false,
           createdAt: Date.now(),
           updatedAt: Date.now(),
         }));
@@ -190,18 +209,17 @@ export default function Dashboard() {
   const loadSampleCollection = useCallback(
     async (sampleId: keyof typeof SAMPLE_COLLECTIONS) => {
       const sample = SAMPLE_COLLECTIONS[sampleId];
-      if (!sample) return;
+      if (!sample || !("requests" in sample)) return;
 
       const collectionId = generateId();
-      const newCollection: Collection = {
-        id: collectionId,
-        name: sample.name,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      };
-
-      const requests: SavedRequest[] = (sample.requests || []).map(
-        (r: any) => ({
+      const requests = (sample.requests || []).map(
+        (r: {
+          name: string;
+          method: string;
+          url: string;
+          headers?: Array<{ name: string; value: string }>;
+          body?: { raw: string };
+        }) => ({
           id: generateId(),
           name: r.name,
           collectionId,
@@ -211,33 +229,54 @@ export default function Dashboard() {
             headers: r.headers || [],
             params: [],
             body: r.body || { raw: "" },
-            bodyType: "raw",
-            auth: { type: "none" },
+            bodyType: "raw" as const,
+            auth: { type: "none" as const },
           },
+          request: {
+            id: generateId(),
+            url: r.url,
+            method: r.method,
+            statusCode: 0,
+            tabId: 0,
+            startTime: Date.now(),
+            timeStamp: Date.now(),
+            duration: 0,
+            requestHeaders: r.headers || [],
+            requestBody: null,
+            requestBodyText: null,
+            responseHeaders: [],
+          },
+          tags: [],
           createdAt: Date.now(),
-          updatedAt: Date.now(),
         }),
       );
 
-      await chrome.storage.sync.get(
-        ["apiDebugger_collections", "apiDebugger_savedRequests"],
-        async (data) => {
-          const collections: Collection[] = data.apiDebugger_collections || [];
-          const savedRequests: SavedRequest[] =
-            data.apiDebugger_savedRequests || [];
+      const newCollection: Collection = {
+        id: collectionId,
+        name: sample.name,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        requestCount: requests.length,
+      };
 
-          await chrome.storage.sync.set({
-            apiDebugger_collections: [...collections, newCollection],
-            apiDebugger_savedRequests: [...savedRequests, ...requests],
-          });
+      const saved = await chrome.storage.sync.get([
+        "apiDebugger_collections",
+        "apiDebugger_savedRequests",
+      ]);
+      const collections: Collection[] = saved.apiDebugger_collections || [];
+      const savedRequests: SavedRequest[] =
+        saved.apiDebugger_savedRequests || [];
 
-          setState((s) => ({
-            ...s,
-            collections: [...s.collections, newCollection],
-            savedRequests: [...s.savedRequests, ...requests],
-          }));
-        },
-      );
+      await chrome.storage.sync.set({
+        apiDebugger_collections: [...collections, newCollection],
+        apiDebugger_savedRequests: [...savedRequests, ...requests],
+      });
+
+      setState((s) => ({
+        ...s,
+        collections: [...s.collections, newCollection],
+        savedRequests: [...s.savedRequests, ...requests],
+      }));
 
       dismissWelcome();
       setView("collections");
