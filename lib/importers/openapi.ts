@@ -1,4 +1,9 @@
-import type { ImportResult, ImportCollection, ImportRequest, ImportEnvironment } from "./types";
+import type {
+  ImportResult,
+  ImportCollection,
+  ImportRequest,
+  ImportEnvironment,
+} from "./types";
 import { generateId } from "./types";
 
 interface OpenAPIInfo {
@@ -18,14 +23,21 @@ interface OpenAPIPath {
     description?: string;
   }>;
   requestBody?: {
-    content?: Record<string, {
-      schema?: { $ref?: string; type?: string; properties?: Record<string, unknown> };
-      example?: unknown;
-    }>;
+    content?: Record<
+      string,
+      {
+        schema?: {
+          $ref?: string;
+          type?: string;
+          properties?: Record<string, unknown>;
+        };
+        example?: unknown;
+      }
+    >;
     description?: string;
-  }>;
+  };
   responses?: Record<string, { description?: string }>;
-  security?: Array<Record<string, unknown>>;
+  security?: Array<Record<string, string[]>>;
   operationId?: string;
 }
 
@@ -37,13 +49,16 @@ interface OpenAPISpec {
   paths?: Record<string, Record<string, OpenAPIPath>>;
   components?: {
     schemas?: Record<string, unknown>;
-    securitySchemes?: Record<string, {
-      type?: string;
-      scheme?: string;
-      bearerFormat?: string;
-      name?: string;
-      in?: string;
-    }>;
+    securitySchemes?: Record<
+      string,
+      {
+        type?: string;
+        scheme?: string;
+        bearerFormat?: string;
+        name?: string;
+        in?: string;
+      }
+    >;
   };
   security?: Array<Record<string, unknown>>;
   basePath?: string;
@@ -52,7 +67,7 @@ interface OpenAPISpec {
 
 export function parseOpenAPI(content: string): ImportResult {
   let spec: OpenAPISpec;
-  
+
   try {
     if (content.trim().startsWith("{") || content.trim().startsWith("[")) {
       spec = JSON.parse(content);
@@ -63,7 +78,9 @@ export function parseOpenAPI(content: string): ImportResult {
     return {
       type: "collection",
       name: "Import Failed",
-      errors: [`Failed to parse OpenAPI spec: ${error instanceof Error ? error.message : "Unknown error"}`],
+      errors: [
+        `Failed to parse OpenAPI spec: ${error instanceof Error ? error.message : "Unknown error"}`,
+      ],
       collections: [],
     };
   }
@@ -79,7 +96,11 @@ export function parseOpenAPI(content: string): ImportResult {
     if (!methods || typeof methods !== "object") continue;
 
     for (const [method, operation] of Object.entries(methods)) {
-      if (!["get", "post", "put", "patch", "delete", "head", "options"].includes(method.toLowerCase())) {
+      if (
+        !["get", "post", "put", "patch", "delete", "head", "options"].includes(
+          method.toLowerCase(),
+        )
+      ) {
         continue;
       }
 
@@ -89,7 +110,7 @@ export function parseOpenAPI(content: string): ImportResult {
         path,
         op,
         baseUrl,
-        spec
+        spec,
       );
       requests.push(request);
     }
@@ -127,9 +148,10 @@ function createRequestFromOperation(
   path: string,
   operation: OpenAPIPath,
   baseUrl: string,
-  spec: OpenAPISpec
+  spec: OpenAPISpec,
 ): ImportRequest {
-  const name = operation.summary || operation.operationId || `${method} ${path}`;
+  const name =
+    operation.summary || operation.operationId || `${method} ${path}`;
   const url = `${baseUrl}${path}`;
 
   const headers: Array<{ name: string; value: string; enabled: boolean }> = [];
@@ -159,9 +181,21 @@ function createRequestFromOperation(
     if (jsonContent) {
       body = {
         mode: "raw",
-        raw: JSON.stringify(jsonContent.example || generateExampleFromSchema(jsonContent.schema, spec.components?.schemas), null, 2),
+        raw: JSON.stringify(
+          jsonContent.example ||
+            generateExampleFromSchema(
+              jsonContent.schema,
+              spec.components?.schemas,
+            ),
+          null,
+          2,
+        ),
       };
-      headers.push({ name: "Content-Type", value: "application/json", enabled: true });
+      headers.push({
+        name: "Content-Type",
+        value: "application/json",
+        enabled: true,
+      });
     }
   }
 
@@ -171,7 +205,10 @@ function createRequestFromOperation(
     id: generateId(),
     name,
     method,
-    url: params.length > 0 ? `${url}?${params.map((p) => `${p.name}={{${p.name}}}`).join("&")}` : url,
+    url:
+      params.length > 0
+        ? `${url}?${params.map((p) => `${p.name}={{${p.name}}}`).join("&")}`
+        : url,
     headers,
     body,
     auth,
@@ -182,26 +219,39 @@ function createRequestFromOperation(
 function getExampleValue(schema?: { type?: string }): string {
   if (!schema?.type) return "";
   switch (schema.type) {
-    case "string": return "string";
+    case "string":
+      return "string";
     case "number":
-    case "integer": return "0";
-    case "boolean": return "true";
-    case "array": return "[]";
-    case "object": return "{}";
-    default: return "";
+    case "integer":
+      return "0";
+    case "boolean":
+      return "true";
+    case "array":
+      return "[]";
+    case "object":
+      return "{}";
+    default:
+      return "";
   }
 }
 
 function generateExampleFromSchema(
-  schema?: { $ref?: string; type?: string; properties?: Record<string, unknown> },
-  schemas?: Record<string, unknown>
+  schema?: {
+    $ref?: string;
+    type?: string;
+    properties?: Record<string, unknown>;
+  },
+  schemas?: Record<string, unknown>,
 ): unknown {
   if (!schema) return null;
 
   if (schema.$ref) {
     const refName = schema.$ref.split("/").pop();
     if (refName && schemas?.[refName]) {
-      return generateExampleFromSchema(schemas[refName] as typeof schema, schemas);
+      return generateExampleFromSchema(
+        schemas[refName] as typeof schema,
+        schemas,
+      );
     }
     return null;
   }
@@ -223,7 +273,7 @@ function generateExampleFromSchema(
 
 function getAuthFromSecurity(
   security?: Array<Record<string, unknown>>,
-  spec?: OpenAPISpec
+  spec?: OpenAPISpec,
 ): ImportRequest["auth"] {
   if (!security || security.length === 0) return { type: "none" };
 
@@ -238,7 +288,10 @@ function getAuthFromSecurity(
   }
 
   if (secScheme.type === "http" && secScheme.scheme === "basic") {
-    return { type: "basic", basic: { username: "{{username}}", password: "{{password}}" } };
+    return {
+      type: "basic",
+      basic: { username: "{{username}}", password: "{{password}}" },
+    };
   }
 
   if (secScheme.type === "apiKey") {
@@ -280,7 +333,11 @@ function parseYaml(content: string): OpenAPISpec {
       indent = currentIndent;
 
       if (cleanValue) {
-        setNestedValue(result, [...currentPath, cleanKey], parseYamlValue(cleanValue));
+        setNestedValue(
+          result,
+          [...currentPath, cleanKey],
+          parseYamlValue(cleanValue),
+        );
       } else {
         currentPath.push(cleanKey);
         setNestedValue(result, currentPath, {});
@@ -302,7 +359,11 @@ function parseYamlValue(value: string): unknown {
   return value;
 }
 
-function setNestedValue(obj: Record<string, unknown>, path: string[], value: unknown): void {
+function setNestedValue(
+  obj: Record<string, unknown>,
+  path: string[],
+  value: unknown,
+): void {
   let current: Record<string, unknown> = obj;
   for (let i = 0; i < path.length - 1; i++) {
     if (!current[path[i]]) {
