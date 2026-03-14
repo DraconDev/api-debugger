@@ -39,12 +39,15 @@ export default defineBackground(() => {
     /^data:/i,
     /^blob:/i,
     /^file:\/\//i,
+    /^ws:\/\//i,
+    /^wss:\/\//i,
     /\.(tsx?|jsx?|css|html|map|woff2?|ttf|eot|svg|png|gif|jpg|jpeg|ico|webp)$/i,
     /\/node_modules\//i,
     /\/__vite_ping/i,
     /\/@vite\//i,
     /\/@fs\//i,
     /\/@id\//i,
+    /\/@react-refresh/i,
     /hot-update/i,
   ];
 
