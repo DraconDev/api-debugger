@@ -376,7 +376,10 @@ export default defineBackground(() => {
 
     if (message.type === "UPDATE_MOCK_SERVERS") {
       mockServers = message.payload.servers || [];
-      console.log("[API Debugger] Updated mock servers:", mockServers.length);
+      console.log(
+        "[API Debugger] Mock servers updated (requires declarativeNetRequest for interception):",
+        mockServers.length,
+      );
       sendResponse({ success: true });
       return true;
     }
