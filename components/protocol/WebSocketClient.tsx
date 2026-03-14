@@ -67,6 +67,13 @@ export function WebSocketClient() {
     setIsConnected(false);
   };
 
+  useEffect(() => {
+    return () => {
+      wsRef.current?.close();
+      wsRef.current = null;
+    };
+  }, []);
+
   const sendMessage = () => {
     if (!inputMessage.trim() || !wsRef.current) return;
 
