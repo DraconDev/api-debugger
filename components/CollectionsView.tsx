@@ -8,7 +8,8 @@ interface CollectionsViewProps {
 export function CollectionsView({ onSelectRequest }: CollectionsViewProps) {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [savedRequests, setSavedRequests] = useState<SavedRequest[]>([]);
-  const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
+  const [selectedCollection, setSelectedCollection] =
+    useState<Collection | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showNewCollection, setShowNewCollection] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
@@ -21,7 +22,10 @@ export function CollectionsView({ onSelectRequest }: CollectionsViewProps) {
     setIsLoading(true);
     try {
       // Use sync storage for cross-browser sync
-      const result = await chrome.storage.sync.get(["apiDebugger_collections", "apiDebugger_savedRequests"]);
+      const result = await chrome.storage.sync.get([
+        "apiDebugger_collections",
+        "apiDebugger_savedRequests",
+      ]);
       setCollections(result.apiDebugger_collections || []);
       setSavedRequests(result.apiDebugger_savedRequests || []);
     } catch (err) {
@@ -43,7 +47,9 @@ export function CollectionsView({ onSelectRequest }: CollectionsViewProps) {
     };
 
     const updatedCollections = [newCollection, ...collections];
-    await chrome.storage.sync.set({ apiDebugger_collections: updatedCollections });
+    await chrome.storage.sync.set({
+      apiDebugger_collections: updatedCollections,
+    });
     setCollections(updatedCollections);
     setNewCollectionName("");
     setShowNewCollection(false);
@@ -53,7 +59,9 @@ export function CollectionsView({ onSelectRequest }: CollectionsViewProps) {
     if (!confirm("Delete this collection?")) return;
 
     const updatedCollections = collections.filter((c) => c.id !== collectionId);
-    const updatedRequests = savedRequests.filter((r) => r.collectionId !== collectionId);
+    const updatedRequests = savedRequests.filter(
+      (r) => r.collectionId !== collectionId,
+    );
 
     await chrome.storage.sync.set({
       apiDebugger_collections: updatedCollections,
@@ -94,7 +102,7 @@ export function CollectionsView({ onSelectRequest }: CollectionsViewProps) {
             <h2 className="font-medium">{selectedCollection.name}</h2>
             <button
               onClick={() => deleteCollection(selectedCollection.id)}
-              className="text-xs text-red-600 hover:text-red-700"
+              className="text-xs text-destructive hover:text-destructive/80"
             >
               Delete
             </button>
