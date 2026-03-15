@@ -484,4 +484,93 @@ function EmptyIcon({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
+function OnboardingScreen({
+  onDismiss,
+  openDashboard,
+}: {
+  onDismiss: () => void;
+  openDashboard: (view?: QuickAction) => void;
+}) {
+  return (
+    <div className="p-6">
+      <div className="text-center mb-6">
+        <img
+          src={chrome.runtime.getURL("/icon/48.png")}
+          alt="API Debugger"
+          className="w-12 h-12 mx-auto mb-3 rounded-xl shadow-lg"
+        />
+        <h1 className="text-lg font-bold">API Debugger</h1>
+        <p className="text-xs text-muted-foreground mt-1">
+          Browser-native API debugging
+        </p>
+      </div>
+
+      <div className="space-y-2 mb-6">
+        <div className="flex items-start gap-3 p-2 rounded-lg bg-muted/50">
+          <span className="text-success mt-0.5">✓</span>
+          <div>
+            <div className="text-sm font-medium">No account needed</div>
+            <div className="text-xs text-muted-foreground">
+              Everything stored locally
+            </div>
+          </div>
+        </div>
+        <div className="flex items-start gap-3 p-2 rounded-lg bg-muted/50">
+          <span className="text-success mt-0.5">✓</span>
+          <div>
+            <div className="text-sm font-medium">All protocols</div>
+            <div className="text-xs text-muted-foreground">
+              REST, WebSocket, SSE, Socket.IO, GraphQL
+            </div>
+          </div>
+        </div>
+        <div className="flex items-start gap-3 p-2 rounded-lg bg-muted/50">
+          <span className="text-success mt-0.5">✓</span>
+          <div>
+            <div className="text-sm font-medium">Your AI, Your Keys</div>
+            <div className="text-xs text-muted-foreground">
+              OpenAI, Anthropic, Gemini via BYOK
+            </div>
+          </div>
+        </div>
+        <div className="flex items-start gap-3 p-2 rounded-lg bg-muted/50">
+          <span className="text-success mt-0.5">✓</span>
+          <div>
+            <div className="text-sm font-medium">Auto-capture</div>
+            <div className="text-xs text-muted-foreground">
+              Captures browser API requests automatically
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <button
+          onClick={() => {
+            onDismiss();
+            openDashboard("builder");
+          }}
+          className="w-full py-2.5 px-4 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium rounded-md"
+        >
+          Create First Request
+        </button>
+        <button
+          onClick={() => {
+            onDismiss();
+            openDashboard();
+          }}
+          className="w-full py-2 px-4 bg-secondary hover:bg-secondary/80 text-secondary-foreground text-sm rounded-md"
+        >
+          Open Dashboard
+        </button>
+      </div>
+
+      <p className="text-[10px] text-center text-muted-foreground mt-4">
+        Press <kbd className="px-1 py-0.5 bg-muted rounded text-[10px]">?</kbd>{" "}
+        for keyboard shortcuts
+      </p>
+    </div>
+  );
+}
+
 export default App;
