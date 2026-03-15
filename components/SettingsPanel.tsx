@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { validateApiKey, type AIProvider } from "@/utils/ai-client";
-import { getModels, getProviders, type ModelInfo } from "@/lib/modelRegistry";
+import { getModels, type ModelInfo } from "@/lib/modelRegistry";
 
 interface AISettings {
   provider: AIProvider;
@@ -26,9 +26,6 @@ export function SettingsPanel() {
   const [showKey, setShowKey] = useState(false);
 
   const [allModels, setAllModels] = useState<ModelInfo[]>([]);
-  const [providers, setProviders] = useState<
-    Array<{ id: string; name: string; modelCount: number }>
-  >([]);
   const [modelSearch, setModelSearch] = useState("");
   const [isLoadingModels, setIsLoadingModels] = useState(true);
 
@@ -40,12 +37,8 @@ export function SettingsPanel() {
   const loadModels = async () => {
     setIsLoadingModels(true);
     try {
-      const [modelList, providerList] = await Promise.all([
-        getModels(),
-        getProviders(),
-      ]);
+      const modelList = await getModels();
       setAllModels(modelList);
-      setProviders(providerList);
     } finally {
       setIsLoadingModels(false);
     }
