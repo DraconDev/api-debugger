@@ -1,15 +1,13 @@
 import { useState, useEffect } from "react";
-import { validateChain, type AIProvider } from "@/lib/ai-client";
-import { getModels, type ModelInfo } from "@/lib/modelRegistry";
+import { createAI } from "@/lib/ai-client";
+import { getModels, getProviders, type ModelInfo } from "@/lib/modelRegistry";
 
 interface AISettings {
-  provider: AIProvider;
   apiKey: string;
   model: string;
 }
 
 const DEFAULT_SETTINGS: AISettings = {
-  provider: "openai",
   apiKey: "",
   model: "openai/gpt-4.1-mini",
 };
@@ -26,6 +24,10 @@ export function SettingsPanel() {
   const [showKey, setShowKey] = useState(false);
 
   const [allModels, setAllModels] = useState<ModelInfo[]>([]);
+  const [providerFilter, setProviderFilter] = useState<string>("all");
+  const [providers, setProviders] = useState<
+    Array<{ id: string; name: string; modelCount: number }>
+  >([]);
   const [modelSearch, setModelSearch] = useState("");
   const [isLoadingModels, setIsLoadingModels] = useState(true);
 
