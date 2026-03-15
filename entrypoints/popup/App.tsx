@@ -84,6 +84,10 @@ function App() {
 
   return (
     <div className="w-96 bg-background text-foreground dark">
+      {isFirstLaunch ? (
+        <OnboardingScreen onDismiss={dismissWelcome} openDashboard={openDashboard} />
+      ) : (
+        <>
       {/* Header */}
       <div className="p-3 border-b border-border">
         <div className="flex items-center gap-3">
