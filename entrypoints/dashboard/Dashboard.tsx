@@ -24,11 +24,9 @@ import { ApiDocGenerator } from "@/components/ApiDocGenerator";
 import { GitHubSyncPanel } from "@/components/GitHubSyncPanel";
 import { SettingsPanel } from "@/components/SettingsPanel";
 import { CertificateViewer } from "@/components/CertificateViewer";
-import { SAMPLE_COLLECTIONS } from "@/components/WelcomeScreen";
 import { ImportModal } from "@/components/ImportModal";
 import { ShortcutsModal } from "@/components/ShortcutsModal";
 import { type ImportResult } from "@/lib/importers";
-import { generateId } from "@/lib/importers/types";
 
 type ViewType =
   | "builder"
