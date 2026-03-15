@@ -15,7 +15,7 @@ export function RequestList({ requests, onSelectRequest }: RequestListProps) {
   }
 
   const getStatusColor = (status: number) => {
-    if (status >= 200 && status < 300) return "text-green-600";
+    if (status >= 200 && status < 300) return "text-success";
     if (status >= 400 && status < 500) return "text-yellow-600";
     if (status >= 500) return "text-red-600";
     return "text-muted-foreground";
@@ -26,7 +26,7 @@ export function RequestList({ requests, onSelectRequest }: RequestListProps) {
       case "GET":
         return "text-blue-600";
       case "POST":
-        return "text-green-600";
+        return "text-success";
       case "PUT":
         return "text-orange-600";
       case "DELETE":
