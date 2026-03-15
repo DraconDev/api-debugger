@@ -861,20 +861,6 @@ export default function Dashboard() {
       </main>
 
       {/* Modals */}
-      {showWelcome && (
-        <WelcomeScreen
-          onCreateRequest={() => {
-            dismissWelcome();
-            setView("builder");
-          }}
-          onImportFile={() => {
-            dismissWelcome();
-            setShowImport(true);
-          }}
-          onLoadSample={loadSampleCollection}
-        />
-      )}
-
       {showImport && (
         <ImportModal
           onClose={() => setShowImport(false)}
