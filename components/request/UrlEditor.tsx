@@ -1,7 +1,16 @@
 import { useState, useEffect } from "react";
 import type { QueryParam } from "@/types";
 
-const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "TRACE"];
+const METHODS = [
+  "GET",
+  "POST",
+  "PUT",
+  "PATCH",
+  "DELETE",
+  "HEAD",
+  "OPTIONS",
+  "TRACE",
+];
 
 interface UrlEditorProps {
   method: string;
@@ -62,17 +71,17 @@ export function UrlEditor({
   const methodColor = (m: string) => {
     switch (m) {
       case "GET":
-        return "bg-success hover:bg-success";
+        return "bg-success hover:bg-success/80";
       case "POST":
-        return "bg-warning hover:bg-warning";
+        return "bg-warning hover:bg-warning/80";
       case "PUT":
-        return "bg-primary hover:bg-primary";
+        return "bg-primary hover:bg-primary/80";
       case "PATCH":
-        return "bg-purple-600 hover:bg-purple-500";
+        return "bg-accent hover:bg-accent/80 text-accent-foreground";
       case "DELETE":
-        return "bg-destructive hover:bg-destructive";
+        return "bg-destructive hover:bg-destructive/80";
       default:
-        return "bg-zinc-600 hover:bg-zinc-500";
+        return "bg-muted hover:bg-muted/80 text-muted-foreground";
     }
   };
 
@@ -138,7 +147,10 @@ export function UrlEditor({
             <span className="text-xs font-medium">Query Parameters</span>
             <button
               onClick={() => {
-                onParamsChange([...params, { name: "", value: "", enabled: true }]);
+                onParamsChange([
+                  ...params,
+                  { name: "", value: "", enabled: true },
+                ]);
               }}
               className="text-xs text-primary hover:text-primary/80"
             >
@@ -161,7 +173,10 @@ export function UrlEditor({
                     checked={param.enabled !== false}
                     onChange={(e) => {
                       const newParams = [...params];
-                      newParams[index] = { ...param, enabled: e.target.checked };
+                      newParams[index] = {
+                        ...param,
+                        enabled: e.target.checked,
+                      };
                       onParamsChange(newParams);
                     }}
                     className="w-3 h-3"
@@ -208,15 +223,30 @@ export function UrlEditor({
 
 function SendIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+      />
     </svg>
   );
 }
 
 function TrashIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
