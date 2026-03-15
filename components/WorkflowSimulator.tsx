@@ -532,7 +532,7 @@ export function WorkflowSimulator({
                 <button
                   onClick={() => removeAssertion(assertion.id)}
                   disabled={isRunning}
-                  className="text-destructive hover:text-red-600 disabled:opacity-50"
+                  className="text-destructive hover:text-destructive disabled:opacity-50"
                 >
                   ×
                 </button>

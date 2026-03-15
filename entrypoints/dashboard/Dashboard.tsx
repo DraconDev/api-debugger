@@ -972,13 +972,13 @@ function RequestListItem({
 
   const methodBgColor =
     request.method === "GET"
-      ? "bg-success/10 text-emerald-600"
+      ? "bg-success/10 text-success"
       : request.method === "POST"
         ? "bg-warning/10 text-warning"
         : request.method === "PUT"
-          ? "bg-primary/10 text-blue-600"
+          ? "bg-primary/10 text-primary"
           : request.method === "DELETE"
-            ? "bg-destructive/10 text-red-600"
+            ? "bg-destructive/10 text-destructive"
             : "bg-muted text-muted-foreground";
 
   return (

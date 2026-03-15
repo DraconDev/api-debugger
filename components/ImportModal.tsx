@@ -233,13 +233,13 @@ export function ImportModal({ onClose, onImport }: ImportModalProps) {
                         <span
                           className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${
                             r.method === "GET"
-                              ? "bg-success/20 text-emerald-600"
+                              ? "bg-success/20 text-success"
                               : r.method === "POST"
                                 ? "bg-warning/20 text-warning"
                                 : r.method === "PUT"
-                                  ? "bg-primary/20 text-blue-600"
+                                  ? "bg-primary/20 text-primary"
                                   : r.method === "DELETE"
-                                    ? "bg-destructive/20 text-red-600"
+                                    ? "bg-destructive/20 text-destructive"
                                     : "bg-muted text-muted-foreground"
                           }`}
                         >
