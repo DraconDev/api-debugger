@@ -85,160 +85,171 @@ function App() {
   return (
     <div className="w-96 bg-background text-foreground dark">
       {isFirstLaunch ? (
-        <OnboardingScreen onDismiss={dismissWelcome} openDashboard={openDashboard} />
+        <OnboardingScreen
+          onDismiss={dismissWelcome}
+          openDashboard={openDashboard}
+        />
       ) : (
         <>
-      {/* Header */}
-      <div className="p-3 border-b border-border">
-        <div className="flex items-center gap-3">
-          <img
-            src={chrome.runtime.getURL("/icon/32.png")}
-            alt="API Debugger"
-            className="w-9 h-9 rounded-lg shadow-sm"
-          />
-          <div className="flex-1">
-            <h1 className="font-semibold text-sm">API Debugger</h1>
-            <p className="text-xs text-muted-foreground">
-              {requests.length} requests captured
-            </p>
-          </div>
-          <button
-            onClick={toggleCapture}
-            className={`relative w-10 h-5 rounded-full transition-colors ${
-              captureEnabled ? "bg-success" : "bg-muted"
-            }`}
-            title={captureEnabled ? "Capturing enabled" : "Capturing disabled"}
-          >
-            <span
-              className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
-                captureEnabled ? "translate-x-5" : ""
-              }`}
-            />
-          </button>
-        </div>
-      </div>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-3 gap-px bg-border">
-        <button
-          onClick={() => setFilter("all")}
-          className={`p-3 text-center transition-colors ${
-            filter === "all" ? "bg-accent" : "bg-card hover:bg-accent/50"
-          }`}
-        >
-          <div className="text-xl font-bold">{requests.length}</div>
-          <div className="text-xs text-muted-foreground">Total</div>
-        </button>
-        <button
-          onClick={() => setFilter("success")}
-          className={`p-3 text-center transition-colors ${
-            filter === "success"
-              ? "bg-success/10"
-              : "bg-card hover:bg-accent/50"
-          }`}
-        >
-          <div className="text-xl font-bold text-success">{successCount}</div>
-          <div className="text-xs text-muted-foreground">Success</div>
-        </button>
-        <button
-          onClick={() => setFilter("errors")}
-          className={`p-3 text-center transition-colors ${
-            filter === "errors"
-              ? "bg-destructive/10"
-              : "bg-card hover:bg-accent/50"
-          }`}
-        >
-          <div className="text-xl font-bold text-destructive">{errorCount}</div>
-          <div className="text-xs text-muted-foreground">Errors</div>
-        </button>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="grid grid-cols-5 gap-1 p-2 border-b border-border bg-muted/30">
-        <QuickActionButton
-          icon={<NewRequestIcon />}
-          label="New"
-          onClick={() => openDashboard("new-request")}
-        />
-        <QuickActionButton
-          icon={<WebSocketIcon />}
-          label="WS"
-          onClick={() => openDashboard("websocket")}
-        />
-        <QuickActionButton
-          icon={<GraphQLIcon />}
-          label="GQL"
-          onClick={() => openDashboard("graphql")}
-        />
-        <QuickActionButton
-          icon={<HistoryIcon />}
-          label="History"
-          onClick={() => openDashboard("history")}
-        />
-        <QuickActionButton
-          icon={<SettingsIcon />}
-          label="Settings"
-          onClick={() => openDashboard("settings")}
-        />
-      </div>
-
-      {/* Recent Requests */}
-      <div className="max-h-64 overflow-auto">
-        {isLoading ? (
-          <div className="flex justify-center py-6">
-            <div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" />
-          </div>
-        ) : recentRequests.length === 0 ? (
-          <div className="py-6 text-center">
-            <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-muted flex items-center justify-center">
-              <EmptyIcon className="w-6 h-6 text-muted-foreground" />
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {filter === "all"
-                ? "No requests captured yet"
-                : `No ${filter} requests`}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Browse the web to capture API requests
-            </p>
-          </div>
-        ) : (
-          <div>
-            {recentRequests.map((req) => (
-              <RequestRow
-                key={req.id}
-                request={req}
-                onClick={() => openDashboard("history")}
+          {/* Header */}
+          <div className="p-3 border-b border-border">
+            <div className="flex items-center gap-3">
+              <img
+                src={chrome.runtime.getURL("/icon/32.png")}
+                alt="API Debugger"
+                className="w-9 h-9 rounded-lg shadow-sm"
               />
-            ))}
+              <div className="flex-1">
+                <h1 className="font-semibold text-sm">API Debugger</h1>
+                <p className="text-xs text-muted-foreground">
+                  {requests.length} requests captured
+                </p>
+              </div>
+              <button
+                onClick={toggleCapture}
+                className={`relative w-10 h-5 rounded-full transition-colors ${
+                  captureEnabled ? "bg-success" : "bg-muted"
+                }`}
+                title={
+                  captureEnabled ? "Capturing enabled" : "Capturing disabled"
+                }
+              >
+                <span
+                  className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
+                    captureEnabled ? "translate-x-5" : ""
+                  }`}
+                />
+              </button>
+            </div>
           </div>
-        )}
-      </div>
 
-      {/* Footer Actions */}
-      <div className="p-2 border-t border-border flex gap-2 bg-muted/30">
-        <button
-          onClick={() => openDashboard()}
-          className="flex-1 py-2 px-3 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium rounded-md flex items-center justify-center gap-2"
-        >
-          <ExpandIcon className="w-4 h-4" />
-          Open Dashboard
-        </button>
-        {requests.length > 0 && (
-          <button
-            onClick={clearHistory}
-            className="py-2 px-3 bg-secondary hover:bg-secondary/80 text-secondary-foreground text-sm rounded-md"
-            title="Clear history"
-          >
-            <TrashIcon className="w-4 h-4" />
-          </button>
-        )}
-      </div>
+          {/* Quick Stats */}
+          <div className="grid grid-cols-3 gap-px bg-border">
+            <button
+              onClick={() => setFilter("all")}
+              className={`p-3 text-center transition-colors ${
+                filter === "all" ? "bg-accent" : "bg-card hover:bg-accent/50"
+              }`}
+            >
+              <div className="text-xl font-bold">{requests.length}</div>
+              <div className="text-xs text-muted-foreground">Total</div>
+            </button>
+            <button
+              onClick={() => setFilter("success")}
+              className={`p-3 text-center transition-colors ${
+                filter === "success"
+                  ? "bg-success/10"
+                  : "bg-card hover:bg-accent/50"
+              }`}
+            >
+              <div className="text-xl font-bold text-success">
+                {successCount}
+              </div>
+              <div className="text-xs text-muted-foreground">Success</div>
+            </button>
+            <button
+              onClick={() => setFilter("errors")}
+              className={`p-3 text-center transition-colors ${
+                filter === "errors"
+                  ? "bg-destructive/10"
+                  : "bg-card hover:bg-accent/50"
+              }`}
+            >
+              <div className="text-xl font-bold text-destructive">
+                {errorCount}
+              </div>
+              <div className="text-xs text-muted-foreground">Errors</div>
+            </button>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="grid grid-cols-5 gap-1 p-2 border-b border-border bg-muted/30">
+            <QuickActionButton
+              icon={<NewRequestIcon />}
+              label="New"
+              onClick={() => openDashboard("new-request")}
+            />
+            <QuickActionButton
+              icon={<WebSocketIcon />}
+              label="WS"
+              onClick={() => openDashboard("websocket")}
+            />
+            <QuickActionButton
+              icon={<GraphQLIcon />}
+              label="GQL"
+              onClick={() => openDashboard("graphql")}
+            />
+            <QuickActionButton
+              icon={<HistoryIcon />}
+              label="History"
+              onClick={() => openDashboard("history")}
+            />
+            <QuickActionButton
+              icon={<SettingsIcon />}
+              label="Settings"
+              onClick={() => openDashboard("settings")}
+            />
+          </div>
+
+          {/* Recent Requests */}
+          <div className="max-h-64 overflow-auto">
+            {isLoading ? (
+              <div className="flex justify-center py-6">
+                <div className="animate-spin w-5 h-5 border-2 border-primary border-t-transparent rounded-full" />
+              </div>
+            ) : recentRequests.length === 0 ? (
+              <div className="py-6 text-center">
+                <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-muted flex items-center justify-center">
+                  <EmptyIcon className="w-6 h-6 text-muted-foreground" />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {filter === "all"
+                    ? "No requests captured yet"
+                    : `No ${filter} requests`}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Browse the web to capture API requests
+                </p>
+              </div>
+            ) : (
+              <div>
+                {recentRequests.map((req) => (
+                  <RequestRow
+                    key={req.id}
+                    request={req}
+                    onClick={() => openDashboard("history")}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Footer Actions */}
+          <div className="p-2 border-t border-border flex gap-2 bg-muted/30">
+            <button
+              onClick={() => openDashboard()}
+              className="flex-1 py-2 px-3 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium rounded-md flex items-center justify-center gap-2"
+            >
+              <ExpandIcon className="w-4 h-4" />
+              Open Dashboard
+            </button>
+            {requests.length > 0 && (
+              <button
+                onClick={clearHistory}
+                className="py-2 px-3 bg-secondary hover:bg-secondary/80 text-secondary-foreground text-sm rounded-md"
+                title="Clear history"
+              >
+                <TrashIcon className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </>
       )}
     </div>
   );
 }
+
+function QuickActionButton({
   icon,
   label,
   onClick,
