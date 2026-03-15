@@ -1,9 +1,6 @@
-import { useState, useEffect } from "react";
-import {
-  getAvailableModels,
-  validateApiKey,
-  type AIProvider,
-} from "@/utils/ai-client";
+import { useState, useEffect, useCallback } from "react";
+import { validateApiKey, type AIProvider } from "@/utils/ai-client";
+import { getModels, getProviders, type ModelInfo } from "@/lib/modelRegistry";
 
 interface AISettings {
   provider: AIProvider;
@@ -14,7 +11,7 @@ interface AISettings {
 const DEFAULT_SETTINGS: AISettings = {
   provider: "openai",
   apiKey: "",
-  model: "gpt-4o-mini",
+  model: "openai/gpt-4.1-mini",
 };
 
 const STORAGE_KEY = "sync:ai_settings";
