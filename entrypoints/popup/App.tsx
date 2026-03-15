@@ -234,11 +234,11 @@ function App() {
           </button>
         )}
       </div>
+        </>
+      )}
     </div>
   );
 }
-
-function QuickActionButton({
   icon,
   label,
   onClick,
