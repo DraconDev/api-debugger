@@ -25,9 +25,31 @@ export function SettingsPanel() {
   const [isSaving, setIsSaving] = useState(false);
   const [showKey, setShowKey] = useState(false);
 
+  const [allModels, setAllModels] = useState<ModelInfo[]>([]);
+  const [providers, setProviders] = useState<
+    Array<{ id: string; name: string; modelCount: number }>
+  >([]);
+  const [modelSearch, setModelSearch] = useState("");
+  const [isLoadingModels, setIsLoadingModels] = useState(true);
+
   useEffect(() => {
     loadSettings();
+    loadModels();
   }, []);
+
+  const loadModels = async () => {
+    setIsLoadingModels(true);
+    try {
+      const [modelList, providerList] = await Promise.all([
+        getModels(),
+        getProviders(),
+      ]);
+      setAllModels(modelList);
+      setProviders(providerList);
+    } finally {
+      setIsLoadingModels(false);
+    }
+  };
 
   const loadSettings = async () => {
     try {
