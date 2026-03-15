@@ -95,17 +95,33 @@ export function SettingsPanel() {
   };
 
   const handleProviderChange = (provider: AIProvider) => {
-    const models = getAvailableModels(provider);
+    const providerModels = allModels.filter(
+      (m) => m.providerId === provider || (provider === "openrouter" && true),
+    );
+    const firstModel = providerModels[0]?.id || "";
     setSettings({
       ...settings,
       provider,
-      model: models[0] || "",
+      model: firstModel,
       apiKey: "",
     });
     setValidationResult(null);
+    setModelSearch("");
   };
 
-  const models = getAvailableModels(settings.provider);
+  const filteredModels = modelSearch
+    ? allModels.filter(
+        (m) =>
+          (settings.provider === "openrouter" ||
+            m.providerId === settings.provider) &&
+          (m.name.toLowerCase().includes(modelSearch.toLowerCase()) ||
+            m.id.toLowerCase().includes(modelSearch.toLowerCase())),
+      )
+    : allModels.filter(
+        (m) =>
+          settings.provider === "openrouter" ||
+          m.providerId === settings.provider,
+      );
 
   return (
     <div className="h-full w-full flex flex-col">
