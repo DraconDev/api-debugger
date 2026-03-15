@@ -74,12 +74,16 @@ export function SettingsPanel() {
     setValidationResult(null);
 
     try {
-      const isValid = await validateApiKey({
-        provider: settings.provider,
-        apiKey: settings.apiKey,
-        model: settings.model,
+      const result = await validateChain({
+        chain: [
+          {
+            provider: settings.provider,
+            apiKey: settings.apiKey,
+            model: settings.model,
+          },
+        ],
       });
-      setValidationResult(isValid ? "valid" : "invalid");
+      setValidationResult(result.valid ? "valid" : "invalid");
     } catch {
       setValidationResult("invalid");
     } finally {
