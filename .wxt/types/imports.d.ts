@@ -43,8 +43,11 @@ declare global {
   const defineUnlistedScript: typeof import('wxt/utils/define-unlisted-script').defineUnlistedScript
   const defineWxtPlugin: typeof import('wxt/utils/define-wxt-plugin').defineWxtPlugin
   const fakeBrowser: typeof import('wxt/testing').fakeBrowser
+  const fetchModelsFromAPI: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/ai-client').fetchModelsFromAPI
   const getAppConfig: typeof import('wxt/utils/app-config').getAppConfig
   const getAvailableModels: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/ai-client').getAvailableModels
+  const getDefaultModel: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/ai-client').getDefaultModel
+  const getProviderName: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/ai-client').getProviderName
   const injectScript: typeof import('wxt/utils/inject-script').injectScript
   const interpolateVariables: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useRuntimeVariables').interpolateVariables
   const storage: typeof import('wxt/utils/storage').storage
@@ -94,6 +97,6 @@ declare global {
   export type { WorkflowConfig, WorkflowAssertion, WorkflowStep, WorkflowCondition, WorkflowResult, AssertionResult, LoadTestMetrics } from '/home/dracon/Dev/extensions/api-debugger/components/WorkflowSimulator'
   import('/home/dracon/Dev/extensions/api-debugger/components/WorkflowSimulator')
   // @ts-ignore
-  export type { AIProvider, AIConfig, AIMessage, AIResponse } from '/home/dracon/Dev/extensions/api-debugger/utils/ai-client'
+  export type { AIProvider, AIConfig, AIMessage, AIResponse, ModelInfo } from '/home/dracon/Dev/extensions/api-debugger/utils/ai-client'
   import('/home/dracon/Dev/extensions/api-debugger/utils/ai-client')
 }

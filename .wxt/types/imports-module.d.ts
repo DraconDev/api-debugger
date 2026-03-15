@@ -46,5 +46,5 @@ declare module '#imports' {
   export { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
   export { RuntimeVariablesProvider, useRuntimeVariables, interpolateVariables } from '../hooks/useRuntimeVariables';
   export { useTheme, ThemeToggle } from '../hooks/useTheme';
-  export { createAIClient, getAvailableModels, validateApiKey, AIProvider, AIConfig, AIMessage, AIResponse } from '../utils/ai-client';
+  export { getProviderName, getDefaultModel, createAIClient, getAvailableModels, fetchModelsFromAPI, validateApiKey, AIProvider, AIConfig, AIMessage, AIResponse, ModelInfo } from '../utils/ai-client';
 }
