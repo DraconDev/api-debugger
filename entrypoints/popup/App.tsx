@@ -2,7 +2,12 @@ import { useEffect, useState, useCallback } from "react";
 import type { RequestRecord } from "@/types";
 import "./style.css";
 
-type QuickAction = "new-request" | "websocket" | "graphql" | "history" | "settings";
+type QuickAction =
+  | "new-request"
+  | "websocket"
+  | "graphql"
+  | "history"
+  | "settings";
 
 function App() {
   const [requests, setRequests] = useState<RequestRecord[]>([]);
@@ -41,7 +46,7 @@ function App() {
   };
 
   const openDashboard = useCallback((view?: QuickAction) => {
-    const url = view 
+    const url = view
       ? `${chrome.runtime.getURL("/dashboard.html")}?view=${view}`
       : chrome.runtime.getURL("/dashboard.html");
     chrome.tabs.create({ url });
@@ -109,7 +114,9 @@ function App() {
         <button
           onClick={() => setFilter("success")}
           className={`p-3 text-center transition-colors ${
-            filter === "success" ? "bg-success/10" : "bg-card hover:bg-accent/50"
+            filter === "success"
+              ? "bg-success/10"
+              : "bg-card hover:bg-accent/50"
           }`}
         >
           <div className="text-xl font-bold text-success">{successCount}</div>
@@ -118,7 +125,9 @@ function App() {
         <button
           onClick={() => setFilter("errors")}
           className={`p-3 text-center transition-colors ${
-            filter === "errors" ? "bg-destructive/10" : "bg-card hover:bg-accent/50"
+            filter === "errors"
+              ? "bg-destructive/10"
+              : "bg-card hover:bg-accent/50"
           }`}
         >
           <div className="text-xl font-bold text-destructive">{errorCount}</div>
@@ -167,7 +176,9 @@ function App() {
               <EmptyIcon className="w-6 h-6 text-muted-foreground" />
             </div>
             <p className="text-sm text-muted-foreground">
-              {filter === "all" ? "No requests captured yet" : `No ${filter} requests`}
+              {filter === "all"
+                ? "No requests captured yet"
+                : `No ${filter} requests`}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
               Browse the web to capture API requests
@@ -247,12 +258,18 @@ function RequestRow({
 
   const methodColorClass = (method: string) => {
     switch (method) {
-      case "GET": return "text-success bg-success/10";
-      case "POST": return "text-warning bg-warning/10";
-      case "PUT": return "text-primary bg-primary/10";
-      case "PATCH": return "text-cyan-500 bg-cyan-500/10";
-      case "DELETE": return "text-destructive bg-destructive/10";
-      default: return "text-muted-foreground bg-muted";
+      case "GET":
+        return "text-success bg-success/10";
+      case "POST":
+        return "text-warning bg-warning/10";
+      case "PUT":
+        return "text-primary bg-primary/10";
+      case "PATCH":
+        return "text-accent bg-accent/10";
+      case "DELETE":
+        return "text-destructive bg-destructive/10";
+      default:
+        return "text-muted-foreground bg-muted";
     }
   };
 
@@ -268,10 +285,14 @@ function RequestRow({
       onClick={onClick}
       className="flex items-center gap-2 px-3 py-2 border-b border-border hover:bg-accent/50 cursor-pointer transition-colors"
     >
-      <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-medium ${methodColorClass(request.method)}`}>
+      <span
+        className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-medium ${methodColorClass(request.method)}`}
+      >
         {request.method}
       </span>
-      <span className={`text-xs font-mono ${statusColorClass(request.statusCode)}`}>
+      <span
+        className={`text-xs font-mono ${statusColorClass(request.statusCode)}`}
+      >
         {request.statusCode}
       </span>
       <span className="flex-1 text-xs truncate text-muted-foreground font-mono">
@@ -286,65 +307,150 @@ function RequestRow({
 
 function NewRequestIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M12 4v16m8-8H4"
+      />
     </svg>
   );
 }
 
 function WebSocketIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+      />
     </svg>
   );
 }
 
 function GraphQLIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+      />
     </svg>
   );
 }
 
 function HistoryIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
     </svg>
   );
 }
 
 function SettingsIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+      />
     </svg>
   );
 }
 
 function ExpandIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+      />
     </svg>
   );
 }
 
 function TrashIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+      />
     </svg>
   );
 }
 
 function EmptyIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+      />
     </svg>
   );
 }
