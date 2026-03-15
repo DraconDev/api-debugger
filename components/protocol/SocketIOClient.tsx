@@ -378,7 +378,7 @@ export function SocketIOClient() {
           </button>
         </div>
 
-        <div className="flex-1 overflow-auto bg-zinc-950">
+        <div className="flex-1 overflow-auto bg-background">
           {filteredEvents.length === 0 ? (
             <div className="flex items-center justify-center h-full text-muted-foreground">
               <div className="text-center">

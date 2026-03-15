@@ -39,7 +39,7 @@ export function JsonViewer({
   );
 
   if (data === null) {
-    return <span className="text-purple-400">null</span>;
+    return <span className="text-muted-foreground">null</span>;
   }
 
   if (data === undefined) {
@@ -150,7 +150,7 @@ export function JsonViewer({
                     className={
                       isMatch
                         ? "text-yellow-400 bg-yellow-400/20 px-0.5 rounded"
-                        : "text-cyan-400"
+                        : "text-primary"
                     }
                   >
                     {escapeHtml(key)}

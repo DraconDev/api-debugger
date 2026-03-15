@@ -73,7 +73,7 @@ pm.expect(value).to.beA("string");`}
           value={script}
           onChange={(e) => onChange(e.target.value)}
           placeholder="// Write your script here...&#10;// pm.variables.set('timestamp', Date.now().toString());"
-          className="flex-1 w-full p-3 bg-zinc-950 text-foreground font-mono text-xs resize-none focus:outline-none"
+          className="flex-1 w-full p-3 bg-background text-foreground font-mono text-xs resize-none focus:outline-none"
           spellCheck={false}
         />
       </div>
@@ -85,7 +85,7 @@ pm.expect(value).to.beA("string");`}
       )}
 
       {logs && logs.length > 0 && (
-        <div className="border-t border-border max-h-32 overflow-auto bg-zinc-950">
+        <div className="border-t border-border max-h-32 overflow-auto bg-background">
           <div className="p-2 text-xs font-mono">
             {logs.map((log, i) => (
               <div key={i} className={`py-0.5 ${

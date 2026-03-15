@@ -162,7 +162,7 @@ export function ApiDocGenerator({ collections, savedRequests }: ApiDocGeneratorP
           </div>
         ) : (
           <div className="p-4">
-            <pre className="text-xs font-mono whitespace-pre-wrap bg-zinc-950 p-4 rounded-lg text-muted-foreground overflow-auto">
+            <pre className="text-xs font-mono whitespace-pre-wrap bg-background p-4 rounded-lg text-muted-foreground overflow-auto">
               {generatedDoc}
             </pre>
           </div>

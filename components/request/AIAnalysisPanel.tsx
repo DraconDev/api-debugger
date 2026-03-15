@@ -120,7 +120,7 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between px-3 py-2 border-b border-border">
         <div className="flex items-center gap-2">
-          <SparklesIcon className="w-4 h-4 text-violet-400" />
+          <SparklesIcon className="w-4 h-4 text-primary" />
           <span className="text-xs font-medium">AI Analysis</span>
         </div>
         <div className="flex items-center gap-1">
@@ -133,7 +133,7 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
               }}
               className={`px-2 py-1 text-xs rounded ${
                 activeTab === tab
-                  ? "bg-violet-600 text-white"
+                  ? "bg-primary text-white"
                   : "text-muted-foreground hover:bg-muted"
               }`}
             >
@@ -153,7 +153,7 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
             </p>
             <button
               onClick={analyzeRequest}
-              className="px-4 py-2 text-sm bg-violet-600 hover:bg-violet-500 text-white rounded-md flex items-center gap-2 mx-auto"
+              className="px-4 py-2 text-sm bg-primary hover:bg-primary text-white rounded-md flex items-center gap-2 mx-auto"
             >
               <SparklesIcon className="w-4 h-4" />
               Analyze
