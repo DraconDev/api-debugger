@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { createAI, type AIProvider } from "@/lib/ai-client";
+import { createAI } from "@/lib/ai-client";
 import type { RequestRecord, CapturedResponse } from "@/types";
 
 interface AIAnalysisPanelProps {
@@ -8,7 +8,6 @@ interface AIAnalysisPanelProps {
 }
 
 interface AISettings {
-  provider: AIProvider;
   apiKey: string;
   model: string;
 }
@@ -21,6 +20,7 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
   const [error, setError] = useState<string | null>(null);
   const [aiSettings, setAiSettings] = useState<AISettings | null>(null);
   const [usedModel, setUsedModel] = useState<string | null>(null);
+  const [usedFallback, setUsedFallback] = useState(false);
   const [activeTab, setActiveTab] = useState<
     "analysis" | "explain" | "suggest"
   >("analysis");
@@ -37,6 +37,39 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
       }
     } catch (err) {
       console.error("Failed to load AI settings:", err);
+    }
+  };
+
+  const analyzeRequest = async () => {
+    if (!aiSettings) return;
+
+    setIsLoading(true);
+    setError(null);
+    setUsedModel(null);
+    setUsedFallback(false);
+
+    try {
+      const client = createAI({ apiKey: aiSettings.apiKey });
+
+      const prompt = buildAnalysisPrompt(request, response, activeTab);
+      const systemPrompt = getSystemPrompt(activeTab);
+
+      const messages = [];
+      if (systemPrompt)
+        messages.push({ role: "system" as const, content: systemPrompt });
+      messages.push({ role: "user" as const, content: prompt });
+
+      const result = await client.chat(messages, {
+        model: aiSettings.model,
+        fallbacks: ["openai/gpt-4.1-mini", "google/gemini-2.0-flash"],
+      });
+      setAnalysis(result.content);
+      setUsedModel(result.model);
+      setUsedFallback(result.fallback);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to analyze");
+    } finally {
+      setIsLoading(false);
     }
   };
 
