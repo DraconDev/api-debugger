@@ -548,8 +548,8 @@ function OnboardingScreen({
         <button
           onClick={() => {
             onDismiss();
-            openDashboard("builder");
-          }}
+            openDashboard("new-request");
+          }}}
           className="w-full py-2.5 px-4 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium rounded-md"
         >
           Create First Request
