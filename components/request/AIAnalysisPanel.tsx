@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { createAIClient, type AIProvider } from "@/utils/ai-client";
+import { createAI, type AIProvider } from "@/lib/ai-client";
 import type { RequestRecord, CapturedResponse } from "@/types";
 
 interface AIAnalysisPanelProps {
@@ -20,7 +20,10 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [aiSettings, setAiSettings] = useState<AISettings | null>(null);
-  const [activeTab, setActiveTab] = useState<"analysis" | "explain" | "suggest">("analysis");
+  const [usedModel, setUsedModel] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<
+    "analysis" | "explain" | "suggest"
+  >("analysis");
 
   useEffect(() => {
     loadAISettings();
@@ -42,12 +45,23 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
 
     setIsLoading(true);
     setError(null);
+    setUsedModel(null);
 
     try {
-      const client = createAIClient({
-        provider: aiSettings.provider,
-        apiKey: aiSettings.apiKey,
-        model: aiSettings.model,
+      const client = createAI({
+        chain: [
+          {
+            provider: aiSettings.provider,
+            apiKey: aiSettings.apiKey,
+            model: aiSettings.model,
+          },
+        ],
+        onFallback: (from, to, err) => {
+          console.warn(
+            `AI fallback: model ${from} failed, trying ${to}:`,
+            err.message,
+          );
+        },
       });
 
       const prompt = buildAnalysisPrompt(request, response, activeTab);
@@ -55,6 +69,7 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
 
       const result = await client.complete(prompt, systemPrompt);
       setAnalysis(result.content);
+      setUsedModel(result.model);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to analyze");
     } finally {
@@ -74,32 +89,65 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
             Bring your own API key
           </p>
         </div>
-        
+
         <div className="p-3 bg-muted/50 rounded-lg border border-border mb-3">
           <p className="text-xs text-muted-foreground mb-2">
-            <strong className="text-foreground">Your AI, Your Keys, Your Data.</strong>
+            <strong className="text-foreground">
+              Your AI, Your Keys, Your Data.
+            </strong>
           </p>
           <p className="text-xs text-muted-foreground">
-            We never see your AI calls. Use your own OpenAI, Anthropic, or Gemini keys.
+            We never see your AI calls. Use your own OpenAI, Anthropic, or
+            Gemini keys.
           </p>
         </div>
 
         <div className="space-y-2 text-xs">
           <div className="flex items-center gap-2 text-muted-foreground">
-            <svg className="w-4 h-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <svg
+              className="w-4 h-4 text-success"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
             </svg>
             Use company keys
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
-            <svg className="w-4 h-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <svg
+              className="w-4 h-4 text-success"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
             </svg>
             No extra subscription
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
-            <svg className="w-4 h-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <svg
+              className="w-4 h-4 text-success"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
             </svg>
             Full privacy - we never log
           </div>
@@ -147,9 +195,12 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
         {!analysis && !isLoading && (
           <div className="p-4 text-center">
             <p className="text-sm text-muted-foreground mb-3">
-              {activeTab === "analysis" && "Get AI-powered analysis of this request"}
-              {activeTab === "explain" && "Get a detailed explanation of this API endpoint"}
-              {activeTab === "suggest" && "Get suggestions to improve this request"}
+              {activeTab === "analysis" &&
+                "Get AI-powered analysis of this request"}
+              {activeTab === "explain" &&
+                "Get a detailed explanation of this API endpoint"}
+              {activeTab === "suggest" &&
+                "Get suggestions to improve this request"}
             </p>
             <button
               onClick={analyzeRequest}
@@ -242,7 +293,7 @@ Be specific and actionable. Use markdown formatting.`;
 function buildAnalysisPrompt(
   request: RequestRecord,
   response?: CapturedResponse,
-  _tab?: string
+  _tab?: string,
 ): string {
   let prompt = `## Request
 
@@ -297,25 +348,28 @@ function formatAnalysis(text: string): React.ReactNode {
       elements.push(
         <h4 key={index} className="font-semibold mt-4 mb-2 text-foreground">
           {line.slice(4)}
-        </h4>
+        </h4>,
       );
     } else if (line.startsWith("## ")) {
       elements.push(
-        <h3 key={index} className="font-semibold mt-4 mb-2 text-foreground text-base">
+        <h3
+          key={index}
+          className="font-semibold mt-4 mb-2 text-foreground text-base"
+        >
           {line.slice(3)}
-        </h3>
+        </h3>,
       );
     } else if (line.startsWith("**") && line.endsWith("**")) {
       elements.push(
         <p key={index} className="font-semibold text-foreground">
           {line.slice(2, -2)}
-        </p>
+        </p>,
       );
     } else if (line.startsWith("- ")) {
       elements.push(
         <li key={index} className="ml-4 text-muted-foreground">
           {line.slice(2)}
-        </li>
+        </li>,
       );
     } else if (line.startsWith("```")) {
       // Skip code block markers
@@ -323,7 +377,7 @@ function formatAnalysis(text: string): React.ReactNode {
       elements.push(
         <p key={index} className="text-muted-foreground">
           {line}
-        </p>
+        </p>,
       );
     }
   });
@@ -333,7 +387,12 @@ function formatAnalysis(text: string): React.ReactNode {
 
 function SparklesIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
