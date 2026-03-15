@@ -458,7 +458,7 @@ export function RequestTemplates({ onSelect }: RequestTemplatesProps) {
                       : template.config.method === "POST"
                       ? "text-warning bg-warning/10"
                       : template.config.method === "PUT"
-                      ? "text-blue-500 bg-blue-500/10"
+                      ? "text-primary bg-primary/10"
                       : template.config.method === "DELETE"
                       ? "text-destructive bg-destructive/10"
                       : "text-muted-foreground bg-muted"

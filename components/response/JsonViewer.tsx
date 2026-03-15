@@ -51,7 +51,7 @@ export function JsonViewer({
   }
 
   if (typeof data === "number") {
-    return <span className="text-blue-400">{data}</span>;
+    return <span className="text-primary">{data}</span>;
   }
 
   if (typeof data === "string") {

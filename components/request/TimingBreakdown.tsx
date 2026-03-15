@@ -6,7 +6,7 @@ interface TimingBreakdownProps {
 
 export function TimingBreakdown({ timing }: TimingBreakdownProps) {
   const phases = [
-    { name: "DNS Lookup", value: timing.dns, color: "bg-blue-500" },
+    { name: "DNS Lookup", value: timing.dns, color: "bg-primary" },
     { name: "Connection", value: timing.connect, color: "bg-warning" },
     { name: "TLS Handshake", value: timing.tls, color: "bg-purple-500" },
     { name: "TTFB", value: timing.ttfb, color: "bg-success" },
@@ -55,7 +55,7 @@ export function TimingBreakdown({ timing }: TimingBreakdownProps) {
         <div className="relative h-8 bg-muted/50 rounded">
           {timing.dns > 0 && (
             <div
-              className="absolute top-1 bottom-1 bg-blue-500/70 rounded"
+              className="absolute top-1 bottom-1 bg-primary/70 rounded"
               style={{
                 left: "0%",
                 width: `${(timing.dns / total) * 100}%`,

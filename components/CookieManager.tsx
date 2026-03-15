@@ -339,7 +339,7 @@ export function CookieManager() {
                             <span className="font-mono text-sm font-medium">{cookie.name}</span>
                             <div className="flex gap-1">
                               {cookie.secure && (
-                                <span className="px-1 py-0.5 text-xs bg-blue-500/20 text-blue-500 rounded">Secure</span>
+                                <span className="px-1 py-0.5 text-xs bg-primary/20 text-primary rounded">Secure</span>
                               )}
                               {cookie.httpOnly && (
                                 <span className="px-1 py-0.5 text-xs bg-warning/20 text-warning rounded">HttpOnly</span>

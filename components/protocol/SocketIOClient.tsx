@@ -402,7 +402,7 @@ export function SocketIOClient() {
                         : event.type === "disconnect"
                           ? "bg-warning/10 border-warning"
                           : event.direction === "out"
-                            ? "bg-blue-500/10 border-blue-500"
+                            ? "bg-primary/10 border-primary"
                             : "bg-muted/30 border-primary"
                   }`}
                 >
@@ -413,7 +413,7 @@ export function SocketIOClient() {
                     <span
                       className={`text-xs ${
                         event.direction === "out"
-                          ? "text-blue-400"
+                          ? "text-primary"
                           : "text-muted-foreground"
                       }`}
                     >

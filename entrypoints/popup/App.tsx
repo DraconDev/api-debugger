@@ -249,7 +249,7 @@ function RequestRow({
     switch (method) {
       case "GET": return "text-success bg-success/10";
       case "POST": return "text-warning bg-warning/10";
-      case "PUT": return "text-blue-500 bg-blue-500/10";
+      case "PUT": return "text-primary bg-primary/10";
       case "PATCH": return "text-cyan-500 bg-cyan-500/10";
       case "DELETE": return "text-destructive bg-destructive/10";
       default: return "text-muted-foreground bg-muted";
@@ -259,7 +259,7 @@ function RequestRow({
   const statusColorClass = (code: number) => {
     if (code >= 500) return "text-destructive";
     if (code >= 400) return "text-warning";
-    if (code >= 300) return "text-blue-500";
+    if (code >= 300) return "text-primary";
     return "text-success";
   };
 

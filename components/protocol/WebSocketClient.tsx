@@ -101,7 +101,7 @@ export function WebSocketClient() {
   const getMessageColor = (type: WSMessage["type"]) => {
     switch (type) {
       case "sent":
-        return "text-blue-400";
+        return "text-primary";
       case "received":
         return "text-success";
       default:
@@ -165,7 +165,7 @@ export function WebSocketClient() {
               <span
                 className={`text-xs px-1.5 py-0.5 rounded font-medium ${
                   msg.type === "sent"
-                    ? "bg-blue-500/20 text-blue-400"
+                    ? "bg-primary/20 text-primary"
                     : msg.type === "received"
                       ? "bg-success/20 text-success"
                       : "bg-muted text-muted-foreground"

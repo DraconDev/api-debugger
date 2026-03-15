@@ -44,8 +44,8 @@ export function WelcomeScreen({ onCreateRequest, onImportFile, onLoadSample }: W
             onClick={onImportFile}
             className="flex flex-col items-center gap-2 p-6 rounded-xl border border-border bg-card hover:bg-accent/50 transition-colors"
           >
-            <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center">
-              <ImportIcon className="w-6 h-6 text-blue-500" />
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <ImportIcon className="w-6 h-6 text-primary" />
             </div>
             <span className="font-medium">Import</span>
             <span className="text-xs text-muted-foreground">OpenAPI, Postman, HAR</span>

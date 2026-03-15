@@ -11,7 +11,7 @@ function XmlViewer({ xml }: XmlViewerProps) {
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
-      .replace(/(&lt;\/?)([\w:-]+)/g, '$1<span class="text-blue-400">$2</span>')
+      .replace(/(&lt;\/?)([\w:-]+)/g, '$1<span class="text-primary">$2</span>')
       .replace(/([\w:-]+)(=)/g, '<span class="text-warning">$1</span>$2')
       .replace(/"([^"]*)"/g, '"<span class="text-success">$1</span>"');
   }, [xml]);
