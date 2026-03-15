@@ -91,21 +91,8 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
-    checkFirstLaunch();
     loadData();
   }, []);
-
-  const checkFirstLaunch = async () => {
-    const result = await chrome.storage.local.get("apiDebugger_welcomed");
-    if (!result.apiDebugger_welcomed) {
-      setShowWelcome(true);
-    }
-  };
-
-  const dismissWelcome = async () => {
-    setShowWelcome(false);
-    await chrome.storage.local.set({ apiDebugger_welcomed: true });
-  };
 
   const handleImport = useCallback(
     async (result: ImportResult) => {
