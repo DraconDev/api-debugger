@@ -1,16 +1,19 @@
 /**
- * AI Client - Multi-provider AI support with BYOK (Bring Your Own Key)
+ * AI Client - Multi-provider AI with dynamic model registry
  *
- * Supports: OpenAI, Anthropic, Google Gemini, OpenRouter
+ * Models are fetched from OpenRouter (free, no key needed).
+ * User provides API key for their chosen provider.
+ * We route to the correct API based on model ID.
  */
+
+import { getApiProviderForModel } from "@/lib/modelRegistry";
 
 export type AIProvider = "openai" | "anthropic" | "gemini" | "openrouter";
 
 export interface AIConfig {
   provider: AIProvider;
   apiKey: string;
-  model?: string;
-  baseUrl?: string;
+  model: string;
 }
 
 export interface AIMessage {
@@ -26,74 +29,59 @@ export interface AIResponse {
     totalTokens: number;
   };
   model: string;
-  provider: AIProvider;
 }
 
-export interface ModelInfo {
-  id: string;
-  name: string;
-  provider: AIProvider;
-  contextLength: number;
-  pricing?: {
-    input: number;
-    output: number;
-  };
-}
-
-const DEFAULT_MODELS: Record<AIProvider, string> = {
-  openai: "gpt-4.1-mini",
-  anthropic: "claude-haiku-4-20250414",
-  gemini: "gemini-2.0-flash",
-  openrouter: "openai/gpt-4.1-mini",
-};
-
-const PROVIDER_NAMES: Record<AIProvider, string> = {
-  openai: "OpenAI",
-  anthropic: "Anthropic",
-  gemini: "Google Gemini",
-  openrouter: "OpenRouter",
-};
-
-export function getProviderName(provider: AIProvider): string {
-  return PROVIDER_NAMES[provider];
-}
-
-export function getDefaultModel(provider: AIProvider): string {
-  return DEFAULT_MODELS[provider];
-}
-
+/**
+ * Create an AI client - auto-routes based on model ID
+ *
+ * Examples:
+ * - Model "openai/gpt-4.1" + provider "openai" → direct OpenAI API
+ * - Model "anthropic/claude-sonnet-4" + provider "anthropic" → direct Anthropic API
+ * - Model "google/gemini-2.0-flash" + provider "gemini" → direct Gemini API
+ * - Any model + provider "openrouter" → OpenRouter API
+ * - Model "deepseek/deepseek-r1" + provider "openrouter" → OpenRouter API
+ */
 export function createAIClient(config: AIConfig) {
-  const model = config.model || DEFAULT_MODELS[config.provider];
+  const { provider, apiKey, model } = config;
+
+  // Extract clean model name (remove provider prefix if present)
+  const cleanModel = model.includes("/")
+    ? model.split("/").slice(1).join("/")
+    : model;
+
+  // Determine which API to use
+  const apiProvider =
+    provider === "openrouter" ? "openrouter" : getApiProviderForModel(model);
 
   return {
-    provider: config.provider,
     model,
+    apiProvider,
 
     async chat(messages: AIMessage[]): Promise<AIResponse> {
-      switch (config.provider) {
+      switch (apiProvider) {
         case "openai":
-          return openaiChat(config.apiKey, model, messages);
+          return openaiChat(apiKey, cleanModel, messages);
         case "anthropic":
-          return anthropicChat(config.apiKey, model, messages);
+          return anthropicChat(apiKey, cleanModel, messages);
         case "gemini":
-          return geminiChat(config.apiKey, model, messages);
+          return geminiChat(apiKey, cleanModel, messages);
         case "openrouter":
-          return openrouterChat(config.apiKey, model, messages);
+          return openrouterChat(apiKey, model, messages);
         default:
-          throw new Error(`Unsupported provider: ${config.provider}`);
+          throw new Error(`Unsupported API provider: ${apiProvider}`);
       }
     },
 
     async complete(prompt: string, system?: string): Promise<AIResponse> {
       const messages: AIMessage[] = [];
-      if (system) {
-        messages.push({ role: "system", content: system });
-      }
+      if (system) messages.push({ role: "system", content: system });
       messages.push({ role: "user", content: prompt });
       return this.chat(messages);
     },
   };
 }
+
+// ─── Provider Implementations ────────────────────────────────────
 
 async function openaiChat(
   apiKey: string,
@@ -125,7 +113,6 @@ async function openaiChat(
         }
       : undefined,
     model: data.model,
-    provider: "openai",
   };
 }
 
@@ -170,7 +157,6 @@ async function anthropicChat(
         }
       : undefined,
     model: data.model,
-    provider: "anthropic",
   };
 }
 
@@ -219,7 +205,6 @@ async function geminiChat(
         }
       : undefined,
     model,
-    provider: "gemini",
   };
 }
 
@@ -260,154 +245,16 @@ async function openrouterChat(
         }
       : undefined,
     model: data.model,
-    provider: "openrouter",
   };
 }
 
-const STATIC_MODELS: Record<AIProvider, string[]> = {
-  openai: [
-    "gpt-4.1",
-    "gpt-4.1-mini",
-    "gpt-4.1-nano",
-    "gpt-4o",
-    "gpt-4o-mini",
-    "o3",
-    "o3-mini",
-    "o4-mini",
-    "o1",
-    "o1-mini",
-    "o1-pro",
-  ],
-  anthropic: [
-    "claude-opus-4-20250514",
-    "claude-sonnet-4-20250514",
-    "claude-haiku-4-20250414",
-    "claude-3-5-sonnet-20241022",
-    "claude-3-5-haiku-20241022",
-    "claude-3-opus-20240229",
-  ],
-  gemini: [
-    "gemini-2.5-pro-preview",
-    "gemini-2.5-flash-preview",
-    "gemini-2.0-flash",
-    "gemini-2.0-flash-lite",
-    "gemini-1.5-pro",
-    "gemini-1.5-flash",
-  ],
-  openrouter: [],
-};
-
-export function getAvailableModels(provider: AIProvider): string[] {
-  return STATIC_MODELS[provider] || [];
-}
-
-export async function fetchModelsFromAPI(
-  provider: AIProvider,
-  apiKey: string,
-): Promise<ModelInfo[]> {
-  try {
-    switch (provider) {
-      case "openai":
-        return fetchOpenAIModels(apiKey);
-      case "gemini":
-        return fetchGeminiModels(apiKey);
-      case "openrouter":
-        return fetchOpenRouterModels(apiKey);
-      case "anthropic":
-        return STATIC_MODELS.anthropic.map((id) => ({
-          id,
-          name: formatModelName(id),
-          provider: "anthropic",
-          contextLength: 200000,
-        }));
-      default:
-        return [];
-    }
-  } catch {
-    return [];
-  }
-}
-
-async function fetchOpenAIModels(apiKey: string): Promise<ModelInfo[]> {
-  const res = await fetch("https://api.openai.com/v1/models", {
-    headers: { Authorization: `Bearer ${apiKey}` },
-  });
-  if (!res.ok) return [];
-  const data = await res.json();
-  return (data.data || [])
-    .filter(
-      (m: { id: string }) =>
-        m.id.includes("gpt") ||
-        m.id.includes("o1") ||
-        m.id.includes("o3") ||
-        m.id.includes("o4"),
-    )
-    .map((m: { id: string }) => ({
-      id: m.id,
-      name: formatModelName(m.id),
-      provider: "openai" as const,
-      contextLength: 128000,
-    }))
-    .sort((a: ModelInfo, b: ModelInfo) => a.name.localeCompare(b.name));
-}
-
-async function fetchGeminiModels(apiKey: string): Promise<ModelInfo[]> {
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`,
-  );
-  if (!res.ok) return [];
-  const data = await res.json();
-  return (data.models || [])
-    .filter((m: { name: string }) => m.name.includes("gemini"))
-    .map((m: { name: string; displayName?: string }) => ({
-      id: m.name.split("/").pop() || m.name,
-      name: m.displayName || formatModelName(m.name.split("/").pop() || m.name),
-      provider: "gemini" as const,
-      contextLength: 128000,
-    }));
-}
-
-async function fetchOpenRouterModels(apiKey: string): Promise<ModelInfo[]> {
-  const res = await fetch("https://openrouter.ai/api/v1/models", {
-    headers: { Authorization: `Bearer ${apiKey}` },
-  });
-  if (!res.ok) return [];
-  const data = await res.json();
-  return (data.data || [])
-    .filter((m: { id: string }) => !m.id.includes(":free"))
-    .slice(0, 100)
-    .map(
-      (m: {
-        id: string;
-        name: string;
-        context_length: number;
-        pricing?: { prompt: string; completion: string };
-      }) => ({
-        id: m.id,
-        name: m.name,
-        provider: "openrouter" as const,
-        contextLength: m.context_length || 128000,
-        pricing: m.pricing
-          ? {
-              input: parseFloat(m.pricing.prompt),
-              output: parseFloat(m.pricing.completion),
-            }
-          : undefined,
-      }),
-    );
-}
-
-function formatModelName(id: string): string {
-  return id
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase())
-    .replace(/\d{8}/g, "");
-}
-
+/**
+ * Validate an API key by making a minimal test request
+ */
 export async function validateApiKey(config: AIConfig): Promise<boolean> {
   try {
     const client = createAIClient(config);
-    await client.complete('Say "ok" if you can hear me.');
+    await client.complete("Say ok");
     return true;
   } catch {
     return false;
