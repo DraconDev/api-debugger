@@ -118,10 +118,10 @@ function App() {
         <button
           onClick={() => setFilter("errors")}
           className={`p-3 text-center transition-colors ${
-            filter === "errors" ? "bg-red-500/10" : "bg-card hover:bg-accent/50"
+            filter === "errors" ? "bg-destructive/10" : "bg-card hover:bg-accent/50"
           }`}
         >
-          <div className="text-xl font-bold text-red-500">{errorCount}</div>
+          <div className="text-xl font-bold text-destructive">{errorCount}</div>
           <div className="text-xs text-muted-foreground">Errors</div>
         </button>
       </div>
@@ -251,13 +251,13 @@ function RequestRow({
       case "POST": return "text-warning bg-warning/10";
       case "PUT": return "text-blue-500 bg-blue-500/10";
       case "PATCH": return "text-cyan-500 bg-cyan-500/10";
-      case "DELETE": return "text-red-500 bg-red-500/10";
+      case "DELETE": return "text-destructive bg-destructive/10";
       default: return "text-muted-foreground bg-muted";
     }
   };
 
   const statusColorClass = (code: number) => {
-    if (code >= 500) return "text-red-500";
+    if (code >= 500) return "text-destructive";
     if (code >= 400) return "text-warning";
     if (code >= 300) return "text-blue-500";
     return "text-success";

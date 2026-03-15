@@ -90,8 +90,8 @@ pm.expect(value).to.beA("string");`}
             {logs.map((log, i) => (
               <div key={i} className={`py-0.5 ${
                 log.startsWith("✓") ? "text-success" :
-                log.startsWith("✗") ? "text-red-400" :
-                log.startsWith("[ERROR]") ? "text-red-400" :
+                log.startsWith("✗") ? "text-destructive" :
+                log.startsWith("[ERROR]") ? "text-destructive" :
                 log.startsWith("[WARN]") ? "text-warning" :
                 log.startsWith("[INFO]") ? "text-blue-400" :
                 "text-muted-foreground"

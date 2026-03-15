@@ -98,7 +98,7 @@ export function ResponseViewer({ body, contentType, statusCode, headers }: Respo
           {statusCode && (
             <span className={`px-1.5 py-0.5 text-[10px] rounded font-mono ${
               statusCode >= 200 && statusCode < 300 ? "bg-success/20 text-success" :
-              statusCode >= 400 ? "bg-red-500/20 text-red-500" :
+              statusCode >= 400 ? "bg-destructive/20 text-destructive" :
               "bg-warning/20 text-warning"
             }`}>
               {statusCode}
@@ -144,7 +144,7 @@ export function ResponseViewer({ body, contentType, statusCode, headers }: Respo
                 className="max-w-full max-h-full object-contain"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
-                  e.currentTarget.parentElement!.innerHTML = '<span class="text-red-400 text-sm">Failed to load image</span>';
+                  e.currentTarget.parentElement!.innerHTML = '<span class="text-destructive text-sm">Failed to load image</span>';
                 }}
               />
             ) : (

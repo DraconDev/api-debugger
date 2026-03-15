@@ -285,14 +285,14 @@ export function MockServerManager() {
                             endpoint.method === "GET" ? "text-success" :
                             endpoint.method === "POST" ? "text-warning" :
                             endpoint.method === "PUT" ? "text-blue-500" :
-                            endpoint.method === "DELETE" ? "text-red-500" :
+                            endpoint.method === "DELETE" ? "text-destructive" :
                             "text-muted-foreground"
                           }`}>
                             {endpoint.method}
                           </span>
                           <span className="font-mono text-xs text-primary">{endpoint.path}</span>
                           <span className={`font-mono text-xs ${
-                            endpoint.statusCode >= 400 ? "text-red-500" : "text-success"
+                            endpoint.statusCode >= 400 ? "text-destructive" : "text-success"
                           }`}>
                             {endpoint.statusCode}
                           </span>

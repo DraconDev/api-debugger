@@ -460,7 +460,7 @@ export function RequestTemplates({ onSelect }: RequestTemplatesProps) {
                       : template.config.method === "PUT"
                       ? "text-blue-500 bg-blue-500/10"
                       : template.config.method === "DELETE"
-                      ? "text-red-500 bg-red-500/10"
+                      ? "text-destructive bg-destructive/10"
                       : "text-muted-foreground bg-muted"
                   }`}
                 >

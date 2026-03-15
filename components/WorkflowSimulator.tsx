@@ -532,7 +532,7 @@ export function WorkflowSimulator({
                 <button
                   onClick={() => removeAssertion(assertion.id)}
                   disabled={isRunning}
-                  className="text-red-500 hover:text-red-600 disabled:opacity-50"
+                  className="text-destructive hover:text-red-600 disabled:opacity-50"
                 >
                   ×
                 </button>
@@ -608,7 +608,7 @@ function MetricsPanel({ metrics }: { metrics: LoadTestMetrics }) {
           <span className="text-muted-foreground">Error Rate: </span>
           <span
             className={
-              metrics.errorRate > 0 ? "text-red-500" : "text-success"
+              metrics.errorRate > 0 ? "text-destructive" : "text-success"
             }
           >
             {(metrics.errorRate * 100).toFixed(1)}%
@@ -662,7 +662,7 @@ function ResultRow({ result }: { result: WorkflowResult }) {
           {result.status === "success" && (
             <span className="text-success">✓</span>
           )}
-          {result.status === "error" && <span className="text-red-500">✗</span>}
+          {result.status === "error" && <span className="text-destructive">✗</span>}
           {result.status === "skipped" && (
             <span className="text-muted-foreground">○</span>
           )}
@@ -677,7 +677,7 @@ function ResultRow({ result }: { result: WorkflowResult }) {
               <span
                 className={`text-xs font-mono ${
                   result.response.status >= 400
-                    ? "text-red-500"
+                    ? "text-destructive"
                     : "text-success"
                 }`}
               >
@@ -686,7 +686,7 @@ function ResultRow({ result }: { result: WorkflowResult }) {
             )}
           </div>
           {result.error && (
-            <p className="text-xs text-red-500 mt-1">{result.error}</p>
+            <p className="text-xs text-destructive mt-1">{result.error}</p>
           )}
         </div>
         {result.response && (

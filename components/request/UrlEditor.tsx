@@ -70,7 +70,7 @@ export function UrlEditor({
       case "PATCH":
         return "bg-purple-600 hover:bg-purple-500";
       case "DELETE":
-        return "bg-red-600 hover:bg-red-500";
+        return "bg-destructive hover:bg-destructive";
       default:
         return "bg-zinc-600 hover:bg-zinc-500";
     }

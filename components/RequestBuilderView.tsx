@@ -130,7 +130,7 @@ export function RequestBuilderView() {
 
   const statusColor = response
     ? response.status >= 400
-      ? "text-red-500"
+      ? "text-destructive"
       : response.status >= 300
       ? "text-warning"
       : "text-success"

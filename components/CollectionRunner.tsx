@@ -194,7 +194,7 @@ export function CollectionRunner({ requests, onRequestSend }: CollectionRunnerPr
               <span className="font-medium">{stats.success}</span>
             </div>
             <div className="text-sm">
-              <span className="text-red-500">✗ Failed: </span>
+              <span className="text-destructive">✗ Failed: </span>
               <span className="font-medium">{stats.error}</span>
             </div>
             {totalTime > 0 && (
@@ -255,7 +255,7 @@ export function CollectionRunner({ requests, onRequestSend }: CollectionRunnerPr
                       <span className="text-success">✓</span>
                     )}
                     {result.status === "error" && (
-                      <span className="text-red-500">✗</span>
+                      <span className="text-destructive">✗</span>
                     )}
                   </div>
                   <div className="flex-1">
@@ -263,14 +263,14 @@ export function CollectionRunner({ requests, onRequestSend }: CollectionRunnerPr
                       <span className="font-medium text-sm">{result.requestName}</span>
                       {result.response && (
                         <span className={`text-xs font-mono ${
-                          result.response.status >= 400 ? "text-red-500" : "text-success"
+                          result.response.status >= 400 ? "text-destructive" : "text-success"
                         }`}>
                           {result.response.status}
                         </span>
                       )}
                     </div>
                     {result.error && (
-                      <p className="text-xs text-red-500 mt-1">{result.error}</p>
+                      <p className="text-xs text-destructive mt-1">{result.error}</p>
                     )}
                     {result.response && (
                       <div className="flex gap-4 mt-1 text-xs text-muted-foreground">

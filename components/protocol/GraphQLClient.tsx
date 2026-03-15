@@ -258,7 +258,7 @@ export function GraphQLClient({ endpoint: initialEndpoint }: GraphQLClientProps)
                 <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
               </div>
             ) : error ? (
-              <div className="p-3 text-xs text-destructive bg-red-500/10 rounded">
+              <div className="p-3 text-xs text-destructive bg-destructive/10 rounded">
                 {error}
               </div>
             ) : response ? (

@@ -129,7 +129,7 @@ export function CertificateViewer() {
               <div className="space-y-4">
                 <div className={`p-4 rounded-lg border ${
                   result.cert.isExpired 
-                    ? "bg-red-500/10 border-red-500/20" 
+                    ? "bg-destructive/10 border-destructive/20" 
                     : result.cert.daysUntilExpiry < 30
                     ? "bg-warning/10 border-warning/20"
                     : "bg-success/10 border-success/20"
@@ -137,10 +137,10 @@ export function CertificateViewer() {
                   <div className="flex items-center gap-2 mb-2">
                     {result.cert.isExpired ? (
                       <>
-                        <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-5 h-5 text-destructive" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
-                        <span className="font-medium text-red-500">Certificate Expired</span>
+                        <span className="font-medium text-destructive">Certificate Expired</span>
                       </>
                     ) : result.cert.daysUntilExpiry < 30 ? (
                       <>
@@ -208,7 +208,7 @@ export function CertificateViewer() {
                     <span className="font-mono text-sm">{item.hostname}</span>
                     {item.cert && (
                       <span className={`text-xs ${
-                        item.cert.isExpired ? "text-red-500" : 
+                        item.cert.isExpired ? "text-destructive" : 
                         item.cert.daysUntilExpiry < 30 ? "text-warning" : "text-success"
                       }`}>
                         {item.cert.daysUntilExpiry > 0 ? `${item.cert.daysUntilExpiry}d` : "Expired"}

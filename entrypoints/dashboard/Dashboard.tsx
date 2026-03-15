@@ -963,7 +963,7 @@ function RequestListItem({
 }) {
   const statusColor =
     request.statusCode >= 500
-      ? "text-red-500"
+      ? "text-destructive"
       : request.statusCode >= 400
         ? "text-warning"
         : request.statusCode >= 300
@@ -978,7 +978,7 @@ function RequestListItem({
         : request.method === "PUT"
           ? "bg-blue-500/10 text-blue-600"
           : request.method === "DELETE"
-            ? "bg-red-500/10 text-red-600"
+            ? "bg-destructive/10 text-red-600"
             : "bg-muted text-muted-foreground";
 
   return (
@@ -1051,7 +1051,7 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
                   : request.method === "PUT"
                     ? "text-blue-500"
                     : request.method === "DELETE"
-                      ? "text-red-500"
+                      ? "text-destructive"
                       : "text-muted-foreground"
             }`}
           >
@@ -1060,7 +1060,7 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
           <span
             className={`font-mono text-sm ${
               request.statusCode >= 500
-                ? "text-red-500"
+                ? "text-destructive"
                 : request.statusCode >= 400
                   ? "text-warning"
                   : request.statusCode >= 300

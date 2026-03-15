@@ -244,7 +244,7 @@ export function SSEClient() {
                 key={event.id}
                 className={`p-2 rounded border-l-2 ${
                   event.type === "error"
-                    ? "bg-red-500/10 border-red-500"
+                    ? "bg-destructive/10 border-destructive"
                     : event.type === "open"
                       ? "bg-success/10 border-success"
                       : event.type === "close"
@@ -264,7 +264,7 @@ export function SSEClient() {
                   <span
                     className={`text-xs font-medium ${
                       event.type === "error"
-                        ? "text-red-400"
+                        ? "text-destructive"
                         : event.type === "open"
                           ? "text-success"
                           : event.type === "close"
