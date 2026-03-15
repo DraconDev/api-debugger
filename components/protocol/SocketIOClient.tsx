@@ -400,7 +400,7 @@ export function SocketIOClient() {
                       : event.type === "connect"
                         ? "bg-success/10 border-success"
                         : event.type === "disconnect"
-                          ? "bg-amber-500/10 border-amber-500"
+                          ? "bg-warning/10 border-warning"
                           : event.direction === "out"
                             ? "bg-blue-500/10 border-blue-500"
                             : "bg-muted/30 border-primary"
@@ -431,7 +431,7 @@ export function SocketIOClient() {
                           : event.type === "connect"
                             ? "text-success"
                             : event.type === "disconnect"
-                              ? "text-amber-400"
+                              ? "text-warning"
                               : "text-foreground"
                       }`}
                     >

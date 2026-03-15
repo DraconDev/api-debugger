@@ -92,7 +92,7 @@ pm.expect(value).to.beA("string");`}
                 log.startsWith("✓") ? "text-success" :
                 log.startsWith("✗") ? "text-red-400" :
                 log.startsWith("[ERROR]") ? "text-red-400" :
-                log.startsWith("[WARN]") ? "text-amber-400" :
+                log.startsWith("[WARN]") ? "text-warning" :
                 log.startsWith("[INFO]") ? "text-blue-400" :
                 "text-muted-foreground"
               }`}>

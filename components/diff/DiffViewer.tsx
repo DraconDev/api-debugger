@@ -32,7 +32,7 @@ export function DiffViewer({ left, right, leftLabel = "Before", rightLabel = "Af
         <span className="font-medium">Changes:</span>
         {stats.added > 0 && <span className="text-success">+{stats.added} added</span>}
         {stats.removed > 0 && <span className="text-red-500">-{stats.removed} removed</span>}
-        {stats.modified > 0 && <span className="text-amber-500">~{stats.modified} modified</span>}
+        {stats.modified > 0 && <span className="text-warning">~{stats.modified} modified</span>}
         <span className="text-muted-foreground">{stats.unchanged} unchanged</span>
       </div>
 
@@ -60,7 +60,7 @@ export function DiffViewer({ left, right, leftLabel = "Before", rightLabel = "Af
                   line.type === "removed"
                     ? "bg-red-500/10 text-red-400"
                     : line.type === "modified"
-                    ? "bg-amber-500/10"
+                    ? "bg-warning/10"
                     : ""
                 }`}
               >
@@ -78,7 +78,7 @@ export function DiffViewer({ left, right, leftLabel = "Before", rightLabel = "Af
                   line.type === "added"
                     ? "bg-success/10 text-success"
                     : line.type === "modified"
-                    ? "bg-amber-500/10"
+                    ? "bg-warning/10"
                     : ""
                 }`}
               >

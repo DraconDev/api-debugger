@@ -47,7 +47,7 @@ export function JsonViewer({
   }
 
   if (typeof data === "boolean") {
-    return <span className="text-amber-400">{data.toString()}</span>;
+    return <span className="text-warning">{data.toString()}</span>;
   }
 
   if (typeof data === "number") {

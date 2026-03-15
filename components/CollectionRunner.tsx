@@ -230,7 +230,7 @@ export function CollectionRunner({ requests, onRequestSend }: CollectionRunnerPr
             <div className="text-center">
               <p className="text-sm">Click "Run Collection" to execute all requests</p>
               {requests.length === 0 && (
-                <p className="text-xs mt-2 text-amber-500">No requests in collection</p>
+                <p className="text-xs mt-2 text-warning">No requests in collection</p>
               )}
             </div>
           </div>

@@ -342,7 +342,7 @@ export function CookieManager() {
                                 <span className="px-1 py-0.5 text-xs bg-blue-500/20 text-blue-500 rounded">Secure</span>
                               )}
                               {cookie.httpOnly && (
-                                <span className="px-1 py-0.5 text-xs bg-amber-500/20 text-amber-500 rounded">HttpOnly</span>
+                                <span className="px-1 py-0.5 text-xs bg-warning/20 text-warning rounded">HttpOnly</span>
                               )}
                             </div>
                           </div>

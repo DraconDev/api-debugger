@@ -235,7 +235,7 @@ export function ImportModal({ onClose, onImport }: ImportModalProps) {
                             r.method === "GET"
                               ? "bg-success/20 text-emerald-600"
                               : r.method === "POST"
-                                ? "bg-amber-500/20 text-amber-600"
+                                ? "bg-warning/20 text-warning"
                                 : r.method === "PUT"
                                   ? "bg-blue-500/20 text-blue-600"
                                   : r.method === "DELETE"

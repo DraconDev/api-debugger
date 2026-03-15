@@ -64,7 +64,7 @@ export function UrlEditor({
       case "GET":
         return "bg-success hover:bg-success";
       case "POST":
-        return "bg-amber-600 hover:bg-amber-500";
+        return "bg-warning hover:bg-warning";
       case "PUT":
         return "bg-blue-600 hover:bg-blue-500";
       case "PATCH":

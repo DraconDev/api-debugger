@@ -248,7 +248,7 @@ export function SSEClient() {
                     : event.type === "open"
                       ? "bg-success/10 border-success"
                       : event.type === "close"
-                        ? "bg-amber-500/10 border-amber-500"
+                        ? "bg-warning/10 border-warning"
                         : "bg-muted/30 border-primary"
                 }`}
               >
@@ -268,7 +268,7 @@ export function SSEClient() {
                         : event.type === "open"
                           ? "text-success"
                           : event.type === "close"
-                            ? "text-amber-400"
+                            ? "text-warning"
                             : "text-foreground"
                     }`}
                   >

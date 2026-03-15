@@ -283,7 +283,7 @@ export function MockServerManager() {
                           />
                           <span className={`font-mono text-xs font-medium ${
                             endpoint.method === "GET" ? "text-success" :
-                            endpoint.method === "POST" ? "text-amber-500" :
+                            endpoint.method === "POST" ? "text-warning" :
                             endpoint.method === "PUT" ? "text-blue-500" :
                             endpoint.method === "DELETE" ? "text-red-500" :
                             "text-muted-foreground"

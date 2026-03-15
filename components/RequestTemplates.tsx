@@ -456,7 +456,7 @@ export function RequestTemplates({ onSelect }: RequestTemplatesProps) {
                     template.config.method === "GET"
                       ? "text-success bg-success/10"
                       : template.config.method === "POST"
-                      ? "text-amber-500 bg-amber-500/10"
+                      ? "text-warning bg-warning/10"
                       : template.config.method === "PUT"
                       ? "text-blue-500 bg-blue-500/10"
                       : template.config.method === "DELETE"

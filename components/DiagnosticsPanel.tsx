@@ -236,7 +236,7 @@ Keep response under 150 words.`;
       case "error":
         return "border-destructive bg-destructive/10";
       case "warning":
-        return "border-amber-500 bg-amber-500/10";
+        return "border-warning bg-warning/10";
       default:
         return "border-primary bg-primary/10";
     }

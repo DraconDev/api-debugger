@@ -248,7 +248,7 @@ function RequestRow({
   const methodColorClass = (method: string) => {
     switch (method) {
       case "GET": return "text-success bg-success/10";
-      case "POST": return "text-amber-500 bg-amber-500/10";
+      case "POST": return "text-warning bg-warning/10";
       case "PUT": return "text-blue-500 bg-blue-500/10";
       case "PATCH": return "text-cyan-500 bg-cyan-500/10";
       case "DELETE": return "text-red-500 bg-red-500/10";
@@ -258,7 +258,7 @@ function RequestRow({
 
   const statusColorClass = (code: number) => {
     if (code >= 500) return "text-red-500";
-    if (code >= 400) return "text-amber-500";
+    if (code >= 400) return "text-warning";
     if (code >= 300) return "text-blue-500";
     return "text-success";
   };

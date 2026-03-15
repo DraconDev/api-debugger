@@ -131,7 +131,7 @@ export function CertificateViewer() {
                   result.cert.isExpired 
                     ? "bg-red-500/10 border-red-500/20" 
                     : result.cert.daysUntilExpiry < 30
-                    ? "bg-amber-500/10 border-amber-500/20"
+                    ? "bg-warning/10 border-warning/20"
                     : "bg-success/10 border-success/20"
                 }`}>
                   <div className="flex items-center gap-2 mb-2">
@@ -144,10 +144,10 @@ export function CertificateViewer() {
                       </>
                     ) : result.cert.daysUntilExpiry < 30 ? (
                       <>
-                        <svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-5 h-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span className="font-medium text-amber-500">Expiring Soon ({result.cert.daysUntilExpiry} days)</span>
+                        <span className="font-medium text-warning">Expiring Soon ({result.cert.daysUntilExpiry} days)</span>
                       </>
                     ) : (
                       <>
@@ -175,7 +175,7 @@ export function CertificateViewer() {
                   <CertField label="Fingerprint (SHA-256)" value={result.cert.fingerprint} monospace />
                   <div className="px-4 py-3 flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Self-Signed</span>
-                    <span className={`text-sm font-medium ${result.cert.isSelfSigned ? "text-amber-500" : "text-success"}`}>
+                    <span className={`text-sm font-medium ${result.cert.isSelfSigned ? "text-warning" : "text-success"}`}>
                       {result.cert.isSelfSigned ? "Yes" : "No"}
                     </span>
                   </div>
@@ -209,7 +209,7 @@ export function CertificateViewer() {
                     {item.cert && (
                       <span className={`text-xs ${
                         item.cert.isExpired ? "text-red-500" : 
-                        item.cert.daysUntilExpiry < 30 ? "text-amber-500" : "text-success"
+                        item.cert.daysUntilExpiry < 30 ? "text-warning" : "text-success"
                       }`}>
                         {item.cert.daysUntilExpiry > 0 ? `${item.cert.daysUntilExpiry}d` : "Expired"}
                       </span>

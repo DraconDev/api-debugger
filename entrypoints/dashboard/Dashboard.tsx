@@ -965,7 +965,7 @@ function RequestListItem({
     request.statusCode >= 500
       ? "text-red-500"
       : request.statusCode >= 400
-        ? "text-amber-500"
+        ? "text-warning"
         : request.statusCode >= 300
           ? "text-blue-500"
           : "text-success";
@@ -974,7 +974,7 @@ function RequestListItem({
     request.method === "GET"
       ? "bg-success/10 text-emerald-600"
       : request.method === "POST"
-        ? "bg-amber-500/10 text-amber-600"
+        ? "bg-warning/10 text-warning"
         : request.method === "PUT"
           ? "bg-blue-500/10 text-blue-600"
           : request.method === "DELETE"
@@ -1047,7 +1047,7 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
               request.method === "GET"
                 ? "text-success"
                 : request.method === "POST"
-                  ? "text-amber-500"
+                  ? "text-warning"
                   : request.method === "PUT"
                     ? "text-blue-500"
                     : request.method === "DELETE"
@@ -1062,7 +1062,7 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
               request.statusCode >= 500
                 ? "text-red-500"
                 : request.statusCode >= 400
-                  ? "text-amber-500"
+                  ? "text-warning"
                   : request.statusCode >= 300
                     ? "text-blue-500"
                     : "text-success"
@@ -1373,7 +1373,7 @@ function CollectionsView({
                             req.request.method === "GET"
                               ? "text-success"
                               : req.request.method === "POST"
-                                ? "text-amber-500"
+                                ? "text-warning"
                                 : "text-muted-foreground"
                           }`}
                         >

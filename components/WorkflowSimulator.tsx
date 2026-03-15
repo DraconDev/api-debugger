@@ -559,7 +559,7 @@ export function WorkflowSimulator({
             <div className="text-center">
               <p className="text-sm">Configure and run a load test</p>
               {requests.length === 0 && (
-                <p className="text-xs mt-2 text-amber-500">
+                <p className="text-xs mt-2 text-warning">
                   No requests in collection
                 </p>
               )}
