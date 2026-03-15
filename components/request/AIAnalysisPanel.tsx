@@ -73,43 +73,6 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
     }
   };
 
-  const analyzeRequest = async () => {
-    if (!aiSettings) return;
-
-    setIsLoading(true);
-    setError(null);
-    setUsedModel(null);
-
-    try {
-      const client = createAI({
-        chain: [
-          {
-            provider: aiSettings.provider,
-            apiKey: aiSettings.apiKey,
-            model: aiSettings.model,
-          },
-        ],
-        onFallback: (from, to, err) => {
-          console.warn(
-            `AI fallback: model ${from} failed, trying ${to}:`,
-            err.message,
-          );
-        },
-      });
-
-      const prompt = buildAnalysisPrompt(request, response, activeTab);
-      const systemPrompt = getSystemPrompt(activeTab);
-
-      const result = await client.complete(prompt, systemPrompt);
-      setAnalysis(result.content);
-      setUsedModel(result.model);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to analyze");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   if (!aiSettings) {
     return (
       <div className="p-4">
