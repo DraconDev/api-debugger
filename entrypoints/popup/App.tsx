@@ -14,10 +14,24 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [captureEnabled, setCaptureEnabled] = useState(true);
   const [filter, setFilter] = useState<"all" | "errors" | "success">("all");
+  const [isFirstLaunch, setIsFirstLaunch] = useState(false);
 
   useEffect(() => {
+    checkFirstLaunch();
     loadData();
   }, []);
+
+  const checkFirstLaunch = async () => {
+    const result = await chrome.storage.local.get("apiDebugger_welcomed");
+    if (!result.apiDebugger_welcomed) {
+      setIsFirstLaunch(true);
+    }
+  };
+
+  const dismissWelcome = async () => {
+    await chrome.storage.local.set({ apiDebugger_welcomed: true });
+    setIsFirstLaunch(false);
+  };
 
   const loadData = async () => {
     setIsLoading(true);
