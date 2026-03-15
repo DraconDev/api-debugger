@@ -192,7 +192,7 @@ export function ImportModal({ onClose, onImport }: ImportModalProps) {
           {detectedFormat && (
             <div className="mt-4 p-3 bg-muted/50 rounded-lg">
               <div className="flex items-center gap-2 text-sm">
-                <CheckIcon className="w-4 h-4 text-emerald-500" />
+                <CheckIcon className="w-4 h-4 text-success" />
                 <span className="font-medium">Detected format:</span>
                 <span className="text-muted-foreground capitalize">
                   {detectedFormat}
@@ -233,7 +233,7 @@ export function ImportModal({ onClose, onImport }: ImportModalProps) {
                         <span
                           className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${
                             r.method === "GET"
-                              ? "bg-emerald-500/20 text-emerald-600"
+                              ? "bg-success/20 text-emerald-600"
                               : r.method === "POST"
                                 ? "bg-amber-500/20 text-amber-600"
                                 : r.method === "PUT"

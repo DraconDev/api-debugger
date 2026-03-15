@@ -59,8 +59,8 @@ export function WelcomeScreen({ onCreateRequest, onImportFile, onLoadSample }: W
             className="w-full flex items-center justify-between p-4 rounded-xl border border-border bg-card hover:bg-accent/50 transition-colors"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                <SampleIcon className="w-5 h-5 text-emerald-500" />
+              <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center">
+                <SampleIcon className="w-5 h-5 text-success" />
               </div>
               <div className="text-left">
                 <span className="font-medium">Try Sample APIs</span>

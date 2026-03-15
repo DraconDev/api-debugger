@@ -608,7 +608,7 @@ function MetricsPanel({ metrics }: { metrics: LoadTestMetrics }) {
           <span className="text-muted-foreground">Error Rate: </span>
           <span
             className={
-              metrics.errorRate > 0 ? "text-red-500" : "text-emerald-500"
+              metrics.errorRate > 0 ? "text-red-500" : "text-success"
             }
           >
             {(metrics.errorRate * 100).toFixed(1)}%
@@ -660,7 +660,7 @@ function ResultRow({ result }: { result: WorkflowResult }) {
             <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full mx-auto" />
           )}
           {result.status === "success" && (
-            <span className="text-emerald-500">✓</span>
+            <span className="text-success">✓</span>
           )}
           {result.status === "error" && <span className="text-red-500">✗</span>}
           {result.status === "skipped" && (
@@ -678,7 +678,7 @@ function ResultRow({ result }: { result: WorkflowResult }) {
                 className={`text-xs font-mono ${
                   result.response.status >= 400
                     ? "text-red-500"
-                    : "text-emerald-500"
+                    : "text-success"
                 }`}
               >
                 {result.response.status}

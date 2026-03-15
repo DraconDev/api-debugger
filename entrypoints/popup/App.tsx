@@ -82,7 +82,7 @@ function App() {
           <button
             onClick={toggleCapture}
             className={`relative w-10 h-5 rounded-full transition-colors ${
-              captureEnabled ? "bg-emerald-500" : "bg-muted"
+              captureEnabled ? "bg-success" : "bg-muted"
             }`}
             title={captureEnabled ? "Capturing enabled" : "Capturing disabled"}
           >
@@ -109,10 +109,10 @@ function App() {
         <button
           onClick={() => setFilter("success")}
           className={`p-3 text-center transition-colors ${
-            filter === "success" ? "bg-emerald-500/10" : "bg-card hover:bg-accent/50"
+            filter === "success" ? "bg-success/10" : "bg-card hover:bg-accent/50"
           }`}
         >
-          <div className="text-xl font-bold text-emerald-500">{successCount}</div>
+          <div className="text-xl font-bold text-success">{successCount}</div>
           <div className="text-xs text-muted-foreground">Success</div>
         </button>
         <button
@@ -247,7 +247,7 @@ function RequestRow({
 
   const methodColorClass = (method: string) => {
     switch (method) {
-      case "GET": return "text-emerald-500 bg-emerald-500/10";
+      case "GET": return "text-success bg-success/10";
       case "POST": return "text-amber-500 bg-amber-500/10";
       case "PUT": return "text-blue-500 bg-blue-500/10";
       case "PATCH": return "text-cyan-500 bg-cyan-500/10";
@@ -260,7 +260,7 @@ function RequestRow({
     if (code >= 500) return "text-red-500";
     if (code >= 400) return "text-amber-500";
     if (code >= 300) return "text-blue-500";
-    return "text-emerald-500";
+    return "text-success";
   };
 
   return (

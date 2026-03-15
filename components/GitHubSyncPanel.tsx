@@ -195,8 +195,8 @@ export function GitHubSyncPanel() {
         )}
 
         {success && (
-          <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
-            <p className="text-sm text-emerald-500">{success}</p>
+          <div className="p-3 bg-success/10 border border-success/20 rounded-lg">
+            <p className="text-sm text-success">{success}</p>
           </div>
         )}
 
@@ -265,8 +265,8 @@ export function GitHubSyncPanel() {
             <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                    <CheckIcon className="w-4 h-4 text-emerald-500" />
+                  <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center">
+                    <CheckIcon className="w-4 h-4 text-success" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Connected</p>
@@ -371,15 +371,15 @@ export function GitHubSyncPanel() {
           <h3 className="text-sm font-medium mb-2">What gets synced</h3>
           <ul className="text-xs text-muted-foreground space-y-1">
             <li className="flex items-center gap-2">
-              <CheckIcon className="w-3 h-3 text-emerald-500" />
+              <CheckIcon className="w-3 h-3 text-success" />
               Collections and saved requests
             </li>
             <li className="flex items-center gap-2">
-              <CheckIcon className="w-3 h-3 text-emerald-500" />
+              <CheckIcon className="w-3 h-3 text-success" />
               Environments and variables
             </li>
             <li className="flex items-center gap-2">
-              <CheckIcon className="w-3 h-3 text-emerald-500" />
+              <CheckIcon className="w-3 h-3 text-success" />
               Settings and preferences
             </li>
             <li className="flex items-center gap-2">

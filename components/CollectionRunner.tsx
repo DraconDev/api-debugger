@@ -190,7 +190,7 @@ export function CollectionRunner({ requests, onRequestSend }: CollectionRunnerPr
               <span className="font-medium">{stats.total}</span>
             </div>
             <div className="text-sm">
-              <span className="text-emerald-500">✓ Passed: </span>
+              <span className="text-success">✓ Passed: </span>
               <span className="font-medium">{stats.success}</span>
             </div>
             <div className="text-sm">
@@ -252,7 +252,7 @@ export function CollectionRunner({ requests, onRequestSend }: CollectionRunnerPr
                       <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full mx-auto" />
                     )}
                     {result.status === "success" && (
-                      <span className="text-emerald-500">✓</span>
+                      <span className="text-success">✓</span>
                     )}
                     {result.status === "error" && (
                       <span className="text-red-500">✗</span>
@@ -263,7 +263,7 @@ export function CollectionRunner({ requests, onRequestSend }: CollectionRunnerPr
                       <span className="font-medium text-sm">{result.requestName}</span>
                       {result.response && (
                         <span className={`text-xs font-mono ${
-                          result.response.status >= 400 ? "text-red-500" : "text-emerald-500"
+                          result.response.status >= 400 ? "text-red-500" : "text-success"
                         }`}>
                           {result.response.status}
                         </span>

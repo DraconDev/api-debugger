@@ -13,7 +13,7 @@ function XmlViewer({ xml }: XmlViewerProps) {
       .replace(/>/g, "&gt;")
       .replace(/(&lt;\/?)([\w:-]+)/g, '$1<span class="text-blue-400">$2</span>')
       .replace(/([\w:-]+)(=)/g, '<span class="text-amber-400">$1</span>$2')
-      .replace(/"([^"]*)"/g, '"<span class="text-emerald-400">$1</span>"');
+      .replace(/"([^"]*)"/g, '"<span class="text-success">$1</span>"');
   }, [xml]);
 
   return (
@@ -97,7 +97,7 @@ export function ResponseViewer({ body, contentType, statusCode, headers }: Respo
           </span>
           {statusCode && (
             <span className={`px-1.5 py-0.5 text-[10px] rounded font-mono ${
-              statusCode >= 200 && statusCode < 300 ? "bg-emerald-500/20 text-emerald-500" :
+              statusCode >= 200 && statusCode < 300 ? "bg-success/20 text-success" :
               statusCode >= 400 ? "bg-red-500/20 text-red-500" :
               "bg-amber-500/20 text-amber-500"
             }`}>

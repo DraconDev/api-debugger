@@ -103,7 +103,7 @@ export function SaveToCollection({ request, onSave }: SaveToCollectionProps) {
       <h3 className="text-xs font-medium mb-2">Save to Collection</h3>
 
       {saved ? (
-        <div className="text-xs text-emerald-500">✓ Request saved!</div>
+        <div className="text-xs text-success">✓ Request saved!</div>
       ) : (
         <div className="space-y-2">
           <input

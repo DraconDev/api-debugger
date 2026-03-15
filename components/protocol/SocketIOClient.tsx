@@ -332,7 +332,7 @@ export function SocketIOClient() {
         <div className="p-3 border-t border-border text-xs text-muted-foreground">
           <div className="flex justify-between mb-1">
             <span>Status:</span>
-            <span className={isConnected ? "text-emerald-500" : ""}>
+            <span className={isConnected ? "text-success" : ""}>
               {isConnected ? "● Connected" : "○ Disconnected"}
             </span>
           </div>
@@ -398,7 +398,7 @@ export function SocketIOClient() {
                     event.type === "error"
                       ? "bg-red-500/10 border-red-500"
                       : event.type === "connect"
-                        ? "bg-emerald-500/10 border-emerald-500"
+                        ? "bg-success/10 border-success"
                         : event.type === "disconnect"
                           ? "bg-amber-500/10 border-amber-500"
                           : event.direction === "out"
@@ -429,7 +429,7 @@ export function SocketIOClient() {
                         event.type === "error"
                           ? "text-red-400"
                           : event.type === "connect"
-                            ? "text-emerald-400"
+                            ? "text-success"
                             : event.type === "disconnect"
                               ? "text-amber-400"
                               : "text-foreground"

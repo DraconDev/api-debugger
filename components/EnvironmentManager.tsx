@@ -142,7 +142,7 @@ export function EnvironmentManager({ onEnvironmentChange }: EnvironmentManagerPr
                   }`}
                 >
                   <span
-                    className={`w-2 h-2 rounded-full ${env.isActive ? "bg-emerald-500" : "bg-muted-foreground/30"}`}
+                    className={`w-2 h-2 rounded-full ${env.isActive ? "bg-success" : "bg-muted-foreground/30"}`}
                   />
                   <span className="flex-1 text-left truncate">{env.name}</span>
                   <span className="text-muted-foreground text-xs">
@@ -192,7 +192,7 @@ export function EnvironmentManager({ onEnvironmentChange }: EnvironmentManagerPr
                     disabled={selectedEnv.isActive}
                     className={`px-2 py-1 text-xs rounded ${
                       selectedEnv.isActive
-                        ? "bg-emerald-500/20 text-emerald-500 cursor-default"
+                        ? "bg-success/20 text-success cursor-default"
                         : "bg-primary text-primary-foreground hover:bg-primary/90"
                     }`}
                   >

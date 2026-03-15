@@ -57,13 +57,13 @@ export function JsonViewer({
   if (typeof data === "string") {
     if (searchTerm && data.toLowerCase().includes(searchTerm.toLowerCase())) {
       return (
-        <span className="text-emerald-400">
+        <span className="text-success">
           &quot;{highlightMatch(data, searchTerm)}&quot;
         </span>
       );
     }
     return (
-      <span className="text-emerald-400">&quot;{escapeHtml(data)}&quot;</span>
+      <span className="text-success">&quot;{escapeHtml(data)}&quot;</span>
     );
   }
 
@@ -284,7 +284,7 @@ export function JsonViewerWithSearch({ body }: JsonViewerWithSearchProps) {
           <DownloadIcon className="w-4 h-4" />
         </button>
         {copyMessage && (
-          <span className="text-xs text-emerald-500 ml-auto">
+          <span className="text-xs text-success ml-auto">
             {copyMessage}
           </span>
         )}

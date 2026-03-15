@@ -968,11 +968,11 @@ function RequestListItem({
         ? "text-amber-500"
         : request.statusCode >= 300
           ? "text-blue-500"
-          : "text-emerald-500";
+          : "text-success";
 
   const methodBgColor =
     request.method === "GET"
-      ? "bg-emerald-500/10 text-emerald-600"
+      ? "bg-success/10 text-emerald-600"
       : request.method === "POST"
         ? "bg-amber-500/10 text-amber-600"
         : request.method === "PUT"
@@ -1045,7 +1045,7 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
           <span
             className={`font-mono text-sm font-semibold ${
               request.method === "GET"
-                ? "text-emerald-500"
+                ? "text-success"
                 : request.method === "POST"
                   ? "text-amber-500"
                   : request.method === "PUT"
@@ -1065,7 +1065,7 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
                   ? "text-amber-500"
                   : request.statusCode >= 300
                     ? "text-blue-500"
-                    : "text-emerald-500"
+                    : "text-success"
             }`}
           >
             {request.statusCode}
@@ -1371,7 +1371,7 @@ function CollectionsView({
                         <span
                           className={`font-mono text-xs ${
                             req.request.method === "GET"
-                              ? "text-emerald-500"
+                              ? "text-success"
                               : req.request.method === "POST"
                                 ? "text-amber-500"
                                 : "text-muted-foreground"

@@ -123,7 +123,7 @@ export function ReplayPanel({ request }: ReplayPanelProps) {
               <span
                 className={
                   response.status < 400
-                    ? "text-emerald-500"
+                    ? "text-success"
                     : "text-destructive"
                 }
               >

@@ -205,7 +205,7 @@ export function MockServerManager() {
                         toggleServer(server.id);
                       }}
                       className={`w-2 h-2 rounded-full ${
-                        server.enabled ? "bg-emerald-500" : "bg-muted-foreground/50"
+                        server.enabled ? "bg-success" : "bg-muted-foreground/50"
                       }`}
                     />
                     <span className="flex-1 text-sm truncate">{server.name}</span>
@@ -282,7 +282,7 @@ export function MockServerManager() {
                             className="rounded border-border"
                           />
                           <span className={`font-mono text-xs font-medium ${
-                            endpoint.method === "GET" ? "text-emerald-500" :
+                            endpoint.method === "GET" ? "text-success" :
                             endpoint.method === "POST" ? "text-amber-500" :
                             endpoint.method === "PUT" ? "text-blue-500" :
                             endpoint.method === "DELETE" ? "text-red-500" :
@@ -292,7 +292,7 @@ export function MockServerManager() {
                           </span>
                           <span className="font-mono text-xs text-primary">{endpoint.path}</span>
                           <span className={`font-mono text-xs ${
-                            endpoint.statusCode >= 400 ? "text-red-500" : "text-emerald-500"
+                            endpoint.statusCode >= 400 ? "text-red-500" : "text-success"
                           }`}>
                             {endpoint.statusCode}
                           </span>

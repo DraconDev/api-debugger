@@ -62,7 +62,7 @@ export function UrlEditor({
   const methodColor = (m: string) => {
     switch (m) {
       case "GET":
-        return "bg-emerald-600 hover:bg-emerald-500";
+        return "bg-success hover:bg-success";
       case "POST":
         return "bg-amber-600 hover:bg-amber-500";
       case "PUT":

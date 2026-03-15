@@ -194,7 +194,7 @@ export function SSEClient() {
           </label>
           <div className="flex items-center gap-2 ml-auto">
             <div
-              className={`w-2 h-2 rounded-full ${isConnected ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground"}`}
+              className={`w-2 h-2 rounded-full ${isConnected ? "bg-success shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground"}`}
             />
             <span className="text-xs text-muted-foreground">
               {isConnected ? "Connected" : "Disconnected"}
@@ -246,7 +246,7 @@ export function SSEClient() {
                   event.type === "error"
                     ? "bg-red-500/10 border-red-500"
                     : event.type === "open"
-                      ? "bg-emerald-500/10 border-emerald-500"
+                      ? "bg-success/10 border-success"
                       : event.type === "close"
                         ? "bg-amber-500/10 border-amber-500"
                         : "bg-muted/30 border-primary"
@@ -266,7 +266,7 @@ export function SSEClient() {
                       event.type === "error"
                         ? "text-red-400"
                         : event.type === "open"
-                          ? "text-emerald-400"
+                          ? "text-success"
                           : event.type === "close"
                             ? "text-amber-400"
                             : "text-foreground"

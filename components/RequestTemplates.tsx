@@ -454,7 +454,7 @@ export function RequestTemplates({ onSelect }: RequestTemplatesProps) {
                 <span
                   className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-medium ${
                     template.config.method === "GET"
-                      ? "text-emerald-500 bg-emerald-500/10"
+                      ? "text-success bg-success/10"
                       : template.config.method === "POST"
                       ? "text-amber-500 bg-amber-500/10"
                       : template.config.method === "PUT"

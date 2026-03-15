@@ -133,7 +133,7 @@ export function RequestBuilderView() {
       ? "text-red-500"
       : response.status >= 300
       ? "text-amber-500"
-      : "text-emerald-500"
+      : "text-success"
     : "";
 
   return (

@@ -100,7 +100,7 @@ export function TestRunner({ response }: TestRunnerProps) {
         <div className="flex items-center gap-2">
           {hasRun && (
             <div className="flex items-center gap-1 text-xs">
-              <span className="text-emerald-500">{passedCount} passed</span>
+              <span className="text-success">{passedCount} passed</span>
               {failedCount > 0 && (
                 <>
                   <span className="text-muted-foreground">/</span>
@@ -148,7 +148,7 @@ export function TestRunner({ response }: TestRunnerProps) {
                   className={`p-2 border rounded ${
                     result
                       ? result.passed
-                        ? "border-emerald-500/50 bg-emerald-500/5"
+                        ? "border-success/50 bg-success/5"
                         : "border-red-500/50 bg-red-500/5"
                       : "border-border"
                   }`}
@@ -156,7 +156,7 @@ export function TestRunner({ response }: TestRunnerProps) {
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-xs text-muted-foreground">Test {index + 1}</span>
                     {result && (
-                      <span className={`text-xs ${result.passed ? "text-emerald-500" : "text-red-500"}`}>
+                      <span className={`text-xs ${result.passed ? "text-success" : "text-red-500"}`}>
                         {result.passed ? "✓ Passed" : "✗ Failed"}
                       </span>
                     )}

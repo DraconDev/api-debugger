@@ -135,7 +135,7 @@ export function CaptureFilter() {
           <button
             onClick={toggleCapture}
             className={`relative w-12 h-6 rounded-full transition-colors ${
-              filter.enabled ? "bg-emerald-500" : "bg-muted"
+              filter.enabled ? "bg-success" : "bg-muted"
             }`}
           >
             <div

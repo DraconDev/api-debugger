@@ -89,7 +89,7 @@ pm.expect(value).to.beA("string");`}
           <div className="p-2 text-xs font-mono">
             {logs.map((log, i) => (
               <div key={i} className={`py-0.5 ${
-                log.startsWith("✓") ? "text-emerald-400" :
+                log.startsWith("✓") ? "text-success" :
                 log.startsWith("✗") ? "text-red-400" :
                 log.startsWith("[ERROR]") ? "text-red-400" :
                 log.startsWith("[WARN]") ? "text-amber-400" :

@@ -106,7 +106,7 @@ export function SettingsPanel() {
           <div className="grid grid-cols-2 gap-4">
             <div className="p-3 bg-card rounded-lg border border-border">
               <div className="flex items-center gap-2 mb-1">
-                <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-4 h-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <span className="text-sm font-medium">Use Company Keys</span>
@@ -115,7 +115,7 @@ export function SettingsPanel() {
             </div>
             <div className="p-3 bg-card rounded-lg border border-border">
               <div className="flex items-center gap-2 mb-1">
-                <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-4 h-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <span className="text-sm font-medium">Full Privacy</span>
@@ -217,7 +217,7 @@ export function SettingsPanel() {
               <div
                 className={`p-3 rounded-lg text-sm ${
                   validationResult === "valid"
-                    ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-500"
+                    ? "bg-success/10 border border-success/20 text-success"
                     : "bg-destructive/10 border border-destructive/20 text-destructive"
                 }`}
               >

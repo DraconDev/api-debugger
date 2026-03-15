@@ -103,7 +103,7 @@ export function WebSocketClient() {
       case "sent":
         return "text-blue-400";
       case "received":
-        return "text-emerald-400";
+        return "text-success";
       default:
         return "text-muted-foreground";
     }
@@ -114,7 +114,7 @@ export function WebSocketClient() {
       {/* Connection Bar */}
       <div className="flex items-center gap-3 p-4 border-b border-border bg-muted/30">
         <div
-          className={`w-2.5 h-2.5 rounded-full ${isConnected ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground"}`}
+          className={`w-2.5 h-2.5 rounded-full ${isConnected ? "bg-success shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted-foreground"}`}
         />
         <input
           type="text"
@@ -167,7 +167,7 @@ export function WebSocketClient() {
                   msg.type === "sent"
                     ? "bg-blue-500/20 text-blue-400"
                     : msg.type === "received"
-                      ? "bg-emerald-500/20 text-emerald-400"
+                      ? "bg-success/20 text-success"
                       : "bg-muted text-muted-foreground"
                 }`}
               >
