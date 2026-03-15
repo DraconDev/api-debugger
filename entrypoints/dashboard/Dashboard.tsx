@@ -230,78 +230,8 @@ export default function Dashboard() {
     [state.collections],
   );
 
-  const loadSampleCollection = useCallback(async (sampleId: string) => {
-    const sample =
-      SAMPLE_COLLECTIONS[sampleId as keyof typeof SAMPLE_COLLECTIONS];
-    if (!sample || !("requests" in sample)) return;
-
-    const collectionId = generateId();
-    const requests = (sample.requests || []).map(
-      (r: {
-        name: string;
-        method: string;
-        url: string;
-        headers?: Array<{ name: string; value: string }>;
-        body?: { raw: string };
-      }) => ({
-        id: generateId(),
-        name: r.name,
-        collectionId,
-        requestConfig: {
-          method: r.method,
-          url: r.url,
-          headers: r.headers || [],
-          params: [],
-          body: r.body || { raw: "" },
-          bodyType: "raw" as const,
-          auth: { type: "none" as const },
-        },
-        request: {
-          id: generateId(),
-          url: r.url,
-          method: r.method,
-          statusCode: 0,
-          tabId: 0,
-          startTime: Date.now(),
-          timeStamp: Date.now(),
-          duration: 0,
-          requestHeaders: r.headers || [],
-          requestBody: null,
-          requestBodyText: null,
-          responseHeaders: [],
-        },
-        tags: [],
-        createdAt: Date.now(),
-      }),
-    );
-
-    const newCollection: Collection = {
-      id: collectionId,
-      name: sample.name,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-      requestCount: requests.length,
-    };
-
-    const saved = await chrome.storage.sync.get([
-      "apiDebugger_collections",
-      "apiDebugger_savedRequests",
-    ]);
-    const collections: Collection[] = saved.apiDebugger_collections || [];
-    const savedRequests: SavedRequest[] = saved.apiDebugger_savedRequests || [];
-
-    await chrome.storage.sync.set({
-      apiDebugger_collections: [...collections, newCollection],
-      apiDebugger_savedRequests: [...savedRequests, ...requests],
-    });
-
-    setState((s) => ({
-      ...s,
-      collections: [...s.collections, newCollection],
-      savedRequests: [...s.savedRequests, ...requests],
-    }));
-
-    setView("collections");
+  useEffect(() => {
+    loadData();
   }, []);
 
   useEffect(() => {
