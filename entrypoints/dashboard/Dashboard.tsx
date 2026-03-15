@@ -301,7 +301,6 @@ export default function Dashboard() {
       savedRequests: [...s.savedRequests, ...requests],
     }));
 
-    dismissWelcome();
     setView("collections");
   }, []);
 
