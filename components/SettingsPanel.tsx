@@ -247,19 +247,39 @@ export function SettingsPanel() {
 
             <div>
               <label className="block text-sm font-medium mb-2">Model</label>
+              <div className="relative mb-2">
+                <input
+                  type="text"
+                  value={modelSearch}
+                  onChange={(e) => setModelSearch(e.target.value)}
+                  placeholder="Search models..."
+                  className="w-full px-3 py-2 text-sm bg-input border border-border rounded-lg"
+                />
+              </div>
               <select
                 value={settings.model}
                 onChange={(e) =>
                   setSettings({ ...settings, model: e.target.value })
                 }
                 className="w-full px-3 py-2 text-sm bg-input border border-border rounded-lg"
+                size={8}
               >
-                {models.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
+                {isLoadingModels ? (
+                  <option disabled>Loading models...</option>
+                ) : filteredModels.length === 0 ? (
+                  <option disabled>No models found</option>
+                ) : (
+                  filteredModels.map((m: ModelInfo) => (
+                    <option key={m.id} value={m.id}>
+                      {m.name} ({(m.contextLength / 1000).toFixed(0)}k ctx)
+                    </option>
+                  ))
+                )}
               </select>
+              <p className="text-xs text-muted-foreground mt-1">
+                {filteredModels.length} models available
+                {settings.provider === "openrouter" && " via OpenRouter"}
+              </p>
             </div>
 
             <div>
