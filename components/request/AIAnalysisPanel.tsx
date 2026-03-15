@@ -235,8 +235,11 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
               {formatAnalysis(analysis)}
             </div>
             {usedModel && (
-              <div className="text-[10px] text-muted-foreground mt-2">
-                Model: {usedModel}
+              <div className="text-[10px] text-muted-foreground mt-2 flex items-center gap-2">
+                <span>Model: {usedModel}</span>
+                {usedFallback && (
+                  <span className="text-warning">(fallback)</span>
+                )}
               </div>
             )}
             <button
