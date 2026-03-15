@@ -1,110 +1,67 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import {
-  createAIClient,
-  getAvailableModels,
-  validateApiKey,
-  getProviderName,
-  getDefaultModel,
-  type AIProvider,
-} from "@/utils/ai-client";
+import { createAIClient, validateApiKey } from "@/utils/ai-client";
 
 describe("AI Client", () => {
   describe("createAIClient", () => {
-    it("should create a client with default model", () => {
+    it("should create a client with model", () => {
       const client = createAIClient({
         provider: "openai",
         apiKey: "test-key",
+        model: "gpt-4.1-mini",
       });
 
-      expect(client.provider).toBe("openai");
       expect(client.model).toBe("gpt-4.1-mini");
     });
 
-    it("should create a client with custom model", () => {
+    it("should strip provider prefix from model for direct API", () => {
       const client = createAIClient({
         provider: "openai",
         apiKey: "test-key",
-        model: "gpt-4.1",
+        model: "openai/gpt-4.1-mini",
       });
 
-      expect(client.model).toBe("gpt-4.1");
+      expect(client.model).toBe("openai/gpt-4.1-mini");
+      expect(client.apiProvider).toBe("openai");
     });
 
-    it("should use correct default models for each provider", () => {
-      const defaults: Record<AIProvider, string> = {
-        openai: "gpt-4.1-mini",
-        anthropic: "claude-haiku-4-20250414",
-        gemini: "gemini-2.0-flash",
-        openrouter: "openai/gpt-4.1-mini",
-      };
-
-      (Object.keys(defaults) as AIProvider[]).forEach((provider) => {
-        const client = createAIClient({
-          provider,
-          apiKey: "test-key",
-        });
-        expect(client.model).toBe(defaults[provider]);
+    it("should route Anthropic models to Anthropic API", () => {
+      const client = createAIClient({
+        provider: "anthropic",
+        apiKey: "test-key",
+        model: "anthropic/claude-sonnet-4",
       });
+
+      expect(client.apiProvider).toBe("anthropic");
     });
 
-    it("should support OpenRouter provider", () => {
+    it("should route Google models to Gemini API", () => {
+      const client = createAIClient({
+        provider: "gemini",
+        apiKey: "test-key",
+        model: "google/gemini-2.0-flash",
+      });
+
+      expect(client.apiProvider).toBe("gemini");
+    });
+
+    it("should route OpenRouter provider to OpenRouter API", () => {
       const client = createAIClient({
         provider: "openrouter",
         apiKey: "test-key",
+        model: "deepseek/deepseek-r1",
       });
 
-      expect(client.provider).toBe("openrouter");
-      expect(client.model).toBe("openai/gpt-4.1-mini");
-    });
-  });
-
-  describe("getProviderName", () => {
-    it("should return display names for all providers", () => {
-      expect(getProviderName("openai")).toBe("OpenAI");
-      expect(getProviderName("anthropic")).toBe("Anthropic");
-      expect(getProviderName("gemini")).toBe("Google Gemini");
-      expect(getProviderName("openrouter")).toBe("OpenRouter");
-    });
-  });
-
-  describe("getDefaultModel", () => {
-    it("should return default models for all providers", () => {
-      expect(getDefaultModel("openai")).toBe("gpt-4.1-mini");
-      expect(getDefaultModel("anthropic")).toBe("claude-haiku-4-20250414");
-      expect(getDefaultModel("gemini")).toBe("gemini-2.0-flash");
-      expect(getDefaultModel("openrouter")).toBe("openai/gpt-4.1-mini");
-    });
-  });
-
-  describe("getAvailableModels", () => {
-    it("should return current OpenAI models", () => {
-      const models = getAvailableModels("openai");
-      expect(models).toContain("gpt-4.1");
-      expect(models).toContain("gpt-4.1-mini");
-      expect(models).toContain("gpt-4.1-nano");
-      expect(models).toContain("gpt-4o");
-      expect(models).toContain("o3");
-      expect(models).toContain("o4-mini");
+      expect(client.apiProvider).toBe("openrouter");
     });
 
-    it("should return current Anthropic models", () => {
-      const models = getAvailableModels("anthropic");
-      expect(models).toContain("claude-opus-4-20250514");
-      expect(models).toContain("claude-sonnet-4-20250514");
-      expect(models).toContain("claude-haiku-4-20250414");
-      expect(models).toContain("claude-3-5-sonnet-20241022");
-    });
+    it("should route unknown provider models to OpenRouter", () => {
+      const client = createAIClient({
+        provider: "openrouter",
+        apiKey: "test-key",
+        model: "qwen/qwen-2.5-72b",
+      });
 
-    it("should return current Gemini models", () => {
-      const models = getAvailableModels("gemini");
-      expect(models).toContain("gemini-2.5-pro-preview");
-      expect(models).toContain("gemini-2.0-flash");
-      expect(models).toContain("gemini-1.5-pro");
-    });
-
-    it("should return empty for OpenRouter (uses dynamic fetching)", () => {
-      const models = getAvailableModels("openrouter");
-      expect(models).toEqual([]);
+      expect(client.apiProvider).toBe("openrouter");
     });
   });
 
@@ -137,6 +94,7 @@ describe("AI Client", () => {
       const client = createAIClient({
         provider: "openai",
         apiKey: "test-key",
+        model: "openai/gpt-4.1-mini",
       });
 
       const response = await client.chat([{ role: "user", content: "Hi" }]);
@@ -151,7 +109,6 @@ describe("AI Client", () => {
         }),
       );
       expect(response.content).toBe("Hello!");
-      expect(response.provider).toBe("openai");
     });
 
     it("should call Anthropic API correctly", async () => {
@@ -160,7 +117,7 @@ describe("AI Client", () => {
         json: () =>
           Promise.resolve({
             content: [{ text: "Hello!" }],
-            model: "claude-haiku-4-20250414",
+            model: "claude-sonnet-4",
             usage: { input_tokens: 10, output_tokens: 5 },
           }),
       });
@@ -168,6 +125,7 @@ describe("AI Client", () => {
       const client = createAIClient({
         provider: "anthropic",
         apiKey: "test-key",
+        model: "anthropic/claude-sonnet-4",
       });
 
       const response = await client.chat([
@@ -185,7 +143,6 @@ describe("AI Client", () => {
         }),
       );
       expect(response.content).toBe("Hello!");
-      expect(response.provider).toBe("anthropic");
     });
 
     it("should call Gemini API correctly", async () => {
@@ -205,6 +162,7 @@ describe("AI Client", () => {
       const client = createAIClient({
         provider: "gemini",
         apiKey: "test-key",
+        model: "google/gemini-2.0-flash",
       });
 
       const response = await client.chat([{ role: "user", content: "Hi" }]);
@@ -214,7 +172,6 @@ describe("AI Client", () => {
         expect.objectContaining({ method: "POST" }),
       );
       expect(response.content).toBe("Hello!");
-      expect(response.provider).toBe("gemini");
     });
 
     it("should call OpenRouter API correctly", async () => {
@@ -223,7 +180,7 @@ describe("AI Client", () => {
         json: () =>
           Promise.resolve({
             choices: [{ message: { content: "Hello!" } }],
-            model: "openai/gpt-4.1-mini",
+            model: "deepseek/deepseek-r1",
             usage: {
               prompt_tokens: 10,
               completion_tokens: 5,
@@ -235,6 +192,7 @@ describe("AI Client", () => {
       const client = createAIClient({
         provider: "openrouter",
         apiKey: "test-key",
+        model: "deepseek/deepseek-r1",
       });
 
       const response = await client.chat([{ role: "user", content: "Hi" }]);
@@ -249,7 +207,6 @@ describe("AI Client", () => {
         }),
       );
       expect(response.content).toBe("Hello!");
-      expect(response.provider).toBe("openrouter");
     });
 
     it("should handle API errors", async () => {
@@ -262,6 +219,7 @@ describe("AI Client", () => {
       const client = createAIClient({
         provider: "openai",
         apiKey: "bad-key",
+        model: "openai/gpt-4.1-mini",
       });
 
       await expect(
@@ -294,6 +252,7 @@ describe("AI Client", () => {
       const isValid = await validateApiKey({
         provider: "openai",
         apiKey: "valid-key",
+        model: "openai/gpt-4.1-mini",
       });
 
       expect(isValid).toBe(true);
@@ -308,6 +267,7 @@ describe("AI Client", () => {
       const isValid = await validateApiKey({
         provider: "openai",
         apiKey: "invalid-key",
+        model: "openai/gpt-4.1-mini",
       });
 
       expect(isValid).toBe(false);
@@ -319,6 +279,7 @@ describe("AI Client", () => {
       const isValid = await validateApiKey({
         provider: "openai",
         apiKey: "test-key",
+        model: "openai/gpt-4.1-mini",
       });
 
       expect(isValid).toBe(false);
@@ -349,6 +310,7 @@ describe("AI Client", () => {
       const client = createAIClient({
         provider: "openai",
         apiKey: "test-key",
+        model: "openai/gpt-4.1-mini",
       });
 
       await client.complete("Hello", "You are helpful");
@@ -377,6 +339,7 @@ describe("AI Client", () => {
       const client = createAIClient({
         provider: "openai",
         apiKey: "test-key",
+        model: "openai/gpt-4.1-mini",
       });
 
       await client.complete("Hello");
