@@ -70,7 +70,6 @@ export default function Dashboard() {
     return "history";
   });
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [showWelcome, setShowWelcome] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [state, setState] = useState<DashboardState>({
