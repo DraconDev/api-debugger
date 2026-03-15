@@ -16,7 +16,7 @@ export function RequestList({ requests, onSelectRequest }: RequestListProps) {
 
   const getStatusColor = (status: number) => {
     if (status >= 200 && status < 300) return "text-success";
-    if (status >= 400 && status < 500) return "text-yellow-600";
+    if (status >= 400 && status < 500) return "text-warning";
     if (status >= 500) return "text-destructive";
     return "text-muted-foreground";
   };
@@ -28,7 +28,7 @@ export function RequestList({ requests, onSelectRequest }: RequestListProps) {
       case "POST":
         return "text-success";
       case "PUT":
-        return "text-orange-600";
+        return "text-warning";
       case "DELETE":
         return "text-destructive";
       case "PATCH":
@@ -47,7 +47,9 @@ export function RequestList({ requests, onSelectRequest }: RequestListProps) {
           className="w-full p-2 text-left hover:bg-muted/50 transition-colors"
         >
           <div className="flex items-center gap-2 text-xs">
-            <span className={`font-mono font-medium ${getMethodColor(request.method)}`}>
+            <span
+              className={`font-mono font-medium ${getMethodColor(request.method)}`}
+            >
               {request.method}
             </span>
             <span className={`font-mono ${getStatusColor(request.statusCode)}`}>
