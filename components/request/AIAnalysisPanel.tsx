@@ -238,6 +238,11 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
             <div className="text-sm prose prose-invert prose-sm max-w-none">
               {formatAnalysis(analysis)}
             </div>
+            {usedModel && (
+              <div className="text-[10px] text-muted-foreground mt-2">
+                Model: {usedModel}
+              </div>
+            )}
             <button
               onClick={() => {
                 setAnalysis(null);
