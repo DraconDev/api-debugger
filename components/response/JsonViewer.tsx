@@ -43,7 +43,7 @@ export function JsonViewer({
   }
 
   if (data === undefined) {
-    return <span className="text-gray-500">undefined</span>;
+    return <span className="text-muted-foreground">undefined</span>;
   }
 
   if (typeof data === "boolean") {
@@ -69,7 +69,7 @@ export function JsonViewer({
 
   if (Array.isArray(data)) {
     if (data.length === 0) {
-      return <span className="text-gray-400">[]</span>;
+      return <span className="text-muted-foreground">[]</span>;
     }
 
     const path = `arr_${depth}`;
@@ -78,17 +78,17 @@ export function JsonViewer({
     return (
       <span>
         <span
-          className="cursor-pointer select-none text-gray-500 hover:text-gray-300 mr-1"
+          className="cursor-pointer select-none text-muted-foreground hover:text-gray-300 mr-1"
           onClick={() => toggleExpand(path)}
         >
           {isExpanded ? "▼" : "▶"}
         </span>
-        <span className="text-gray-400">[</span>
+        <span className="text-muted-foreground">[</span>
         {isExpanded ? (
           <div className="ml-4 border-l border-border pl-2">
             {data.map((item, index) => (
               <div key={index} className="group relative">
-                <span className="text-gray-500 mr-2">{index}:</span>
+                <span className="text-muted-foreground mr-2">{index}:</span>
                 <JsonViewer
                   data={item}
                   depth={depth + 1}
@@ -96,7 +96,7 @@ export function JsonViewer({
                   onCopy={onCopy}
                 />
                 {index < data.length - 1 && (
-                  <span className="text-gray-400">,</span>
+                  <span className="text-muted-foreground">,</span>
                 )}
                 <button
                   className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 px-1 text-[10px] text-primary hover:bg-primary/10 rounded"
@@ -113,9 +113,9 @@ export function JsonViewer({
             ))}
           </div>
         ) : (
-          <span className="text-gray-500 mx-1">...{data.length} items</span>
+          <span className="text-muted-foreground mx-1">...{data.length} items</span>
         )}
-        <span className="text-gray-400">]</span>
+        <span className="text-muted-foreground">]</span>
       </span>
     );
   }
@@ -123,7 +123,7 @@ export function JsonViewer({
   if (typeof data === "object") {
     const entries = Object.entries(data);
     if (entries.length === 0) {
-      return <span className="text-gray-400">{"{}"}</span>;
+      return <span className="text-muted-foreground">{"{}"}</span>;
     }
 
     const path = `obj_${depth}`;
@@ -132,12 +132,12 @@ export function JsonViewer({
     return (
       <span>
         <span
-          className="cursor-pointer select-none text-gray-500 hover:text-gray-300 mr-1"
+          className="cursor-pointer select-none text-muted-foreground hover:text-gray-300 mr-1"
           onClick={() => toggleExpand(path)}
         >
           {isExpanded ? "▼" : "▶"}
         </span>
-        <span className="text-gray-400">{"{"}</span>
+        <span className="text-muted-foreground">{"{"}</span>
         {isExpanded ? (
           <div className="ml-4 border-l border-border pl-2">
             {entries.map(([key, value], index) => {
@@ -155,7 +155,7 @@ export function JsonViewer({
                   >
                     {escapeHtml(key)}
                   </span>
-                  <span className="text-gray-400">: </span>
+                  <span className="text-muted-foreground">: </span>
                   <JsonViewer
                     data={value}
                     depth={depth + 1}
@@ -163,7 +163,7 @@ export function JsonViewer({
                     onCopy={onCopy}
                   />
                   {index < entries.length - 1 && (
-                    <span className="text-gray-400">,</span>
+                    <span className="text-muted-foreground">,</span>
                   )}
                   <button
                     className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 px-1 text-[10px] text-primary hover:bg-primary/10 rounded"
@@ -181,9 +181,9 @@ export function JsonViewer({
             })}
           </div>
         ) : (
-          <span className="text-gray-500 mx-1">...{entries.length} keys</span>
+          <span className="text-muted-foreground mx-1">...{entries.length} keys</span>
         )}
-        <span className="text-gray-400">{"}"}</span>
+        <span className="text-muted-foreground">{"}"}</span>
       </span>
     );
   }

@@ -18,7 +18,7 @@ export function RequestList({ requests, onSelectRequest }: RequestListProps) {
     if (status >= 200 && status < 300) return "text-green-600";
     if (status >= 400 && status < 500) return "text-yellow-600";
     if (status >= 500) return "text-red-600";
-    return "text-gray-600";
+    return "text-muted-foreground";
   };
 
   const getMethodColor = (method: string) => {
@@ -34,7 +34,7 @@ export function RequestList({ requests, onSelectRequest }: RequestListProps) {
       case "PATCH":
         return "text-purple-600";
       default:
-        return "text-gray-600";
+        return "text-muted-foreground";
     }
   };
 
