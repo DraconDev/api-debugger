@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { validateApiKey, type AIProvider } from "@/utils/ai-client";
 import { getModels, getProviders, type ModelInfo } from "@/lib/modelRegistry";
 
