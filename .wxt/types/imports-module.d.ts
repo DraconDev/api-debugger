@@ -41,6 +41,7 @@ declare module '#imports' {
   export { SaveToCollection } from '../components/SaveToCollection';
   export { SettingsPanel } from '../components/SettingsPanel';
   export { ShortcutsModal } from '../components/ShortcutsModal';
+  export { TestMode } from '../components/TestMode';
   export { WelcomeScreen, SAMPLE_COLLECTIONS } from '../components/WelcomeScreen';
   export { WorkflowSimulator, WorkflowConfig, WorkflowAssertion, WorkflowStep, WorkflowCondition, WorkflowResult, AssertionResult, LoadTestMetrics } from '../components/WorkflowSimulator';
   export { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';

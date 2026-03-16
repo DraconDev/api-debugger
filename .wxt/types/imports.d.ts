@@ -29,6 +29,7 @@ declare global {
   const SaveToCollection: typeof import('/home/dracon/Dev/extensions/api-debugger/components/SaveToCollection').SaveToCollection
   const SettingsPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/SettingsPanel').SettingsPanel
   const ShortcutsModal: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ShortcutsModal').ShortcutsModal
+  const TestMode: typeof import('/home/dracon/Dev/extensions/api-debugger/components/TestMode').TestMode
   const ThemeToggle: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useTheme').ThemeToggle
   const WelcomeScreen: typeof import('/home/dracon/Dev/extensions/api-debugger/components/WelcomeScreen').WelcomeScreen
   const WorkflowSimulator: typeof import('/home/dracon/Dev/extensions/api-debugger/components/WorkflowSimulator').WorkflowSimulator

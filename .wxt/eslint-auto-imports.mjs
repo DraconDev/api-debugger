@@ -58,6 +58,7 @@ const globals = {
   "StorageArea": true,
   "StorageAreaChanges": true,
   "StorageItemKey": true,
+  "TestMode": true,
   "ThemeToggle": true,
   "WelcomeScreen": true,
   "WorkflowAssertion": true,
