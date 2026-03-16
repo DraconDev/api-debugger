@@ -247,7 +247,7 @@ export function createDemoCollections(): {
           'pm.variables.set("timestamp", new Date().toISOString());',
           'console.log("Fetching user:", pm.variables.get("userId"));',
         ].join("\n"),
-        postRequestScript: [
+        postResponseScript: [
           "// Extract data from response",
           "const response = pm.response.json();",
           'pm.variables.set("userName", response.name);',
@@ -285,7 +285,7 @@ export function createDemoCollections(): {
         body: { raw: "" },
         bodyType: "none",
         auth: { type: "none" },
-        postRequestScript: [
+        postResponseScript: [
           "// Test the response",
           'pm.test("Status is 200", () => {',
           "  pm.expect(pm.response.status).to.equal(200);",
