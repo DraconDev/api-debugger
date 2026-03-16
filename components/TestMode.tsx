@@ -198,22 +198,7 @@ interface TestResult {
   error?: string;
 }
 
-export function TestMode({
-  onRequestSend,
-}: {
-  onRequestSend?: (config: {
-    method: string;
-    url: string;
-    headers: Record<string, string>;
-    body?: string;
-  }) => Promise<{
-    status: number;
-    statusText: string;
-    headers: [string, string][];
-    body: string;
-    duration: number;
-  }>;
-}) {
+export function TestMode() {
   const [activeCategory, setActiveCategory] = useState<string>("rest");
   const [results, setResults] = useState<Record<string, TestResult>>({});
   const [expandedResult, setExpandedResult] = useState<string | null>(null);
