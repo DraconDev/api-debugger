@@ -6,13 +6,18 @@
  * Demonstrates every feature: methods, auth, scripts, environments, folders.
  */
 
-import type { Collection, SavedRequest, Environment, RequestRecord } from "@/types";
+import type { Collection, SavedRequest, Environment, RequestRecord, RequestConfig } from "@/types";
 
 const NOW = Date.now();
+let counter = 0;
 
-function stubRequest(url: string, method: string): RequestRecord {
+function makeId(prefix: string): string {
+  return `${prefix}-${++counter}`;
+}
+
+function stub(url: string, method: string): RequestRecord {
   return {
-    id: `stub-${method}-${Math.random().toString(36).slice(2, 7)}`,
+    id: makeId("stub"),
     url,
     method,
     statusCode: 0,
@@ -25,6 +30,27 @@ function stubRequest(url: string, method: string): RequestRecord {
     requestBodyText: null,
     responseHeaders: [],
   };
+}
+
+function req(
+  id: string,
+  name: string,
+  collectionId: string,
+  config: Omit<RequestConfig, "id" | "name">
+): SavedRequest {
+  return {
+    id,
+    name,
+    collectionId,
+    request: stub(config.url, config.method),
+    requestConfig: { ...config, id, name },
+    tags: [],
+    createdAt: NOW,
+  };
+}
+
+function env(id: string, name: string, isActive: boolean, variables: Environment["variables"]): Environment {
+  return { id, name, isActive, variables, createdAt: NOW, updatedAt: NOW };
 }
 
 export function createDemoCollections(): {
