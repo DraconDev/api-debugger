@@ -1,7 +1,7 @@
 # API Debugger - Manual Testing Checklist
 
 > Switch to the **Demo Examples** profile first (Settings → Profiles → Switch).
-> Everything else is covered by `npm test` (257 tests).
+> Everything else is covered by `npm test` (366 tests).
 
 ## Sending Requests
 
