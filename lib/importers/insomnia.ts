@@ -61,7 +61,6 @@ export function parseInsomnia(content: string): ImportResult {
 
     const collections: ImportCollection[] = workspaces.map((ws) => {
       const wsFolders = folders.filter((f) => f.parentId === ws._id);
-      const wsRequests = requests.filter((r) => r.parentId === ws._id);
 
       return {
         id: ws._id,
