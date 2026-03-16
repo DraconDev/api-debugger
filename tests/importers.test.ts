@@ -3,18 +3,25 @@ import { parseCurl } from "@/lib/importers/curl";
 import { parseHar } from "@/lib/importers/har";
 import { parsePostmanCollection } from "@/lib/importers/postman";
 import { parseOpenAPI } from "@/lib/importers/openapi";
+import { parseInsomnia } from "@/lib/importers/insomnia";
 import { detectImportFormat } from "@/lib/importers/types";
 
 describe("Importers", () => {
   describe("detectImportFormat", () => {
     it("detects OpenAPI JSON", () => {
-      const content = JSON.stringify({ openapi: "3.0.0", info: { title: "Test" } });
+      const content = JSON.stringify({
+        openapi: "3.0.0",
+        info: { title: "Test" },
+      });
       expect(detectImportFormat(content)).toBe("openapi");
     });
 
     it("detects Postman collection", () => {
       const content = JSON.stringify({
-        info: { _postman_id: "123", schema: "https://schema.postman.com/collection.json" },
+        info: {
+          _postman_id: "123",
+          schema: "https://schema.postman.com/collection.json",
+        },
         item: [],
       });
       expect(detectImportFormat(content)).toBe("postman");
@@ -42,14 +49,18 @@ describe("Importers", () => {
     });
 
     it("parses POST request with data", () => {
-      const result = parseCurl('curl -X POST -d \'{"name":"test"}\' https://api.example.com/users');
+      const result = parseCurl(
+        'curl -X POST -d \'{"name":"test"}\' https://api.example.com/users',
+      );
       expect(result.requests).toHaveLength(1);
       expect(result.requests?.[0].method).toBe("POST");
       expect(result.requests?.[0].body?.raw).toBe('{"name":"test"}');
     });
 
     it("parses headers", () => {
-      const result = parseCurl('curl -H "Content-Type: application/json" https://api.example.com');
+      const result = parseCurl(
+        'curl -H "Content-Type: application/json" https://api.example.com',
+      );
       expect(result.requests).toHaveLength(1);
       expect(result.requests?.[0].headers).toContainEqual({
         name: "Content-Type",
@@ -59,7 +70,9 @@ describe("Importers", () => {
     });
 
     it("parses Bearer auth", () => {
-      const result = parseCurl('curl -H "Authorization: Bearer mytoken" https://api.example.com');
+      const result = parseCurl(
+        'curl -H "Authorization: Bearer mytoken" https://api.example.com',
+      );
       expect(result.requests?.[0].auth?.type).toBe("bearer");
       expect(result.requests?.[0].auth?.bearer?.token).toBe("mytoken");
     });
@@ -118,7 +131,10 @@ describe("Importers", () => {
             name: "Users",
             item: [
               { name: "List Users", request: { method: "GET", url: "/users" } },
-              { name: "Create User", request: { method: "POST", url: "/users" } },
+              {
+                name: "Create User",
+                request: { method: "POST", url: "/users" },
+              },
             ],
           },
         ],
