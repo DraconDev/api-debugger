@@ -437,8 +437,8 @@ export function GitHubSyncPanel() {
               Request history (local only)
             </li>
             <li className="flex items-center gap-2">
-              <XIcon className="w-3 h-3 text-muted-foreground" />
-              AI API keys (local only)
+              <CheckIcon className="w-3 h-3 text-success" />
+              AI settings and model config
             </li>
           </ul>
         </div>
