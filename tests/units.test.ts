@@ -689,7 +689,7 @@ describe("OpenAPI Parser", () => {
         },
       }),
     );
-    expect(r.requests.length).toBe(2);
+    expect(r.requests?.length).toBe(2);
   });
 
   it("handles empty paths", () => {
@@ -700,7 +700,7 @@ describe("OpenAPI Parser", () => {
         paths: {},
       }),
     );
-    expect(r.requests).toHaveLength(0);
+    expect(r.requests || []).toHaveLength(0);
   });
 
   it("sets base URL from servers", () => {
