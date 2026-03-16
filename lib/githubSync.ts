@@ -19,13 +19,26 @@ export interface SyncStatus {
 export interface SyncData {
   version: string;
   exportedAt: string;
-  collections: unknown[];
-  savedRequests: unknown[];
-  environments: unknown[];
-  settings: {
+  // Legacy flat data (for backward compat with older sync files)
+  collections?: unknown[];
+  savedRequests?: unknown[];
+  environments?: unknown[];
+  settings?: {
     theme: string;
     captureFilter: unknown;
   };
+  // Profile-based data (current format)
+  profiles?: unknown[];
+  activeProfileId?: string;
+  profileData?: Record<
+    string,
+    {
+      collections: unknown[];
+      savedRequests: unknown[];
+      environments: unknown[];
+      aiSettings?: unknown;
+    }
+  >;
 }
 
 const GITHUB_API = "https://api.github.com";
@@ -39,7 +52,9 @@ export function getGitHubPATUrl(): string {
   return `https://github.com/settings/tokens/new?description=${description}&scopes=${scopes}`;
 }
 
-export async function validateGitHubToken(token: string): Promise<{ valid: boolean; username?: string; error?: string }> {
+export async function validateGitHubToken(
+  token: string,
+): Promise<{ valid: boolean; username?: string; error?: string }> {
   try {
     const response = await fetch(`${GITHUB_API}/user`, {
       headers: {
@@ -67,9 +82,14 @@ export class GitHubSync {
     this.config = config;
   }
 
-  private async request(endpoint: string, options: RequestInit = {}): Promise<Response> {
-    const url = endpoint.startsWith("http") ? endpoint : `${GITHUB_API}${endpoint}`;
-    
+  private async request(
+    endpoint: string,
+    options: RequestInit = {},
+  ): Promise<Response> {
+    const url = endpoint.startsWith("http")
+      ? endpoint
+      : `${GITHUB_API}${endpoint}`;
+
     const response = await fetch(url, {
       ...options,
       headers: {
@@ -88,30 +108,36 @@ export class GitHubSync {
     return response;
   }
 
-  async testConnection(): Promise<{ valid: boolean; user?: string; error?: string }> {
+  async testConnection(): Promise<{
+    valid: boolean;
+    user?: string;
+    error?: string;
+  }> {
     try {
       const response = await this.request("/user");
       const user = await response.json();
-      
+
       await this.request(`/repos/${this.config.owner}/${this.config.repo}`);
-      
+
       return { valid: true, user: user.login };
     } catch (error) {
-      return { 
-        valid: false, 
-        error: error instanceof Error ? error.message : "Connection failed" 
+      return {
+        valid: false,
+        error: error instanceof Error ? error.message : "Connection failed",
       };
     }
   }
 
   async getFile(): Promise<{ content: SyncData | null; sha: string | null }> {
     try {
-      const path = this.config.path ? `${this.config.path}/${SYNC_FILE}` : SYNC_FILE;
+      const path = this.config.path
+        ? `${this.config.path}/${SYNC_FILE}`
+        : SYNC_FILE;
       const response = await this.request(
-        `/repos/${this.config.owner}/${this.config.repo}/contents/${path}?ref=${this.config.branch}`
+        `/repos/${this.config.owner}/${this.config.repo}/contents/${path}?ref=${this.config.branch}`,
       );
       const data = await response.json();
-      
+
       const content = JSON.parse(atob(data.content));
       return { content, sha: data.sha };
     } catch (error) {
@@ -123,8 +149,12 @@ export class GitHubSync {
   }
 
   async push(data: SyncData, sha: string | null): Promise<void> {
-    const path = this.config.path ? `${this.config.path}/${SYNC_FILE}` : SYNC_FILE;
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+    const path = this.config.path
+      ? `${this.config.path}/${SYNC_FILE}`
+      : SYNC_FILE;
+    const content = btoa(
+      unescape(encodeURIComponent(JSON.stringify(data, null, 2))),
+    );
 
     const body: Record<string, unknown> = {
       message: `Update API Debugger sync - ${new Date().toISOString()}`,
@@ -141,7 +171,7 @@ export class GitHubSync {
       {
         method: "PUT",
         body: JSON.stringify(body),
-      }
+      },
     );
   }
 
