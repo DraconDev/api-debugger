@@ -422,11 +422,11 @@ export function GitHubSyncPanel() {
           <ul className="text-xs text-muted-foreground space-y-1">
             <li className="flex items-center gap-2">
               <CheckIcon className="w-3 h-3 text-success" />
-              Collections and saved requests
+              All profiles (collections, requests, environments)
             </li>
             <li className="flex items-center gap-2">
               <CheckIcon className="w-3 h-3 text-success" />
-              Environments and variables
+              Active profile selection
             </li>
             <li className="flex items-center gap-2">
               <CheckIcon className="w-3 h-3 text-success" />
