@@ -597,6 +597,7 @@ describe("Import Format Detection", () => {
     expect(detectImportFormat("openapi: '3.0.0'", "spec.yaml")).toBe("openapi");
     expect(detectImportFormat("swagger: '2.0'", "spec.yml")).toBe("openapi");
   });
+});
 
   it("detects cURL", () => {
     expect(detectImportFormat("curl https://example.com")).toBe("curl");
