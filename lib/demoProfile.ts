@@ -432,6 +432,25 @@ export function createDemoCollections(): {
       bodyType: "none",
       auth: { type: "none" },
     }),
+    req("demo-req-status-codes", "Status Code Testing", colAdvanced, {
+      method: "GET",
+      url: "https://httpbin.org/status/418",
+      headers: [],
+      params: [],
+      body: { raw: "" },
+      bodyType: "none",
+      auth: { type: "none" },
+      postResponseScript: [
+        "// httpbin.org/status/{code} returns that status code",
+        "// Try changing 418 to: 200, 201, 301, 400, 401, 403, 404, 500, 502",
+        'pm.test("Got expected status", () => {',
+        "  pm.expect(pm.response.status).to.equal(418);",
+        "});",
+        'pm.test("I\'m a teapot ☕", () => {',
+        "  pm.expect(pm.response.status).to.equal(418);",
+        "});",
+      ].join("\n"),
+    }),
   ];
 
   const environments: Environment[] = [
