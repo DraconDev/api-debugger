@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { createAI, AIError, FALLBACK_CHAINS } from "@/lib/ai-client";
+import { createAI, AIError } from "@/lib/ai-client";
 
 describe("AI Client (OpenRouter + Fallback)", () => {
   const mockFetch = vi.fn();
@@ -208,35 +208,6 @@ describe("AI Client (OpenRouter + Fallback)", () => {
       const client = createAI({ apiKey: "test-key" });
       const valid = await client.validate();
       expect(valid).toBe(false);
-    });
-  });
-
-  describe("FALLBACK_CHAINS", () => {
-    it("should have fast-and-cheap chain", () => {
-      expect(FALLBACK_CHAINS["fast-and-cheap"]).toContain(
-        "openai/gpt-4.1-mini",
-      );
-      expect(FALLBACK_CHAINS["fast-and-cheap"]).toContain(
-        "google/gemini-2.0-flash",
-      );
-    });
-
-    it("should have best-quality chain", () => {
-      expect(FALLBACK_CHAINS["best-quality"]).toContain(
-        "anthropic/claude-opus-4",
-      );
-    });
-
-    it("should have coding chain", () => {
-      expect(FALLBACK_CHAINS["coding"]).toContain("anthropic/claude-sonnet-4");
-    });
-
-    it("should have reasoning chain", () => {
-      expect(FALLBACK_CHAINS["reasoning"]).toContain("openai/o3");
-    });
-
-    it("should have budget chain", () => {
-      expect(FALLBACK_CHAINS["budget"]).toContain("openai/gpt-4.1-nano");
     });
   });
 

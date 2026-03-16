@@ -10,6 +10,7 @@ interface AIAnalysisPanelProps {
 interface AISettings {
   apiKey: string;
   model: string;
+  fallbacks: string[];
 }
 
 const AI_STORAGE_KEY = "sync:ai_settings";
@@ -61,7 +62,7 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
 
       const result = await client.chat(messages, {
         model: aiSettings.model,
-        fallbacks: ["openai/gpt-4.1-mini", "google/gemini-2.0-flash"],
+        fallbacks: aiSettings.fallbacks || [],
       });
       setAnalysis(result.content);
       setUsedModel(result.model);

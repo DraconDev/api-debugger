@@ -13,7 +13,6 @@ export function SSEClient() {
   const [isConnected, setIsConnected] = useState(false);
   const [events, setEvents] = useState<SSEEvent[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [autoScroll, setAutoScroll] = useState(true);
   const [reconnect, setReconnect] = useState(false);
 
   const eventSourceRef = useRef<EventSource | null>(null);
@@ -21,10 +20,10 @@ export function SSEClient() {
   const eventsEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (autoScroll && eventsEndRef.current) {
+    if (eventsEndRef.current) {
       eventsEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [events, autoScroll]);
+  }, [events]);
 
   const addEvent = useCallback((event: Omit<SSEEvent, "id" | "timestamp">) => {
     setEvents((prev) => [
@@ -182,15 +181,6 @@ export function SSEClient() {
               className="w-4 h-4 rounded border-border"
             />
             Auto-reconnect
-          </label>
-          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
-            <input
-              type="checkbox"
-              checked={autoScroll}
-              onChange={(e) => setAutoScroll(e.target.checked)}
-              className="w-4 h-4 rounded border-border"
-            />
-            Auto-scroll
           </label>
           <div className="flex items-center gap-2 ml-auto">
             <div

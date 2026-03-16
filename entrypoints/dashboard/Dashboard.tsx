@@ -28,6 +28,16 @@ import { ImportModal } from "@/components/ImportModal";
 import { ShortcutsModal } from "@/components/ShortcutsModal";
 import { TestMode } from "@/components/TestMode";
 import { type ImportResult } from "@/lib/importers";
+import { createDemoCollections } from "@/lib/demoProfile";
+import { ProfileManager } from "@/components/ProfileManager";
+import {
+  initializeProfiles,
+  getActiveProfileId,
+  getProfileData,
+  saveProfileData,
+} from "@/lib/profiles";
+import { GettingStarted } from "@/components/GettingStarted";
+import { completeChecklistItem } from "@/lib/checklist";
 
 type ViewType =
   | "builder"
@@ -95,6 +105,9 @@ export default function Dashboard() {
 
   const handleImport = useCallback(
     async (result: ImportResult) => {
+      const activeId = await getActiveProfileId();
+      const currentData = await getProfileData(activeId);
+
       if (result.collections && result.collections.length > 0) {
         const newCollections: Collection[] = result.collections.map((c) => ({
           id: c.id,
@@ -106,12 +119,10 @@ export default function Dashboard() {
             result.requests?.filter((r) => r.collectionId === c.id).length || 0,
         }));
 
-        const saved = await chrome.storage.sync.get("apiDebugger_collections");
-        const existingCollections: Collection[] =
-          saved.apiDebugger_collections || [];
-        await chrome.storage.sync.set({
-          apiDebugger_collections: [...existingCollections, ...newCollections],
-        });
+        currentData.collections = [
+          ...currentData.collections,
+          ...newCollections,
+        ];
 
         setState((s) => ({
           ...s,
@@ -189,14 +200,10 @@ export default function Dashboard() {
           createdAt: Date.now(),
         }));
 
-        const saved = await chrome.storage.sync.get(
-          "apiDebugger_savedRequests",
-        );
-        const existingRequests: SavedRequest[] =
-          saved.apiDebugger_savedRequests || [];
-        await chrome.storage.sync.set({
-          apiDebugger_savedRequests: [...existingRequests, ...newRequests],
-        });
+        currentData.savedRequests = [
+          ...currentData.savedRequests,
+          ...newRequests,
+        ];
 
         setState((s) => ({
           ...s,
@@ -214,17 +221,13 @@ export default function Dashboard() {
           updatedAt: Date.now(),
         }));
 
-        const saved = await chrome.storage.sync.get("apiDebugger_environments");
-        const existingEnvironments: Environment[] =
-          saved.apiDebugger_environments || [];
-        await chrome.storage.sync.set({
-          apiDebugger_environments: [
-            ...existingEnvironments,
-            ...newEnvironments,
-          ],
-        });
+        currentData.environments = [
+          ...currentData.environments,
+          ...newEnvironments,
+        ];
       }
 
+      await saveProfileData(activeId, currentData);
       setShowImport(false);
     },
     [state.collections],
@@ -241,25 +244,56 @@ export default function Dashboard() {
   const loadData = async () => {
     setState((s) => ({ ...s, isLoading: true }));
     try {
-      const historyRes = await chrome.runtime.sendMessage({
-        type: "GET_REQUESTS",
-      });
-      const storageRes = await chrome.storage.sync.get([
-        "apiDebugger_collections",
-        "apiDebugger_savedRequests",
+      // Initialize profiles on first run (migrates old data if needed)
+      await initializeProfiles();
+
+      const [historyRes, activeId] = await Promise.all([
+        chrome.runtime.sendMessage({ type: "GET_REQUESTS" }),
+        getActiveProfileId(),
       ]);
+
+      const profileData = await getProfileData(activeId);
+
+      // Apply profile's environments if they exist
+      if (profileData.environments && profileData.environments.length > 0) {
+        await chrome.storage.sync.set({
+          apiDebugger_environments: profileData.environments,
+        });
+      }
+
+      // Apply profile's AI settings if they exist
+      if (profileData.aiSettings) {
+        await chrome.storage.sync.set({
+          "sync:ai_settings": profileData.aiSettings,
+        });
+      }
 
       setState((s) => ({
         ...s,
         requests: historyRes.requests || [],
-        collections: storageRes.apiDebugger_collections || [],
-        savedRequests: storageRes.apiDebugger_savedRequests || [],
+        collections: profileData.collections || [],
+        savedRequests: profileData.savedRequests || [],
         isLoading: false,
       }));
     } catch (err) {
       console.error("Failed to load data:", err);
       setState((s) => ({ ...s, isLoading: false }));
     }
+  };
+
+  const loadDemoProfile = async () => {
+    const demo = createDemoCollections();
+    const activeId = await getActiveProfileId();
+    await saveProfileData(activeId, {
+      collections: demo.collections,
+      savedRequests: demo.requests,
+      environments: demo.environments,
+    });
+    setState((s) => ({
+      ...s,
+      collections: demo.collections,
+      savedRequests: demo.requests,
+    }));
   };
 
   const filteredRequests = useMemo(() => {
@@ -373,15 +407,17 @@ export default function Dashboard() {
     <div className="flex h-screen bg-background text-foreground dark">
       {/* Sidebar */}
       <aside
-        className={`${sidebarCollapsed ? "w-14" : "w-56"} flex-shrink-0 bg-card border-r border-border flex flex-col transition-all duration-200`}
+        className={`${sidebarCollapsed ? "w-14" : "w-56"} flex-shrink-0 bg-card border-r border-border flex flex-col transition-all duration-200 overflow-hidden`}
       >
         {/* Logo */}
         <div className="p-3 border-b border-border flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div
+            className={`flex items-center ${sidebarCollapsed ? "justify-center w-full" : "gap-2"}`}
+          >
             <img
               src={chrome.runtime.getURL("/icon/32.png")}
               alt="API Debugger"
-              className="w-8 h-8 rounded-lg cursor-pointer"
+              className="w-8 h-8 rounded-lg cursor-pointer flex-shrink-0"
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             />
             {!sidebarCollapsed && (
@@ -391,14 +427,14 @@ export default function Dashboard() {
               </div>
             )}
           </div>
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="p-1 hover:bg-accent rounded text-muted-foreground"
-          >
-            <ChevronIcon
-              className={`w-4 h-4 transition-transform ${sidebarCollapsed ? "rotate-180" : ""}`}
-            />
-          </button>
+          {!sidebarCollapsed && (
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="p-1 hover:bg-accent rounded text-muted-foreground flex-shrink-0"
+            >
+              <ChevronIcon className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
         {/* Navigation */}
@@ -542,7 +578,9 @@ export default function Dashboard() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex">
+      <main className="flex-1 flex flex-col overflow-hidden">
+        <GettingStarted onNavigate={(v) => setView(v as ViewType)} />
+        <div className="flex-1 flex overflow-hidden">
         {view === "builder" && (
           <RuntimeVariablesProvider>
             <RequestBuilderView />
@@ -714,6 +752,7 @@ export default function Dashboard() {
                 selectedRequestId: null,
               }))
             }
+            onLoadDemo={loadDemoProfile}
           />
         )}
 
@@ -1107,11 +1146,13 @@ function CollectionsView({
   savedRequests,
   selectedCollectionId,
   onSelectCollection,
+  onLoadDemo,
 }: {
   collections: Collection[];
   savedRequests: SavedRequest[];
   selectedCollectionId: string | null;
   onSelectCollection: (id: string | null) => void;
+  onLoadDemo: () => void;
 }) {
   const [isRunning, setIsRunning] = useState(false);
   const selectedCollection = collections.find(
@@ -1200,13 +1241,31 @@ function CollectionsView({
     <div className="flex-1 flex">
       {/* Collections List */}
       <div className="w-64 border-r border-border">
-        <div className="p-3 border-b border-border">
+        <div className="p-3 border-b border-border flex items-center justify-between">
           <h2 className="text-sm font-medium">Collections</h2>
+          <button
+            onClick={onLoadDemo}
+            className="text-xs text-primary hover:text-primary/80 transition-colors"
+            title="Load demo examples"
+          >
+            + Demo
+          </button>
         </div>
         <div className="p-2 space-y-1">
           {collections.length === 0 ? (
-            <div className="p-4 text-sm text-muted-foreground text-center">
-              No collections yet
+            <div className="p-4 text-center space-y-3">
+              <p className="text-sm text-muted-foreground">
+                No collections yet
+              </p>
+              <button
+                onClick={onLoadDemo}
+                className="w-full px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+              >
+                Load Demo Examples
+              </button>
+              <p className="text-xs text-muted-foreground">
+                16 requests across 4 collections with auth, scripts, and more
+              </p>
             </div>
           ) : (
             collections.map((col) => (
@@ -1316,13 +1375,24 @@ function CollectionsView({
 
 function SettingsView() {
   const [settingsTab, setSettingsTab] = useState<
-    "ai" | "environments" | "filters" | "shortcuts"
-  >("ai");
+    "profiles" | "ai" | "environments" | "filters" | "shortcuts"
+  >("profiles");
 
   return (
     <div className="flex-1 flex">
       {/* Settings Tabs */}
       <div className="w-48 border-r border-border p-2 space-y-1">
+        <button
+          onClick={() => setSettingsTab("profiles")}
+          className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm ${
+            settingsTab === "profiles"
+              ? "bg-accent text-accent-foreground"
+              : "hover:bg-accent/50"
+          }`}
+        >
+          <FolderIcon className="w-4 h-4" />
+          Profiles
+        </button>
         <button
           onClick={() => setSettingsTab("ai")}
           className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm ${
@@ -1371,6 +1441,8 @@ function SettingsView() {
 
       {/* Settings Content */}
       <div className="flex-1 overflow-auto">
+        {settingsTab === "profiles" && <ProfileManager />}
+
         {settingsTab === "ai" && <SettingsPanel />}
 
         {settingsTab === "environments" && <EnvironmentManager />}

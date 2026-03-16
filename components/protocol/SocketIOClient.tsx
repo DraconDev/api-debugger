@@ -16,7 +16,6 @@ export function SocketIOClient() {
   const [isConnected, setIsConnected] = useState(false);
   const [events, setEvents] = useState<SocketEvent[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [autoScroll, setAutoScroll] = useState(true);
   const [emitEventName, setEmitEventName] = useState("");
   const [emitEventData, setEmitEventData] = useState("");
   const [listenEvents, setListenEvents] = useState<string[]>(["message"]);
@@ -28,10 +27,10 @@ export function SocketIOClient() {
   const eventsEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (autoScroll && eventsEndRef.current) {
+    if (eventsEndRef.current) {
       eventsEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [events, autoScroll]);
+  }, [events]);
 
   const addEvent = useCallback(
     (event: Omit<SocketEvent, "id" | "timestamp">) => {
@@ -354,15 +353,6 @@ export function SocketIOClient() {
             placeholder="Search events..."
             className="flex-1 px-2 py-1.5 bg-input border border-border rounded text-xs"
           />
-          <label className="flex items-center gap-1 text-xs text-muted-foreground">
-            <input
-              type="checkbox"
-              checked={autoScroll}
-              onChange={(e) => setAutoScroll(e.target.checked)}
-              className="rounded border-border"
-            />
-            Auto-scroll
-          </label>
           <button
             onClick={clearEvents}
             className="px-3 py-1.5 text-xs bg-secondary hover:bg-secondary/80 rounded text-secondary-foreground"

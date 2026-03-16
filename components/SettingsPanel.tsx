@@ -1,21 +1,17 @@
 import { useState, useEffect } from "react";
-import {
-  createAI,
-  FALLBACK_CHAINS,
-  type FallbackChainName,
-} from "@/lib/ai-client";
+import { createAI } from "@/lib/ai-client";
 import { getModels, type ModelInfo } from "@/lib/modelRegistry";
 
 interface AISettings {
   apiKey: string;
   model: string;
-  fallbackChain: FallbackChainName;
+  fallbacks: string[];
 }
 
 const DEFAULT_SETTINGS: AISettings = {
   apiKey: "",
   model: "openai/gpt-4.1-mini",
-  fallbackChain: "fast-and-cheap",
+  fallbacks: [],
 };
 
 const STORAGE_KEY = "sync:ai_settings";
@@ -31,6 +27,7 @@ export function SettingsPanel() {
 
   const [allModels, setAllModels] = useState<ModelInfo[]>([]);
   const [modelSearch, setModelSearch] = useState("");
+  const [fallbackSearch, setFallbackSearch] = useState("");
   const [isLoadingModels, setIsLoadingModels] = useState(true);
 
   useEffect(() => {
@@ -52,7 +49,12 @@ export function SettingsPanel() {
     try {
       const result = await chrome.storage.sync.get(STORAGE_KEY);
       if (result[STORAGE_KEY]) {
-        setSettings({ ...DEFAULT_SETTINGS, ...result[STORAGE_KEY] });
+        const saved = result[STORAGE_KEY];
+        setSettings({
+          apiKey: saved.apiKey || "",
+          model: saved.model || DEFAULT_SETTINGS.model,
+          fallbacks: saved.fallbacks || [],
+        });
       }
     } catch (err) {
       console.error("Failed to load settings:", err);
@@ -92,6 +94,38 @@ export function SettingsPanel() {
       m.id.toLowerCase().includes(modelSearch.toLowerCase()) ||
       m.provider.toLowerCase().includes(modelSearch.toLowerCase()),
   );
+
+  const availableFallbacks = allModels.filter(
+    (m) =>
+      m.id !== settings.model &&
+      !settings.fallbacks.includes(m.id) &&
+      (!fallbackSearch ||
+        m.name.toLowerCase().includes(fallbackSearch.toLowerCase()) ||
+        m.id.toLowerCase().includes(fallbackSearch.toLowerCase()) ||
+        m.provider.toLowerCase().includes(fallbackSearch.toLowerCase())),
+  );
+
+  const addFallback = (modelId: string) => {
+    if (settings.fallbacks.length >= 3) return;
+    setSettings({
+      ...settings,
+      fallbacks: [...settings.fallbacks, modelId],
+    });
+  };
+
+  const removeFallback = (modelId: string) => {
+    setSettings({
+      ...settings,
+      fallbacks: settings.fallbacks.filter((id) => id !== modelId),
+    });
+  };
+
+  const moveFallback = (fromIndex: number, toIndex: number) => {
+    const newFallbacks = [...settings.fallbacks];
+    const [item] = newFallbacks.splice(fromIndex, 1);
+    newFallbacks.splice(toIndex, 0, item);
+    setSettings({ ...settings, fallbacks: newFallbacks });
+  };
 
   return (
     <div className="h-full w-full flex flex-col">
@@ -196,29 +230,102 @@ export function SettingsPanel() {
 
           <div>
             <label className="block text-sm font-medium mb-2">
-              Fallback Chain
+              Fallback Models{" "}
+              <span className="text-muted-foreground font-normal">
+                (up to 3)
+              </span>
             </label>
             <p className="text-xs text-muted-foreground mb-2">
-              If primary model fails, automatically try these:
+              If primary model fails, try these in order:
             </p>
-            <select
-              value={settings.fallbackChain}
-              onChange={(e) =>
-                setSettings({
-                  ...settings,
-                  fallbackChain: e.target.value as FallbackChainName,
-                })
-              }
-              className="w-full px-3 py-2 text-sm bg-input border border-border rounded-lg"
-            >
-              {(Object.keys(FALLBACK_CHAINS) as FallbackChainName[]).map(
-                (name) => (
-                  <option key={name} value={name}>
-                    {name} — {FALLBACK_CHAINS[name].join(" → ")}
+
+            {/* Selected fallbacks */}
+            {settings.fallbacks.length > 0 && (
+              <div className="space-y-1 mb-2">
+                {settings.fallbacks.map((modelId, index) => {
+                  const model = allModels.find((m) => m.id === modelId);
+                  return (
+                    <div
+                      key={modelId}
+                      className="flex items-center gap-2 px-3 py-2 bg-muted/50 border border-border rounded-lg text-sm"
+                    >
+                      <span className="text-muted-foreground font-mono text-xs w-4">
+                        {index + 1}.
+                      </span>
+                      <span className="flex-1 truncate">
+                        {model?.provider} / {model?.name || modelId}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        {index > 0 && (
+                          <button
+                            onClick={() => moveFallback(index, index - 1)}
+                            className="text-muted-foreground hover:text-foreground text-xs"
+                            title="Move up"
+                          >
+                            ↑
+                          </button>
+                        )}
+                        {index < settings.fallbacks.length - 1 && (
+                          <button
+                            onClick={() => moveFallback(index, index + 1)}
+                            className="text-muted-foreground hover:text-foreground text-xs"
+                            title="Move down"
+                          >
+                            ↓
+                          </button>
+                        )}
+                        <button
+                          onClick={() => removeFallback(modelId)}
+                          className="text-destructive hover:text-destructive/80 text-xs ml-1"
+                          title="Remove"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Add fallback */}
+            {settings.fallbacks.length < 3 && (
+              <>
+                <div className="relative mb-2">
+                  <input
+                    type="text"
+                    value={fallbackSearch}
+                    onChange={(e) => setFallbackSearch(e.target.value)}
+                    placeholder="Search models to add as fallback..."
+                    className="w-full px-3 py-2 text-sm bg-input border border-border rounded-lg"
+                  />
+                </div>
+                <select
+                  value=""
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      addFallback(e.target.value);
+                      setFallbackSearch("");
+                    }
+                  }}
+                  className="w-full px-3 py-2 text-sm bg-input border border-border rounded-lg"
+                  size={5}
+                >
+                  <option value="" disabled>
+                    Select a fallback model...
                   </option>
-                ),
-              )}
-            </select>
+                  {availableFallbacks.length === 0 ? (
+                    <option disabled>No models found</option>
+                  ) : (
+                    availableFallbacks.map((m: ModelInfo) => (
+                      <option key={m.id} value={m.id}>
+                        {m.provider} / {m.name}
+                      </option>
+                    ))
+                  )}
+                </select>
+              </>
+            )}
           </div>
 
           <div className="flex gap-2">

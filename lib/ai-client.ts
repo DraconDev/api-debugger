@@ -200,34 +200,4 @@ async function callOpenRouter(
   }
 }
 
-// ─── Fallback Presets ────────────────────────────────────────────
-
-export const FALLBACK_CHAINS = {
-  "fast-and-cheap": [
-    "openai/gpt-4.1-mini",
-    "google/gemini-2.0-flash",
-    "anthropic/claude-haiku-4",
-  ],
-  "best-quality": [
-    "anthropic/claude-opus-4",
-    "openai/gpt-4.1",
-    "google/gemini-2.5-pro-preview",
-  ],
-  coding: [
-    "anthropic/claude-sonnet-4",
-    "openai/gpt-4.1",
-    "deepseek/deepseek-r1",
-  ],
-  reasoning: [
-    "openai/o3",
-    "anthropic/claude-opus-4",
-    "google/gemini-2.5-pro-preview",
-  ],
-  budget: [
-    "openai/gpt-4.1-nano",
-    "google/gemini-2.0-flash-lite",
-    "deepseek/deepseek-chat-v3",
-  ],
-} as const;
-
-export type FallbackChainName = keyof typeof FALLBACK_CHAINS;
+// ─── Model list (for UI reference only, fetched from OpenRouter API) ───
