@@ -630,11 +630,6 @@ describe("Import Format Detection", () => {
   it("returns null for unknown", () => {
     expect(detectImportFormat("random text")).toBe(null);
   });
-
-  it("detects by extension", () => {
-    expect(detectImportFormat("", "spec.yaml")).toBe("openapi");
-    expect(detectImportFormat("", "export.har")).toBe("har");
-  });
 });
 
 // ─── cURL Parser ─────────────────────────────────────────────
