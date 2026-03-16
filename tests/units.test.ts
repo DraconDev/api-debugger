@@ -712,7 +712,7 @@ describe("OpenAPI Parser", () => {
         paths: { "/test": { get: { summary: "T" } } },
       }),
     );
-    expect(r.requests[0].url).toContain("https://custom.com/v2");
+    expect(r.requests?.[0].url).toContain("https://custom.com/v2");
   });
 });
 
