@@ -97,7 +97,7 @@ export function createDemoCollections(): {
       description: "Pre-request and post-response scripting",
       createdAt: Date.now(),
       updatedAt: Date.now(),
-      requestCount: 3,
+      requestCount: 4,
     },
     {
       id: colAdvanced,
@@ -105,7 +105,7 @@ export function createDemoCollections(): {
       description: "Headers, params, body types, edge cases",
       createdAt: Date.now(),
       updatedAt: Date.now(),
-      requestCount: 4,
+      requestCount: 8,
     },
   ];
 
