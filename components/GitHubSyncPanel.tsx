@@ -179,9 +179,12 @@ export function GitHubSyncPanel() {
               // Legacy format - migrate into the active profile
               const activeId = await getActiveProfileId();
               await saveProfileData(activeId, {
-                collections: content.collections || [],
-                savedRequests: content.savedRequests || [],
-                environments: content.environments || [],
+                collections: (content.collections ||
+                  []) as ProfileData["collections"],
+                savedRequests: (content.savedRequests ||
+                  []) as ProfileData["savedRequests"],
+                environments: (content.environments ||
+                  []) as ProfileData["environments"],
               });
             }
             if (content.settings) {
