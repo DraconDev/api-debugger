@@ -576,14 +576,12 @@ export default function Dashboard() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
-        <GettingStarted onNavigate={(v) => setView(v as ViewType)} />
-        <div className="flex-1 flex overflow-hidden">
-          {view === "builder" && (
-            <RuntimeVariablesProvider>
-              <RequestBuilderView />
-            </RuntimeVariablesProvider>
-          )}
+      <main className="flex-1 flex">
+        {view === "builder" && (
+          <RuntimeVariablesProvider>
+            <RequestBuilderView />
+          </RuntimeVariablesProvider>
+        )}
 
           {view === "websocket" && <WebSocketClient />}
 
