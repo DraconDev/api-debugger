@@ -585,17 +585,23 @@ describe("Import Format Detection", () => {
     ).toBe("insomnia");
   });
 
-  it("detects Bruno by content", () => {
-    expect(detectImportFormat("meta { name: test }")).toBe("bruno");
+  it("detects Bruno by content in JSON", () => {
+    expect(
+      detectImportFormat(JSON.stringify({ meta: true, resources: {} })),
+    ).toBe("bruno");
   });
 
   it("returns null for unknown", () => {
     expect(detectImportFormat("random text")).toBe(null);
   });
 
-  it("detects OpenAPI by yaml extension + content", () => {
-    expect(detectImportFormat("openapi: '3.0.0'", "spec.yaml")).toBe("openapi");
-    expect(detectImportFormat("swagger: '2.0'", "spec.yml")).toBe("openapi");
+  it("detects OpenAPI YAML by content", () => {
+    expect(detectImportFormat("openapi: '3.0.0'", "spec.yaml")).toBe(
+      "openapi-yaml",
+    );
+    expect(detectImportFormat("swagger: '2.0'", "spec.yml")).toBe(
+      "openapi-yaml",
+    );
   });
 });
 
