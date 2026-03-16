@@ -89,7 +89,7 @@ export function createDemoCollections(): {
       description: "Different auth methods demonstrated",
       createdAt: Date.now(),
       updatedAt: Date.now(),
-      requestCount: 3,
+      requestCount: 4,
     },
     {
       id: colScripts,
