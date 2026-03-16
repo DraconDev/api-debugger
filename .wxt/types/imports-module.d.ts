@@ -27,7 +27,6 @@ declare module '#imports' {
   export { DiagnosticsPanel } from '../components/DiagnosticsPanel';
   export { EnvironmentManager } from '../components/EnvironmentManager';
   export { ExportPanel } from '../components/ExportPanel';
-  export { GettingStarted } from '../components/GettingStarted';
   export { GitHubSyncPanel } from '../components/GitHubSyncPanel';
   export { ImportExport } from '../components/ImportExport';
   export { ImportModal } from '../components/ImportModal';

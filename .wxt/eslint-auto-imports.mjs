@@ -26,7 +26,6 @@ const globals = {
   "DiagnosticsPanel": true,
   "EnvironmentManager": true,
   "ExportPanel": true,
-  "GettingStarted": true,
   "GitHubSyncPanel": true,
   "IframeContentScriptUi": true,
   "IframeContentScriptUiOptions": true,
