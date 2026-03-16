@@ -351,6 +351,39 @@ export function createDemoCollections(): {
       bodyType: "none",
       auth: { type: "none" },
     }),
+    req("demo-req-toggle-header", "Toggle Headers Demo", colAdvanced, {
+      method: "GET",
+      url: "https://httpbin.org/headers",
+      headers: [
+        { name: "X-Always-Enabled", value: "I will be sent", enabled: true },
+        {
+          name: "X-Toggle-Me",
+          value: "Disable me before sending!",
+          enabled: true,
+        },
+        {
+          name: "X-Disabled",
+          value: "I start disabled",
+          enabled: false,
+        },
+      ],
+      params: [],
+      body: { raw: "" },
+      bodyType: "none",
+      auth: { type: "none" },
+    }),
+    req("demo-req-cookies", "Cookie Handling", colAdvanced, {
+      method: "GET",
+      url: "https://httpbin.org/cookies/set",
+      headers: [{ name: "Accept", value: "application/json", enabled: true }],
+      params: [
+        { name: "session", value: "abc123", enabled: true },
+        { name: "theme", value: "dark", enabled: true },
+      ],
+      body: { raw: "" },
+      bodyType: "none",
+      auth: { type: "none" },
+    }),
     req("demo-req-formdata", "Form Data POST", colAdvanced, {
       method: "POST",
       url: "https://httpbin.org/post",
