@@ -168,7 +168,7 @@ export function GitHubSyncPanel() {
                 for (const [profileId, data] of Object.entries(
                   content.profileData,
                 )) {
-                  await saveProfileData(profileId, data);
+                  await saveProfileData(profileId, data as ProfileData);
                 }
               }
               if (content.activeProfileId) {
