@@ -1,166 +1,159 @@
 # API Debugger - Manual Testing Checklist
 
-> These are the things that actually need a human to verify.
+> Switch to the **Demo Examples** profile first (Settings → Profiles → Switch).
 > Everything else is covered by `npm test` (257 tests).
 
 ## Sending Requests
 
-- [ ] Send a GET request to `https://jsonplaceholder.typicode.com/posts` and see the response
-- [ ] Send a POST with JSON body, verify the response reflects the sent data
-- [ ] Send a request with Bearer auth, confirm it works against httpbin.org/bearer
-- [ ] Send a request with Basic auth, confirm it works against httpbin.org/basic-auth
-- [ ] Toggle a header off, send request, verify header was not sent
-- [ ] Add a query param, verify it appears in the request URL shown in history
+- [ ] Open **Get Posts** → Send → see JSON response with 5 posts
+- [ ] Open **Create Post** → Send → verify response has the title you sent
+- [ ] Open **Bearer Token** → Send → see httpbin echo back your auth header
+- [ ] Open **Basic Auth** → Send → see `"authenticated": true`
+- [ ] Open **Multiple Headers** → Send → see httpbin echo all 4 headers back
+- [ ] Open **Query Params Demo** → Send → see params reflected in response URL
+- [ ] Open **Toggle Headers Demo** → disable `X-Toggle-Me` → Send → confirm it's missing from response
+- [ ] Open **Toggle Headers Demo** → enable `X-Disabled` → Send → confirm it appears in response
 
 ## Browser Capture
 
-- [ ] Open a website that makes API calls (e.g. github.com), see requests appear in history
-- [ ] Toggle capture off in the popup, browse a site, confirm no new requests captured
-- [ ] Toggle capture back on, confirm requests start appearing again
-- [ ] Search requests in history by URL fragment
-- [ ] Select multiple requests with checkboxes, delete them
-- [ ] Export selected requests, confirm file downloads
+- [ ] Open github.com in a tab → switch to History → see API requests appear
+- [ ] Open popup → toggle capture off → browse → no new requests
+- [ ] Toggle capture back on → new requests appear
+- [ ] Type "github" in search → only matching requests shown
+- [ ] Check 3 requests → click Delete → they disappear
+- [ ] Check 2 requests → click Export → JSON file downloads
 
 ## WebSocket
 
-- [ ] Connect to `wss://echo.websocket.org`, send a message, see it echoed back
-- [ ] Verify events auto-scroll as new messages arrive (no scroll toggle visible)
-- [ ] Disconnect, confirm status shows "Disconnected"
-- [ ] Type a URL with query params, connect, confirm it works
+- [ ] Open WebSocket view → connect to `wss://echo.websocket.org`
+- [ ] Type "hello" → Send → see "hello" in message list
+- [ ] Verify messages auto-scroll (no toggle visible)
+- [ ] Click Disconnect → status shows "Disconnected"
 
 ## SSE
 
-- [ ] Connect to an SSE endpoint, see events stream in real-time
-- [ ] Toggle auto-reconnect on, disconnect, confirm it reconnects
+- [ ] Open SSE view → enter an SSE endpoint URL → Connect
+- [ ] See events streaming in real-time
+- [ ] Toggle Auto-reconnect on → disconnect → watch it reconnect
 - [ ] Verify events auto-scroll (no toggle visible)
 
 ## Socket.IO
 
-- [ ] Connect to a Socket.IO server, send an event, see response
-- [ ] Add a custom listen event name, receive events with that name
-- [ ] Clear events, confirm list is empty
+- [ ] Open Socket.IO view → connect to a Socket.IO server
+- [ ] Type event name "chat" + data → Emit → see response
+- [ ] Add "user:join" to listen events → receive join events
+- [ ] Click Clear → event list empties
 
 ## GraphQL
 
-- [ ] Send `{ __typename }` to a GraphQL endpoint, see response
-- [ ] Send a mutation, confirm it executes
-- [ ] Send a query with variables, confirm variables are sent
+- [ ] Open GraphQL view → enter `{ __typename }` → Send → see response
+- [ ] Enter a mutation → Send → confirm it executes
+- [ ] Add variables `{"id": "1"}` → Send → variables are sent
 
 ## Profiles
 
-- [ ] Settings → Profiles, see "Demo Examples" built-in profile
-- [ ] Click "Switch" on Demo, page reloads with 16 demo requests in collections
-- [ ] Click "+ Demo" in collections sidebar header, demo data loads into current profile
-- [ ] Click "Load Demo Examples" in empty collections state, demo data appears
-- [ ] Create a new profile, switch to it, confirm collections are empty
-- [ ] Switch back to Demo, confirm demo data is still there
-- [ ] Duplicate a profile, confirm copy has same data
-- [ ] Delete a custom profile, confirm it's gone
-- [ ] Click "Reset" on Demo, confirm it restores to default 16 requests
-- [ ] Verify built-in profiles cannot be deleted (no delete button)
+- [ ] Settings → Profiles → see **Demo Examples** with 🎯 icon and "Built-in" badge
+- [ ] Click **Switch** on Demo → page reloads → 21 requests in collections sidebar
+- [ ] Click **+ Demo** in collections header → demo data loads into current profile
+- [ ] Click **+ New Profile** → type "My Project" → Create → empty collections
+- [ ] Switch to Demo → switch back to "My Project" → confirm data persisted
+- [ ] Click **Duplicate** on Demo → "Demo Examples (copy)" appears
+- [ ] Delete the copy → confirm it's removed
+- [ ] Click **Reset** on Demo → confirm 21 requests restored
+- [ ] Confirm no Delete button on Demo (built-in protection)
 
 ## AI Integration
 
-- [ ] Enter an OpenRouter API key in Settings → AI
-- [ ] Click "Test Key", see "✓ API key is valid" message
-- [ ] Clear the key, click "Test Key", see error
-- [ ] Search for a model in the model list, find it
-- [ ] Select a primary model from the list
-- [ ] Add a fallback model, see it appear in the fallback list
-- [ ] Reorder fallbacks with ↑/↓ arrows
-- [ ] Remove a fallback with ✕ button
-- [ ] Save settings, reload, confirm settings persisted
-- [ ] Send a request, click "AI Analysis", see analysis results
-- [ ] Click "Explain" tab, see endpoint explanation
-- [ ] Click "Suggest" tab, see optimization suggestions
-- [ ] Click "Regenerate", get a fresh analysis
-- [ ] Verify the model name shown matches your selected model
+- [ ] Settings → AI → paste OpenRouter key → click **Test Key** → see "✓ valid"
+- [ ] Clear key → Test Key → see "✗ failed"
+- [ ] Type "gpt" in model search → OpenAI models appear
+- [ ] Select "openai/gpt-4.1-mini" as primary
+- [ ] Click a fallback model → see it added as #1
+- [ ] Click ↑ to reorder → click ✕ to remove
+- [ ] Save → reload Settings → confirm settings persisted
+- [ ] Open any demo request → Send → click **AI Analysis** tab → see analysis
+- [ ] Click **Explain** tab → see endpoint explanation
+- [ ] Click **Suggest** tab → see optimization tips
+- [ ] Click **Regenerate** → get fresh analysis
+- [ ] Verify model name shown matches your selection
 
 ## Environments
 
-- [ ] Settings → Environments, create a new environment
-- [ ] Add a variable `baseUrl` with value `https://api.example.com`
-- [ ] Set it as active
-- [ ] In request builder, use `{{baseUrl}}/path`, send request, verify it resolves
-- [ ] Toggle a variable off, send request, confirm it resolves to empty
-- [ ] Switch to a different environment, confirm variables change
-- [ ] Delete an environment, confirm it's removed
+- [ ] Settings → Environments → see 3 demo environments (Dev, Prod, Testing)
+- [ ] Dev is active (green dot) → has `baseUrl`, `apiKey`, `userId`
+- [ ] Open **Get User by ID** → Send → uses `{{userId}}` from Dev env
+- [ ] Switch to Testing → Send again → `{{userId}}` resolves to Testing's value
+- [ ] Create new env → add `baseUrl=http://localhost:3000` → set active
+- [ ] Toggle a variable off → Send → confirm it resolves to empty
 
 ## Pre/Post Scripts
 
-- [ ] In demo profile, select "Set & Use Variables" request
-- [ ] Send it, check console output for script logs
-- [ ] Check that `userName` and `userEmail` variables were set by the script
-- [ ] Select "Test Assertions" request, send it
-- [ ] Check that test results show 3 passing tests
-- [ ] Add a pre-request script that will fail, confirm error is shown
+- [ ] Open **Set & Use Variables** → Send → check response panel for script logs
+- [ ] Confirm `userName` and `userEmail` were extracted (visible in variables)
+- [ ] Open **Test Assertions** → Send → see "3 passing" test results
+- [ ] Open **Script Error Handling** → Send → see graceful handling of 404
+- [ ] Open **Chained Request** → Send → uses `{{userId}}` set by previous request
 
 ## Test Mode
 
-- [ ] Navigate to Test Mode from sidebar
-- [ ] See 14 pre-loaded API examples listed
-- [ ] Click "JSONPlaceholder - Posts", send it, see response
-- [ ] Click "HTTPBin - Headers", send it, see your headers reflected
-- [ ] Click an auth example, confirm it includes auth
+- [ ] Click **Test Mode** in sidebar → see 14 pre-loaded API examples
+- [ ] Click "JSONPlaceholder - Posts" → Send → see response
+- [ ] Click "HTTPBin - Headers" → Send → see your headers echoed
+- [ ] Click an auth example → confirm auth header is included
 
 ## Workflow Simulator
 
-- [ ] Navigate to Workflows from sidebar
-- [ ] Add a request to the workflow
-- [ ] Set iterations to 10, concurrency to 2
-- [ ] Click Start, see metrics update in real-time (RPS, avg duration)
-- [ ] See assertion pass/fail counts update
-- [ ] Click Stop, confirm workflow halts
-- [ ] Clear workflow, confirm it resets
+- [ ] Click **Workflows** in sidebar → add a request
+- [ ] Set iterations=10, concurrency=2 → Start
+- [ ] See RPS, avg/min/max duration updating in real-time
+- [ ] See pass/fail counts incrementing
+- [ ] Click Stop → workflow halts
+- [ ] Click Clear → workflow resets
 
 ## GitHub Sync
 
-- [ ] Settings → Sync, click "Create GitHub Token" (opens GitHub in new tab)
-- [ ] Paste a PAT, click "Connect"
-- [ ] See "Connected as @username" message
-- [ ] Change repo name to something unique, click "Save Settings"
-- [ ] Click "Push", see "Successfully pushed to GitHub"
-- [ ] Open GitHub, confirm the sync file exists in the repo
-- [ ] Click "Pull", see "Successfully pulled from GitHub"
-- [ ] Check "Last sync" timestamp updated
-- [ ] Click "Disconnect", confirm token is cleared
+- [ ] Settings → Sync → **Create GitHub Token** (opens GitHub in new tab)
+- [ ] Generate token → paste → Connect → see "Connected as @username"
+- [ ] Set repo name → Save Settings
+- [ ] Click **Push** → "Successfully pushed to GitHub"
+- [ ] Open GitHub → confirm `api-debugger-sync.json` exists
+- [ ] Click **Pull** → "Successfully pulled from GitHub"
+- [ ] Confirm "Last sync" timestamp updated
+- [ ] Disconnect → confirm token cleared
 
 ## Sidebar & Navigation
 
-- [ ] Click chevron to collapse sidebar, confirm it shrinks to icons only
-- [ ] Logo image stays visible and not squished when collapsed
-- [ ] Click chevron again, sidebar expands with text labels
-- [ ] Click "?" in sidebar footer, navigates to Settings
-- [ ] "?" visible in both collapsed and expanded states
-- [ ] Click each nav item (builder, WS, SSE, Socket.IO, etc.), correct view loads
-- [ ] Request count in footer updates as new requests are captured
+- [ ] Click chevron → sidebar shrinks to icons → logo not squished
+- [ ] Click chevron again → sidebar expands with text labels
+- [ ] Click **?** in footer → navigates to Settings
+- [ ] **?** visible in both collapsed and expanded sidebar
+- [ ] Click each nav item → correct view loads
+- [ ] Footer shows correct request count
 
 ## Popup
 
-- [ ] Click extension icon, popup opens
-- [ ] Shows correct request count
-- [ ] Quick stats show correct Total/Success/Errors counts
-- [ ] Click "All", "Success", "Errors" filter buttons, list filters correctly
-- [ ] Click "New" quick action, opens dashboard with request builder
-- [ ] Click "WS" quick action, opens dashboard with WebSocket view
-- [ ] Click a recent request, opens dashboard history view
-- [ ] Click "Open Dashboard", full dashboard opens in new tab
-- [ ] Capture toggle on/off works (same as tested above)
-- [ ] Click trash icon, history clears
+- [ ] Click extension icon → popup opens
+- [ ] Shows correct total/success/error counts
+- [ ] Click "Success" filter → only success requests shown
+- [ ] Click "Errors" → only error requests shown
+- [ ] Click "New" → dashboard opens with request builder
+- [ ] Click "WS" → dashboard opens with WebSocket view
+- [ ] Click a recent request → dashboard opens in History
+- [ ] Click "Open Dashboard" → full dashboard in new tab
+- [ ] Toggle capture → works
 
 ## Keyboard Shortcuts
 
-- [ ] Press `?` anywhere, shortcuts modal opens
-- [ ] Modal lists all available shortcuts
-- [ ] Press Escape, modal closes
+- [ ] Press `?` → shortcuts modal opens
+- [ ] Press Escape → modal closes
 
 ## Theme
 
-- [ ] Extension loads in dark theme by default
-- [ ] All text is readable, colors look correct
-- [ ] Destructive actions are red, success is green, warnings are yellow
-- [ ] No hardcoded colors visible (everything uses theme variables)
+- [ ] Extension loads in dark theme
+- [ ] All text readable, colors consistent
+- [ ] Red = destructive, green = success, yellow = warning
+- [ ] No hardcoded colors (all use CSS variables)
 
 ---
 
-**~50 items that need a human. Everything else is `npm test`.**
+**~45 manual items. Run `npm test` for the other 257.**
