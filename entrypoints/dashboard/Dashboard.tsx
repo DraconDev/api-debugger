@@ -583,261 +583,254 @@ export default function Dashboard() {
           </RuntimeVariablesProvider>
         )}
 
-          {view === "websocket" && <WebSocketClient />}
+        {view === "websocket" && <WebSocketClient />}
 
-          {view === "sse" && <SSEClient />}
+        {view === "sse" && <SSEClient />}
 
-          {view === "socketio" && <SocketIOClient />}
+        {view === "socketio" && <SocketIOClient />}
 
-          {view === "graphql" && <GraphQLClient />}
+        {view === "graphql" && <GraphQLClient />}
 
-          {view === "diff" && <DiffViewer left="" right="" />}
+        {view === "diff" && <DiffViewer left="" right="" />}
 
-          {view === "certs" && <CertificateViewer />}
+        {view === "certs" && <CertificateViewer />}
 
-          {view === "history" && (
-            <>
-              {/* Request List */}
-              <div className="w-80 flex-shrink-0 border-r border-border flex flex-col">
-                {/* Search */}
-                <div className="p-3 border-b border-border">
-                  <div className="relative">
-                    <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <input
-                      type="text"
-                      value={state.searchQuery}
-                      onChange={(e) =>
-                        setState((s) => ({ ...s, searchQuery: e.target.value }))
-                      }
-                      placeholder="Search requests..."
-                      className="w-full pl-9 pr-3 py-2 text-sm bg-input border border-border rounded-md text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                    />
-                  </div>
+        {view === "history" && (
+          <>
+            {/* Request List */}
+            <div className="w-80 flex-shrink-0 border-r border-border flex flex-col">
+              {/* Search */}
+              <div className="p-3 border-b border-border">
+                <div className="relative">
+                  <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={state.searchQuery}
+                    onChange={(e) =>
+                      setState((s) => ({ ...s, searchQuery: e.target.value }))
+                    }
+                    placeholder="Search requests..."
+                    className="w-full pl-9 pr-3 py-2 text-sm bg-input border border-border rounded-md text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
                 </div>
+              </div>
 
-                {/* Selection Actions */}
-                {state.selectedRequestIds.size > 0 && (
-                  <div className="p-2 border-b border-border bg-muted/50">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-muted-foreground">
-                        {state.selectedRequestIds.size} selected
-                      </span>
-                      <button
-                        onClick={deselectAllRequests}
-                        className="text-xs text-muted-foreground hover:text-foreground"
-                      >
-                        Deselect all
-                      </button>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={deleteSelectedRequests}
-                        className="flex-1 px-2 py-1.5 text-xs bg-destructive hover:bg-destructive/90 rounded text-destructive-foreground flex items-center justify-center gap-1"
-                      >
-                        <TrashIcon className="w-3 h-3" />
-                        Delete
-                      </button>
-                      <button
-                        onClick={exportSelectedRequests}
-                        className="flex-1 px-2 py-1.5 text-xs bg-secondary hover:bg-secondary/80 rounded text-secondary-foreground flex items-center justify-center gap-1"
-                      >
-                        <ExportIcon className="w-3 h-3" />
-                        Export
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Actions */}
-                <div className="p-2 border-b border-border flex gap-2">
-                  <button
-                    onClick={loadData}
-                    className="flex-1 px-2 py-1.5 text-xs bg-secondary hover:bg-secondary/80 rounded text-secondary-foreground flex items-center justify-center gap-1"
-                  >
-                    <RefreshIcon className="w-3 h-3" />
-                    Refresh
-                  </button>
-                  <button
-                    onClick={clearHistory}
-                    className="flex-1 px-2 py-1.5 text-xs bg-secondary hover:bg-secondary/80 rounded text-secondary-foreground flex items-center justify-center gap-1"
-                  >
-                    <TrashIcon className="w-3 h-3" />
-                    Clear
-                  </button>
-                  {filteredRequests.length > 0 && (
+              {/* Selection Actions */}
+              {state.selectedRequestIds.size > 0 && (
+                <div className="p-2 border-b border-border bg-muted/50">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs text-muted-foreground">
+                      {state.selectedRequestIds.size} selected
+                    </span>
                     <button
-                      onClick={selectAllRequests}
-                      className="px-2 py-1.5 text-xs bg-secondary hover:bg-secondary/80 rounded text-secondary-foreground"
-                      title="Select all"
+                      onClick={deselectAllRequests}
+                      className="text-xs text-muted-foreground hover:text-foreground"
                     >
-                      <CheckIcon className="w-3 h-3" />
+                      Deselect all
                     </button>
-                  )}
-                </div>
-
-                {/* List */}
-                <div className="flex-1 overflow-y-auto">
-                  {state.isLoading ? (
-                    <div className="flex items-center justify-center h-32">
-                      <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
-                    </div>
-                  ) : filteredRequests.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-6">
-                      <div className="w-16 h-16 mb-4 rounded-full bg-muted flex items-center justify-center">
-                        <HistoryIcon className="w-8 h-8 opacity-50" />
-                      </div>
-                      <p className="text-sm font-medium">
-                        {state.searchQuery
-                          ? "No matching requests"
-                          : "No requests yet"}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1 text-center">
-                        {state.searchQuery
-                          ? "Try a different search term"
-                          : "Browse the web to capture API requests"}
-                      </p>
-                    </div>
-                  ) : (
-                    filteredRequests.map((request) => (
-                      <RequestListItem
-                        key={request.id}
-                        request={request}
-                        selected={state.selectedRequestId === request.id}
-                        checked={state.selectedRequestIds.has(request.id)}
-                        onClick={() =>
-                          setState((s) => ({
-                            ...s,
-                            selectedRequestId: request.id,
-                          }))
-                        }
-                        onToggleSelect={() => toggleSelectRequest(request.id)}
-                        onDelete={() => deleteRequest(request.id)}
-                      />
-                    ))
-                  )}
-                </div>
-              </div>
-
-              {/* Request Detail */}
-              <div className="flex-1 flex flex-col">
-                {selectedRequest ? (
-                  <RequestDetailView request={selectedRequest} />
-                ) : (
-                  <div className="flex-1 flex items-center justify-center text-muted-foreground">
-                    <div className="text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-                        <CodeIcon className="w-8 h-8 text-muted-foreground" />
-                      </div>
-                      <p className="text-sm">
-                        Select a request to view details
-                      </p>
-                    </div>
                   </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={deleteSelectedRequests}
+                      className="flex-1 px-2 py-1.5 text-xs bg-destructive hover:bg-destructive/90 rounded text-destructive-foreground flex items-center justify-center gap-1"
+                    >
+                      <TrashIcon className="w-3 h-3" />
+                      Delete
+                    </button>
+                    <button
+                      onClick={exportSelectedRequests}
+                      className="flex-1 px-2 py-1.5 text-xs bg-secondary hover:bg-secondary/80 rounded text-secondary-foreground flex items-center justify-center gap-1"
+                    >
+                      <ExportIcon className="w-3 h-3" />
+                      Export
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="p-2 border-b border-border flex gap-2">
+                <button
+                  onClick={loadData}
+                  className="flex-1 px-2 py-1.5 text-xs bg-secondary hover:bg-secondary/80 rounded text-secondary-foreground flex items-center justify-center gap-1"
+                >
+                  <RefreshIcon className="w-3 h-3" />
+                  Refresh
+                </button>
+                <button
+                  onClick={clearHistory}
+                  className="flex-1 px-2 py-1.5 text-xs bg-secondary hover:bg-secondary/80 rounded text-secondary-foreground flex items-center justify-center gap-1"
+                >
+                  <TrashIcon className="w-3 h-3" />
+                  Clear
+                </button>
+                {filteredRequests.length > 0 && (
+                  <button
+                    onClick={selectAllRequests}
+                    className="px-2 py-1.5 text-xs bg-secondary hover:bg-secondary/80 rounded text-secondary-foreground"
+                    title="Select all"
+                  >
+                    <CheckIcon className="w-3 h-3" />
+                  </button>
                 )}
               </div>
-            </>
-          )}
 
-          {view === "collections" && (
-            <CollectionsView
-              collections={state.collections}
-              savedRequests={state.savedRequests}
-              selectedCollectionId={state.selectedCollectionId}
-              onSelectCollection={(id) =>
-                setState((s) => ({
-                  ...s,
-                  selectedCollectionId: id,
-                  selectedRequestId: null,
-                }))
+              {/* List */}
+              <div className="flex-1 overflow-y-auto">
+                {state.isLoading ? (
+                  <div className="flex items-center justify-center h-32">
+                    <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full" />
+                  </div>
+                ) : filteredRequests.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-6">
+                    <div className="w-16 h-16 mb-4 rounded-full bg-muted flex items-center justify-center">
+                      <HistoryIcon className="w-8 h-8 opacity-50" />
+                    </div>
+                    <p className="text-sm font-medium">
+                      {state.searchQuery
+                        ? "No matching requests"
+                        : "No requests yet"}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1 text-center">
+                      {state.searchQuery
+                        ? "Try a different search term"
+                        : "Browse the web to capture API requests"}
+                    </p>
+                  </div>
+                ) : (
+                  filteredRequests.map((request) => (
+                    <RequestListItem
+                      key={request.id}
+                      request={request}
+                      selected={state.selectedRequestId === request.id}
+                      checked={state.selectedRequestIds.has(request.id)}
+                      onClick={() =>
+                        setState((s) => ({
+                          ...s,
+                          selectedRequestId: request.id,
+                        }))
+                      }
+                      onToggleSelect={() => toggleSelectRequest(request.id)}
+                      onDelete={() => deleteRequest(request.id)}
+                    />
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Request Detail */}
+            <div className="flex-1 flex flex-col">
+              {selectedRequest ? (
+                <RequestDetailView request={selectedRequest} />
+              ) : (
+                <div className="flex-1 flex items-center justify-center text-muted-foreground">
+                  <div className="text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+                      <CodeIcon className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <p className="text-sm">Select a request to view details</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        {view === "collections" && (
+          <CollectionsView
+            collections={state.collections}
+            savedRequests={state.savedRequests}
+            selectedCollectionId={state.selectedCollectionId}
+            onSelectCollection={(id) =>
+              setState((s) => ({
+                ...s,
+                selectedCollectionId: id,
+                selectedRequestId: null,
+              }))
+            }
+            onLoadDemo={loadDemoProfile}
+          />
+        )}
+
+        {view === "cookies" && <CookieManager />}
+
+        {view === "mocks" && <MockServerManager />}
+
+        {view === "docs" && (
+          <ApiDocGenerator
+            collections={state.collections}
+            savedRequests={state.savedRequests}
+          />
+        )}
+
+        {view === "sync" && <GitHubSyncPanel />}
+
+        {view === "workflows" && (
+          <WorkflowSimulator
+            requests={state.savedRequests}
+            onRequestSend={async (config) => {
+              if (!config) throw new Error("No config");
+              const headers: Record<string, string> = {};
+              config.headers.forEach((h) => {
+                if (h.enabled !== false && h.name) {
+                  headers[h.name] = h.value;
+                }
+              });
+              if (config.auth.type === "bearer" && config.auth.bearer?.token) {
+                headers["Authorization"] = "Bearer " + config.auth.bearer.token;
               }
-              onLoadDemo={loadDemoProfile}
-            />
-          )}
-
-          {view === "cookies" && <CookieManager />}
-
-          {view === "mocks" && <MockServerManager />}
-
-          {view === "docs" && (
-            <ApiDocGenerator
-              collections={state.collections}
-              savedRequests={state.savedRequests}
-            />
-          )}
-
-          {view === "sync" && <GitHubSyncPanel />}
-
-          {view === "workflows" && (
-            <WorkflowSimulator
-              requests={state.savedRequests}
-              onRequestSend={async (config) => {
-                if (!config) throw new Error("No config");
-                const headers: Record<string, string> = {};
-                config.headers.forEach((h) => {
-                  if (h.enabled !== false && h.name) {
-                    headers[h.name] = h.value;
-                  }
-                });
-                if (
-                  config.auth.type === "bearer" &&
-                  config.auth.bearer?.token
-                ) {
-                  headers["Authorization"] =
-                    "Bearer " + config.auth.bearer.token;
+              let body: string | undefined;
+              if (config.bodyType === "json" && config.body.json) {
+                body = config.body.json;
+                if (!headers["Content-Type"])
+                  headers["Content-Type"] = "application/json";
+              } else if (config.bodyType === "raw" && config.body.raw) {
+                body = config.body.raw;
+              }
+              let url = config.url;
+              if (config.params.length > 0) {
+                const enabledParams = config.params.filter(
+                  (p) => p.enabled !== false,
+                );
+                if (enabledParams.length > 0) {
+                  const sep = url.includes("?") ? "&" : "?";
+                  url +=
+                    sep +
+                    enabledParams
+                      .map(
+                        (p) =>
+                          `${encodeURIComponent(p.name)}=${encodeURIComponent(p.value)}`,
+                      )
+                      .join("&");
                 }
-                let body: string | undefined;
-                if (config.bodyType === "json" && config.body.json) {
-                  body = config.body.json;
-                  if (!headers["Content-Type"])
-                    headers["Content-Type"] = "application/json";
-                } else if (config.bodyType === "raw" && config.body.raw) {
-                  body = config.body.raw;
-                }
-                let url = config.url;
-                if (config.params.length > 0) {
-                  const enabledParams = config.params.filter(
-                    (p) => p.enabled !== false,
-                  );
-                  if (enabledParams.length > 0) {
-                    const sep = url.includes("?") ? "&" : "?";
-                    url +=
-                      sep +
-                      enabledParams
-                        .map(
-                          (p) =>
-                            `${encodeURIComponent(p.name)}=${encodeURIComponent(p.value)}`,
-                        )
-                        .join("&");
-                  }
-                }
-                const start = performance.now();
-                const response = await fetch(url, {
-                  method: config.method,
-                  headers,
-                  body:
-                    config.method !== "GET" && config.method !== "HEAD"
-                      ? body
-                      : undefined,
-                });
-                const responseBody = await response.text();
-                const duration = performance.now() - start;
-                const headerPairs: [string, string][] = [];
-                response.headers.forEach((v, k) => headerPairs.push([k, v]));
-                return {
-                  status: response.status,
-                  statusText: response.statusText,
-                  headers: headerPairs,
-                  body: responseBody,
-                  duration,
-                  size: responseBody.length,
-                };
-              }}
-            />
-          )}
+              }
+              const start = performance.now();
+              const response = await fetch(url, {
+                method: config.method,
+                headers,
+                body:
+                  config.method !== "GET" && config.method !== "HEAD"
+                    ? body
+                    : undefined,
+              });
+              const responseBody = await response.text();
+              const duration = performance.now() - start;
+              const headerPairs: [string, string][] = [];
+              response.headers.forEach((v, k) => headerPairs.push([k, v]));
+              return {
+                status: response.status,
+                statusText: response.statusText,
+                headers: headerPairs,
+                body: responseBody,
+                duration,
+                size: responseBody.length,
+              };
+            }}
+          />
+        )}
 
-          {view === "test" && <TestMode />}
-          {view === "settings" && <SettingsView />}
-        </div>
+        {view === "test" && <TestMode />}
+        {view === "settings" && <SettingsView />}
       </main>
 
       {/* Modals */}
