@@ -1,35 +1,41 @@
 # API Debugger - Manual Testing Checklist
 
+> Items marked with ✅ are automatically verified by the test suite.
+> Run `npm test` to verify these.
+
 ## Core Request Features
 
 ### REST API Builder
 
 - [ ] Send a GET request to `https://jsonplaceholder.typicode.com/posts`
-- [ ] Send a POST request with JSON body
-- [ ] Send a PUT request to update a resource
-- [ ] Send a PATCH request with partial body
-- [ ] Send a DELETE request
-- [ ] Add query parameters and verify they appear in the URL
-- [ ] Add custom headers (Accept, Content-Type, X-Custom)
-- [ ] Toggle individual headers on/off
+- [ ] Send a POST request with JSON body ✅
+- [ ] Send a PUT request to update a resource ✅
+- [ ] Send a PATCH request with partial body ✅
+- [ ] Send a DELETE request ✅
+- [ ] Add query parameters and verify they appear in the URL ✅
+- [ ] Add custom headers (Accept, Content-Type, X-Custom) ✅
+- [ ] Toggle individual headers on/off ✅
 - [ ] View response status code, headers, and body
 - [ ] View response time and size
 - [ ] Search through request history
 
 ### Authentication
 
-- [ ] Send request with Bearer token in Authorization header
-- [ ] Send request with Basic Auth (username/password)
-- [ ] Send request with API Key in header
-- [ ] Send request with API Key in query param
+- [ ] Send request with Bearer token in Authorization header ✅
+- [ ] Send request with Basic Auth (username/password) ✅
+- [ ] Send request with API Key in header ✅
+- [ ] Send request with API Key in query param ✅
+- [ ] No Auth returns empty headers ✅
 
 ### Body Types
 
-- [ ] Send JSON body
-- [ ] Send form-data (multipart) body
-- [ ] Send x-www-form-urlencoded body
-- [ ] Send raw text body
-- [ ] Send empty body (GET/DELETE)
+- [ ] Send JSON body ✅
+- [ ] Send form-data (multipart) body ✅
+- [ ] Send x-www-form-urlencoded body ✅
+- [ ] Send raw text body ✅
+- [ ] Send empty body (GET/DELETE) ✅
+- [ ] Handle large JSON body (1MB+) ✅
+- [ ] Handle GraphQL query body ✅
 
 ## Protocol Support
 
@@ -42,6 +48,9 @@
 - [ ] Search/filter messages
 - [ ] Disconnect and reconnect
 - [ ] Events auto-scroll (no toggle visible)
+- [ ] Validate WebSocket URL format ✅
+- [ ] Handle query params in WebSocket URL ✅
+- [ ] Handle binary WebSocket messages ✅
 
 ### Server-Sent Events (SSE)
 
@@ -51,6 +60,10 @@
 - [ ] Auto-reconnect toggle works
 - [ ] Events auto-scroll (no toggle visible)
 - [ ] Disconnect cleanly
+- [ ] Parse SSE event format ✅
+- [ ] Handle multi-line data ✅
+- [ ] Extract event ID ✅
+- [ ] Handle JSON data in events ✅
 
 ### Socket.IO
 
@@ -60,6 +73,9 @@
 - [ ] Add/remove listen event names
 - [ ] View connection transport (polling/websocket)
 - [ ] Events auto-scroll (no toggle visible)
+- [ ] Validate Socket.IO URL ✅
+- [ ] Handle namespace format ✅
+- [ ] Construct emit event ✅
 
 ### GraphQL
 
@@ -67,6 +83,10 @@
 - [ ] Send a GraphQL mutation
 - [ ] View formatted response
 - [ ] See query errors in response
+- [ ] Handle basic query structure ✅
+- [ ] Handle query with variables ✅
+- [ ] Handle mutations ✅
+- [ ] Handle fragments ✅
 
 ## Collections & Saved Requests
 
@@ -81,12 +101,12 @@
 
 ### Import
 
-- [ ] Import OpenAPI/Swagger spec (JSON)
+- [ ] Import OpenAPI/Swagger spec (JSON) ✅
 - [ ] Import OpenAPI/Swagger spec (YAML)
-- [ ] Import Postman Collection v2.1
-- [ ] Import Insomnia export
-- [ ] Import HAR file
-- [ ] Import cURL command
+- [ ] Import Postman Collection v2.1 ✅
+- [ ] Import Insomnia export ✅
+- [ ] Import HAR file ✅
+- [ ] Import cURL command ✅
 - [ ] Imported collections appear in sidebar
 - [ ] Imported requests are runnable
 
@@ -104,17 +124,35 @@
 - [ ] Cannot delete built-in profiles
 - [ ] Click "Reset" on Demo to restore default data
 - [ ] Active profile shows "Active" badge
+- [ ] Profile structure validates correctly ✅
+- [ ] Profile data includes collections, requests, environments ✅
+- [ ] AI settings saved to profile ✅
+- [ ] Built-in vs custom profile distinction works ✅
 
-### Demo Profile
+### Demo Profile (Auto-Verified ✅)
 
-- [ ] Contains 4 collections: REST APIs, Auth, Scripts, Advanced
-- [ ] Contains 16 pre-loaded requests
-- [ ] GET Posts has query params (\_limit, \_sort)
-- [ ] Create Post has JSON body
-- [ ] Bearer Token request has auth header
-- [ ] Basic Auth uses built-in auth config
-- [ ] Set & Use Variables has pre-request and post-response scripts
-- [ ] Test Assertions has pm.test() calls
+- [ ] Contains 4 collections ✅
+- [ ] Collection names include REST APIs, Authentication, Scripts, Advanced ✅
+- [ ] Contains 16 saved requests ✅
+- [ ] Every collection has at least one request ✅
+- [ ] Has GET, POST, PUT, PATCH, DELETE methods ✅
+- [ ] Has JSON body type requests ✅
+- [ ] Has form-data body type requests ✅
+- [ ] Has urlencoded body type requests ✅
+- [ ] Has bearer auth request ✅
+- [ ] Has basic auth request ✅
+- [ ] Has pre-request script (pm.variables) ✅
+- [ ] Has post-response script (pm.test) ✅
+- [ ] Has pm.test() assertions ✅
+- [ ] Has requests with query params ✅
+- [ ] Has requests with variable interpolation ({{var}}) ✅
+- [ ] Has 3 environments ✅
+- [ ] Environments have variables ✅
+- [ ] Exactly one active environment ✅
+- [ ] Has baseUrl variable in environments ✅
+- [ ] All requests have tags array and createdAt ✅
+- [ ] All environments have createdAt and updatedAt ✅
+- [ ] Request stubs have url and method ✅
 
 ## AI Integration
 
@@ -131,6 +169,7 @@
 - [ ] Reorder fallbacks with ↑/↓ arrows
 - [ ] Remove fallback with ✕ button
 - [ ] Click "Save" to persist settings
+- [ ] AI settings saved to both global and profile storage
 
 ### AI Analysis
 
@@ -143,6 +182,9 @@
 - [ ] Shows which model was used
 - [ ] Shows "(fallback)" if fallback model was used
 - [ ] "Regenerate" button re-runs analysis
+- [ ] Fallback chain works when primary model fails ✅
+- [ ] Does NOT fallback on auth errors (401/403) ✅
+- [ ] AIError has status and model properties ✅
 
 ## Environments (Settings → Environments)
 
@@ -150,20 +192,27 @@
 - [ ] Add variables (key/value pairs)
 - [ ] Toggle variables on/off
 - [ ] Set active environment
-- [ ] Variables resolve in request URLs ({{var}})
-- [ ] Variables resolve in request bodies
+- [ ] Variables resolve in request URLs ({{var}}) ✅
+- [ ] Variables resolve in request bodies ✅
+- [ ] Variables resolve in headers ✅
+- [ ] Missing variables return empty string ✅
+- [ ] Non-matching braces are preserved ✅
 - [ ] Switch between environments
 
 ## Pre/Post Scripts
 
 - [ ] Pre-request script runs before request
-- [ ] `pm.variables.set()` sets a variable
-- [ ] `pm.variables.get()` reads a variable
+- [ ] `pm.variables.set()` sets a variable ✅
+- [ ] `pm.variables.get()` reads a variable ✅
+- [ ] `pm.variables.unset()` removes a variable ✅
+- [ ] `pm.variables.clear()` clears all variables ✅
 - [ ] `console.log()` output visible
 - [ ] Post-response script runs after response
 - [ ] `pm.response.json()` parses response body
-- [ ] `pm.test()` creates test assertions
-- [ ] `pm.expect()` validates values
+- [ ] `pm.test()` creates test assertions ✅
+- [ ] `pm.expect().to.equal()` validates values ✅
+- [ ] `pm.expect().to.be.a()` checks types ✅
+- [ ] Multiple tests run independently ✅
 - [ ] Test results shown in response panel
 
 ## Test Mode
@@ -200,6 +249,10 @@
 - [ ] Pull restores all profiles + AI settings
 - [ ] Last sync timestamp updates
 - [ ] "Disconnect" removes token
+- [ ] Sync data has v2.0 structure with profiles ✅
+- [ ] Sync data is backward-compatible with v1.0 ✅
+- [ ] Sync data is serializable to JSON ✅
+- [ ] Profile data includes AI settings in sync ✅
 
 ## Capture & Filtering
 
@@ -242,13 +295,39 @@
 
 ## Import Sources
 
-- [ ] Postman Collection v2.1 (JSON)
-- [ ] Insomnia export (JSON)
-- [ ] OpenAPI 3.0 (JSON)
+- [ ] Postman Collection v2.1 (JSON) ✅
+- [ ] Insomnia export (JSON) ✅
+- [ ] OpenAPI 3.0 (JSON) ✅
 - [ ] OpenAPI 3.0 (YAML)
 - [ ] Swagger 2.0 (JSON)
-- [ ] HAR 1.2 file
-- [ ] cURL command string
+- [ ] HAR 1.2 file ✅
+- [ ] cURL command string ✅
+- [ ] Detect format automatically ✅
+- [ ] Parse cURL with headers and auth ✅
+- [ ] Parse Postman with folders ✅
+- [ ] Parse OpenAPI with paths ✅
+- [ ] Parse Insomnia with environments ✅
+
+## Header & Param Handling
+
+- [ ] Enabled headers are included ✅
+- [ ] Disabled headers are excluded ✅
+- [ ] Headers default to enabled ✅
+- [ ] Empty header names are skipped ✅
+- [ ] Multiple headers handled correctly ✅
+- [ ] Query params build correct string ✅
+- [ ] Special characters are URL-encoded ✅
+- [ ] Disabled params are excluded ✅
+- [ ] Equals signs in values are encoded ✅
+
+## HTTP Status Classification
+
+- [ ] 2xx classified as success ✅
+- [ ] 3xx classified as redirect ✅
+- [ ] 4xx classified as client-error ✅
+- [ ] 5xx classified as server-error ✅
+- [ ] GET/HEAD/OPTIONS are safe methods ✅
+- [ ] POST/PUT/PATCH/DELETE are unsafe methods ✅
 
 ## Theme
 
@@ -256,3 +335,7 @@
 - [ ] Theme toggle switches between light/dark
 - [ ] All colors use CSS variables (no hardcoded colors)
 - [ ] Destructive (red), success (green), warning (yellow) consistent
+
+---
+
+**Total: ~130 items | Auto-verified: ~84 | Manual: ~46**
