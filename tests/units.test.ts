@@ -599,8 +599,9 @@ describe("Import Format Detection", () => {
   });
 
   it("detects OpenAPI YAML by content", () => {
-    // YAML content with openapi: is detected as "openapi-yaml"
-    expect(detectImportFormat("openapi: '3.0.0'\ninfo:\n  title: Test")).toBe(
+    // YAML content without valid JSON goes to catch block
+    // Content with "openapi:" is detected as openapi-yaml
+    expect(detectImportFormat("openapi: 3.0.0\npaths: {}")).toBe(
       "openapi-yaml",
     );
   });
