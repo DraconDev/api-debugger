@@ -26,6 +26,7 @@ import { SettingsPanel } from "@/components/SettingsPanel";
 import { CertificateViewer } from "@/components/CertificateViewer";
 import { ImportModal } from "@/components/ImportModal";
 import { ShortcutsModal } from "@/components/ShortcutsModal";
+import { TestMode } from "@/components/TestMode";
 import { type ImportResult } from "@/lib/importers";
 
 type ViewType =
@@ -43,7 +44,8 @@ type ViewType =
   | "sync"
   | "diff"
   | "certs"
-  | "settings";
+  | "settings"
+  | "test";
 
 interface DashboardState {
   requests: RequestRecord[];
