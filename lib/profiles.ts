@@ -197,7 +197,7 @@ export async function initializeProfiles(): Promise<void> {
     const demoProfile: Profile = {
       id: DEMO_PROFILE_ID,
       name: "Demo Examples",
-      description: "16 pre-loaded requests across 4 collections",
+      description: "21 pre-loaded requests across 4 collections",
       icon: "🎯",
       isBuiltIn: true,
       createdAt: Date.now(),

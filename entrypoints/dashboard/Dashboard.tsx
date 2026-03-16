@@ -1278,7 +1278,7 @@ function CollectionsView({
                 Load Demo Examples
               </button>
               <p className="text-xs text-muted-foreground">
-                16 requests across 4 collections with auth, scripts, and more
+                21 requests across 4 collections with auth, scripts, and more
               </p>
             </div>
           ) : (
