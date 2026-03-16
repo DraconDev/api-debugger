@@ -4,15 +4,25 @@ import { parseOpenAPI } from "./openapi";
 import { parsePostmanCollection, parsePostmanEnvironment } from "./postman";
 import { parseHar } from "./har";
 import { parseCurl } from "./curl";
+import { parseInsomnia } from "./insomnia";
 
 export { detectImportFormat } from "./types";
 export { parseOpenAPI } from "./openapi";
 export { parsePostmanCollection, parsePostmanEnvironment } from "./postman";
 export { parseHar } from "./har";
 export { parseCurl } from "./curl";
-export type { ImportResult, ImportCollection, ImportRequest, ImportEnvironment } from "./types";
+export { parseInsomnia } from "./insomnia";
+export type {
+  ImportResult,
+  ImportCollection,
+  ImportRequest,
+  ImportEnvironment,
+} from "./types";
 
-export function importContent(content: string, filename?: string): ImportResult {
+export function importContent(
+  content: string,
+  filename?: string,
+): ImportResult {
   const format = detectImportFormat(content, filename);
 
   switch (format) {
@@ -27,6 +37,9 @@ export function importContent(content: string, filename?: string): ImportResult 
       }
       return parsePostmanCollection(content);
 
+    case "insomnia":
+      return parseInsomnia(content);
+
     case "har":
       return parseHar(content);
 
@@ -38,8 +51,14 @@ export function importContent(content: string, filename?: string): ImportResult 
       if (jsonData.openapi || jsonData.swagger) {
         return parseOpenAPI(content);
       }
-      if (jsonData.info?._postman_id || jsonData.info?.schema?.includes("postman")) {
+      if (
+        jsonData.info?._postman_id ||
+        jsonData.info?.schema?.includes("postman")
+      ) {
         return parsePostmanCollection(content);
+      }
+      if (jsonData.resources && typeof jsonData.resources === "object") {
+        return parseInsomnia(content);
       }
       if (jsonData.log?.entries) {
         return parseHar(content);
@@ -47,7 +66,9 @@ export function importContent(content: string, filename?: string): ImportResult 
       return {
         type: "collection",
         name: "Unknown Format",
-        errors: ["Unable to determine import format. Supported: OpenAPI, Postman, HAR, cURL"],
+        errors: [
+          "Unable to determine import format. Supported: OpenAPI, Postman, Insomnia, HAR, cURL",
+        ],
         collections: [],
       };
 
@@ -55,7 +76,9 @@ export function importContent(content: string, filename?: string): ImportResult 
       return {
         type: "collection",
         name: "Unknown Format",
-        errors: [`Unsupported format. Detected: ${format || "unknown"}. Supported: OpenAPI, Postman, HAR, cURL`],
+        errors: [
+          `Unsupported format. Detected: ${format || "unknown"}. Supported: OpenAPI, Postman, Insomnia, HAR, cURL`,
+        ],
         collections: [],
       };
   }
