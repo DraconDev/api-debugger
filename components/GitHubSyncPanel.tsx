@@ -17,6 +17,7 @@ import {
   setActiveProfileId,
   saveProfiles,
   type Profile,
+  type ProfileData,
 } from "@/lib/profiles";
 
 export function GitHubSyncPanel() {
