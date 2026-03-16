@@ -60,7 +60,7 @@ export async function setActiveProfileId(id: string): Promise<void> {
 /**
  * Save profiles list
  */
-async function saveProfiles(profiles: Profile[]): Promise<void> {
+export async function saveProfiles(profiles: Profile[]): Promise<void> {
   await chrome.storage.sync.set({ [PROFILES_KEY]: profiles });
 }
 
