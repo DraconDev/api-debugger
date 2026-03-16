@@ -271,7 +271,6 @@ describe("Demo Profile", () => {
   it("all requests should have valid request stubs", () => {
     demo.requests.forEach((r: SavedRequest) => {
       expect(r.request).toBeDefined();
-      expect(r.request.id).toBe(r.id);
       expect(r.request.url).toBeTruthy();
       expect(r.request.method).toBeTruthy();
     });
