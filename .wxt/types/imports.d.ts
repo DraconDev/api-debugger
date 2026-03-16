@@ -11,12 +11,14 @@ declare global {
   const DiagnosticsPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/DiagnosticsPanel').DiagnosticsPanel
   const EnvironmentManager: typeof import('/home/dracon/Dev/extensions/api-debugger/components/EnvironmentManager').EnvironmentManager
   const ExportPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ExportPanel').ExportPanel
+  const GettingStarted: typeof import('/home/dracon/Dev/extensions/api-debugger/components/GettingStarted').GettingStarted
   const GitHubSyncPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/GitHubSyncPanel').GitHubSyncPanel
   const ImportExport: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ImportExport').ImportExport
   const ImportModal: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ImportModal').ImportModal
   const InvalidMatchPattern: typeof import('wxt/utils/match-patterns').InvalidMatchPattern
   const MatchPattern: typeof import('wxt/utils/match-patterns').MatchPattern
   const MockServerManager: typeof import('/home/dracon/Dev/extensions/api-debugger/components/MockServerManager').MockServerManager
+  const ProfileManager: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ProfileManager').ProfileManager
   const ReplayPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ReplayPanel').ReplayPanel
   const RequestBody: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestBody').RequestBody
   const RequestBuilderView: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestBuilderView').RequestBuilderView

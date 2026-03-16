@@ -27,10 +27,12 @@ declare module '#imports' {
   export { DiagnosticsPanel } from '../components/DiagnosticsPanel';
   export { EnvironmentManager } from '../components/EnvironmentManager';
   export { ExportPanel } from '../components/ExportPanel';
+  export { GettingStarted } from '../components/GettingStarted';
   export { GitHubSyncPanel } from '../components/GitHubSyncPanel';
   export { ImportExport } from '../components/ImportExport';
   export { ImportModal } from '../components/ImportModal';
   export { MockServerManager } from '../components/MockServerManager';
+  export { ProfileManager } from '../components/ProfileManager';
   export { ReplayPanel } from '../components/ReplayPanel';
   export { RequestBody } from '../components/RequestBody';
   export { RequestBuilderView } from '../components/RequestBuilderView';
