@@ -156,4 +156,4 @@
 
 ---
 
-**~45 manual items. Run `npm test` for the other 257.**
+**~45 manual items. Run `npm test` for the other 366.**
