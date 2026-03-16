@@ -586,9 +586,23 @@ describe("Import Format Detection", () => {
   });
 
   it("detects Bruno by content in JSON", () => {
+    // Bruno JSON has "meta" but not "resources" (resources triggers Insomnia first)
     expect(
-      detectImportFormat(JSON.stringify({ meta: true, resources: {} })),
+      detectImportFormat(
+        JSON.stringify({ meta: { name: "test" }, version: "1" }),
+      ),
     ).toBe("bruno");
+  });
+
+  it("returns null for unknown", () => {
+    expect(detectImportFormat("random text")).toBe(null);
+  });
+
+  it("detects OpenAPI YAML by content", () => {
+    // YAML content with openapi: is detected as "openapi-yaml"
+    expect(detectImportFormat("openapi: '3.0.0'\ninfo:\n  title: Test")).toBe(
+      "openapi-yaml",
+    );
   });
 
   it("returns null for unknown", () => {
