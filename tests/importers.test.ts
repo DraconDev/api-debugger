@@ -188,4 +188,111 @@ describe("Importers", () => {
       expect(result.requests).toHaveLength(0);
     });
   });
+
+  describe("parseInsomnia", () => {
+    it("detects Insomnia format", () => {
+      const content = JSON.stringify({
+        _type: "export",
+        __export_format: 4,
+        resources: [],
+      });
+      expect(detectImportFormat(content)).toBe("insomnia");
+    });
+
+    it("parses workspace with requests", () => {
+      const content = JSON.stringify({
+        _type: "export",
+        __export_format: 4,
+        resources: [
+          { _type: "workspace", _id: "wrk_1", name: "My API" },
+          {
+            _type: "request",
+            _id: "req_1",
+            parentId: "wrk_1",
+            name: "Get Users",
+            method: "GET",
+            url: "https://api.example.com/users",
+          },
+          {
+            _type: "request",
+            _id: "req_2",
+            parentId: "wrk_1",
+            name: "Create User",
+            method: "POST",
+            url: "https://api.example.com/users",
+            body: { mimeType: "application/json", text: '{"name":"test"}' },
+          },
+        ],
+      });
+      const result = parseInsomnia(content);
+      expect(result.collections).toHaveLength(1);
+      expect(result.collections?.[0].name).toBe("My API");
+    });
+
+    it("parses folders", () => {
+      const content = JSON.stringify({
+        _type: "export",
+        __export_format: 4,
+        resources: [
+          { _type: "workspace", _id: "wrk_1", name: "My API" },
+          {
+            _type: "request_group",
+            _id: "fld_1",
+            parentId: "wrk_1",
+            name: "Users",
+          },
+          {
+            _type: "request",
+            _id: "req_1",
+            parentId: "fld_1",
+            name: "Get User",
+            method: "GET",
+            url: "https://api.example.com/users/1",
+          },
+        ],
+      });
+      const result = parseInsomnia(content);
+      expect(result.collections?.[0].folders).toHaveLength(1);
+      expect(result.collections?.[0].folders?.[0].name).toBe("Users");
+      expect(result.collections?.[0].folders?.[0].requests).toHaveLength(1);
+    });
+
+    it("parses environments", () => {
+      const content = JSON.stringify({
+        _type: "export",
+        __export_format: 4,
+        resources: [
+          { _type: "workspace", _id: "wrk_1", name: "My API" },
+          {
+            _type: "environment",
+            _id: "env_1",
+            name: "Production",
+            data: { baseUrl: "https://api.example.com", apiKey: "secret" },
+          },
+        ],
+      });
+      const result = parseInsomnia(content);
+      expect(result.environments).toHaveLength(1);
+      expect(result.environments?.[0].name).toBe("Production");
+      expect(result.environments?.[0].values).toHaveLength(2);
+    });
+
+    it("handles requests without workspace", () => {
+      const content = JSON.stringify({
+        _type: "export",
+        __export_format: 4,
+        resources: [
+          {
+            _type: "request",
+            _id: "req_1",
+            name: "Test",
+            method: "GET",
+            url: "https://example.com",
+          },
+        ],
+      });
+      const result = parseInsomnia(content);
+      expect(result.requests).toHaveLength(1);
+    });
+  });
 });
