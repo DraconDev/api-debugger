@@ -136,10 +136,11 @@ describe("Demo Profile", () => {
 
   it("should have collections with correct names", () => {
     const names = demo.collections.map((c: Collection) => c.name);
-    expect(names).toContain("REST APIs");
-    expect(names).toContain("Authentication");
-    expect(names).toContain("Scripts & Variables");
-    expect(names).toContain("Advanced Features");
+    // Names include emojis, check they contain the expected text
+    expect(names.some((n: string) => n.includes("REST APIs"))).toBe(true);
+    expect(names.some((n: string) => n.includes("Authentication"))).toBe(true);
+    expect(names.some((n: string) => n.includes("Scripts"))).toBe(true);
+    expect(names.some((n: string) => n.includes("Advanced"))).toBe(true);
   });
 
   it("should have 16 saved requests", () => {
