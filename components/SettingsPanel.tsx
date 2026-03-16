@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import { createAI } from "@/lib/ai-client";
 import { getModels, type ModelInfo } from "@/lib/modelRegistry";
+import {
+  getActiveProfileId,
+  getProfileData,
+  saveProfileData,
+} from "@/lib/profiles";
 
 interface AISettings {
   apiKey: string;
