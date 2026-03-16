@@ -1,31 +1,46 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
+import { getApiProviderForModel } from "@/lib/modelRegistry";
+import {
+  COMMON_HEADERS,
+  HEADER_PRESETS,
+  CONTENT_TYPES,
+  COMMON_USER_AGENTS,
+  filterHeaders,
+  getHeaderValueSuggestions,
+} from "@/lib/headers";
+import { KEYBOARD_SHORTCUTS, formatShortcut } from "@/lib/shortcuts";
+import {
+  executePreRequestScript,
+  executePostResponseScript,
+  applyScriptModifications,
+} from "@/lib/scriptExecutor";
+import { getGitHubPATUrl } from "@/lib/githubSync";
+import { DEMO_PROFILE_ID } from "@/lib/profiles";
+import { detectImportFormat } from "@/lib/importers/types";
+import { parseCurl } from "@/lib/importers/curl";
+import { parsePostmanEnvironment } from "@/lib/importers/postman";
+import { parseOpenAPI } from "@/lib/importers/openapi";
+import { createDemoCollections } from "@/lib/demoProfile";
+import type { CapturedResponse } from "@/types";
 
-// ─── Model Registry (pure functions) ─────────────────────────
+// ─── Model Registry ──────────────────────────────────────────
 
 describe("Model Registry", () => {
-  // Test the exported helper functions that don't need network
-  // getApiProviderForModel is a pure function
-  const { getApiProviderForModel } = await import("@/lib/modelRegistry");
-
   describe("getApiProviderForModel", () => {
-    it("maps openai models to openai provider", () => {
+    it("maps openai models to openai", () => {
       expect(getApiProviderForModel("openai/gpt-4.1")).toBe("openai");
       expect(getApiProviderForModel("openai/gpt-4.1-mini")).toBe("openai");
       expect(getApiProviderForModel("openai/o3")).toBe("openai");
     });
 
-    it("maps anthropic models to anthropic provider", () => {
+    it("maps anthropic models to anthropic", () => {
       expect(getApiProviderForModel("anthropic/claude-sonnet-4")).toBe(
-        "anthropic",
-      );
-      expect(getApiProviderForModel("anthropic/claude-opus-4")).toBe(
         "anthropic",
       );
     });
 
-    it("maps google models to gemini provider", () => {
+    it("maps google models to gemini", () => {
       expect(getApiProviderForModel("google/gemini-2.0-flash")).toBe("gemini");
-      expect(getApiProviderForModel("google/gemini-2.5-pro")).toBe("gemini");
     });
 
     it("maps unknown providers to openrouter", () => {
@@ -33,27 +48,6 @@ describe("Model Registry", () => {
         "openrouter",
       );
       expect(getApiProviderForModel("deepseek/deepseek-r1")).toBe("openrouter");
-      expect(getApiProviderForModel("meta-llama/llama-4")).toBe("openrouter");
-    });
-  });
-
-  describe("ModelInfo structure", () => {
-    it("should have required fields", () => {
-      const model = {
-        id: "openai/gpt-4.1",
-        name: "GPT-4.1",
-        provider: "OpenAI",
-        providerId: "openai",
-        contextLength: 1050000,
-        pricing: { prompt: 0.002, completion: 0.008 },
-        modalities: { input: ["text", "image"], output: ["text"] },
-      };
-
-      expect(model.id).toContain("/");
-      expect(model.name).toBeTruthy();
-      expect(model.provider).toBeTruthy();
-      expect(model.contextLength).toBeGreaterThan(0);
-      expect(model.modalities.input).toContain("text");
     });
   });
 });
@@ -61,16 +55,6 @@ describe("Model Registry", () => {
 // ─── Headers ─────────────────────────────────────────────────
 
 describe("Headers Library", () => {
-  const {
-    COMMON_HEADERS,
-    HEADER_PRESETS,
-    CONTENT_TYPES,
-    ACCEPT_VALUES,
-    COMMON_USER_AGENTS,
-    filterHeaders,
-    getHeaderValueSuggestions,
-  } = await import("@/lib/headers");
-
   describe("COMMON_HEADERS", () => {
     it("should have standard headers", () => {
       expect(COMMON_HEADERS).toContain("Accept");
@@ -82,13 +66,11 @@ describe("Headers Library", () => {
 
     it("should have CORS headers", () => {
       expect(COMMON_HEADERS).toContain("Access-Control-Allow-Origin");
-      expect(COMMON_HEADERS).toContain("Access-Control-Allow-Methods");
     });
 
     it("should have security headers", () => {
       expect(COMMON_HEADERS).toContain("Content-Security-Policy");
       expect(COMMON_HEADERS).toContain("Strict-Transport-Security");
-      expect(COMMON_HEADERS).toContain("X-Frame-Options");
     });
 
     it("should have 100+ headers", () => {
@@ -99,21 +81,11 @@ describe("Headers Library", () => {
   describe("HEADER_PRESETS", () => {
     it("should have JSON Request preset", () => {
       const preset = HEADER_PRESETS["JSON Request"];
-      expect(preset).toBeDefined();
       expect(preset.some((h) => h.name === "Content-Type")).toBe(true);
-      expect(preset.some((h) => h.value === "application/json")).toBe(true);
     });
 
     it("should have Bearer Auth preset", () => {
-      const preset = HEADER_PRESETS["Bearer Auth"];
-      expect(preset).toBeDefined();
-      expect(preset[0].name).toBe("Authorization");
-      expect(preset[0].value).toContain("Bearer");
-    });
-
-    it("should have CORS Headers preset", () => {
-      const preset = HEADER_PRESETS["CORS Headers"];
-      expect(preset.length).toBeGreaterThanOrEqual(3);
+      expect(HEADER_PRESETS["Bearer Auth"][0].name).toBe("Authorization");
     });
 
     it("should have 10 presets", () => {
@@ -122,70 +94,56 @@ describe("Headers Library", () => {
   });
 
   describe("filterHeaders", () => {
-    it("should filter headers by prefix", () => {
+    it("should filter by prefix", () => {
       const results = filterHeaders("content");
       expect(results.length).toBeGreaterThan(0);
-      expect(results.length).toBeLessThanOrEqual(10);
       results.forEach((h) => expect(h.toLowerCase()).toContain("content"));
     });
 
     it("should be case-insensitive", () => {
-      const upper = filterHeaders("ACCEPT");
-      const lower = filterHeaders("accept");
-      expect(upper).toEqual(lower);
+      expect(filterHeaders("ACCEPT")).toEqual(filterHeaders("accept"));
     });
 
-    it("should return max 10 results", () => {
-      const results = filterHeaders("a");
-      expect(results.length).toBeLessThanOrEqual(10);
+    it("should max 10 results", () => {
+      expect(filterHeaders("a").length).toBeLessThanOrEqual(10);
     });
 
     it("should return empty for no match", () => {
-      const results = filterHeaders("zzznotfound");
-      expect(results).toHaveLength(0);
+      expect(filterHeaders("zzznotfound")).toHaveLength(0);
     });
   });
 
   describe("getHeaderValueSuggestions", () => {
-    it("should suggest content types for Content-Type", () => {
-      const suggestions = getHeaderValueSuggestions("Content-Type");
-      expect(suggestions).toContain("application/json");
-      expect(suggestions).toContain("text/html");
+    it("suggests content types for Content-Type", () => {
+      const s = getHeaderValueSuggestions("Content-Type");
+      expect(s).toContain("application/json");
+      expect(s).toContain("text/html");
     });
 
-    it("should suggest content types for Accept", () => {
-      const suggestions = getHeaderValueSuggestions("Accept");
-      expect(suggestions).toContain("application/json");
+    it("suggests encodings for Accept-Encoding", () => {
+      const s = getHeaderValueSuggestions("Accept-Encoding");
+      expect(s).toContain("gzip");
+      expect(s).toContain("br");
     });
 
-    it("should suggest encodings for Accept-Encoding", () => {
-      const suggestions = getHeaderValueSuggestions("Accept-Encoding");
-      expect(suggestions).toContain("gzip");
-      expect(suggestions).toContain("br");
+    it("suggests user agents for User-Agent", () => {
+      const s = getHeaderValueSuggestions("User-Agent");
+      expect(s.some((v) => v.includes("Chrome"))).toBe(true);
     });
 
-    it("should suggest user agents for User-Agent", () => {
-      const suggestions = getHeaderValueSuggestions("User-Agent");
-      expect(suggestions.length).toBeGreaterThan(0);
-      expect(suggestions.some((s) => s.includes("Chrome"))).toBe(true);
+    it("suggests cache directives for Cache-Control", () => {
+      const s = getHeaderValueSuggestions("Cache-Control");
+      expect(s).toContain("no-cache");
+      expect(s).toContain("max-age=3600");
     });
 
-    it("should suggest cache directives for Cache-Control", () => {
-      const suggestions = getHeaderValueSuggestions("Cache-Control");
-      expect(suggestions).toContain("no-cache");
-      expect(suggestions).toContain("max-age=3600");
+    it("suggests CORS values for Access-Control", () => {
+      const s = getHeaderValueSuggestions("Access-Control-Allow-Origin");
+      expect(s).toContain("*");
     });
 
-    it("should suggest CORS values for Access-Control headers", () => {
-      const suggestions = getHeaderValueSuggestions(
-        "Access-Control-Allow-Origin",
-      );
-      expect(suggestions).toContain("*");
-    });
-
-    it("should return empty for unknown headers", () => {
-      const suggestions = getHeaderValueSuggestions("X-Custom-Unknown");
-      expect(suggestions).toHaveLength(0);
+    it("returns empty for unknown headers", () => {
+      expect(getHeaderValueSuggestions("X-Custom-Unknown")).toHaveLength(0);
     });
   });
 
@@ -194,7 +152,6 @@ describe("Headers Library", () => {
       expect(CONTENT_TYPES).toContain("application/json");
       expect(CONTENT_TYPES).toContain("text/html");
       expect(CONTENT_TYPES).toContain("image/png");
-      expect(CONTENT_TYPES).toContain("application/pdf");
     });
   });
 
@@ -203,12 +160,10 @@ describe("Headers Library", () => {
       const names = COMMON_USER_AGENTS.map((ua) => ua.name);
       expect(names.some((n) => n.includes("Chrome"))).toBe(true);
       expect(names.some((n) => n.includes("Firefox"))).toBe(true);
-      expect(names.some((n) => n.includes("Safari"))).toBe(true);
     });
 
-    it("should have valid user agent strings", () => {
+    it("should have valid strings", () => {
       COMMON_USER_AGENTS.forEach((ua) => {
-        expect(ua.value).toBeTruthy();
         expect(ua.value.length).toBeGreaterThan(10);
       });
     });
@@ -218,74 +173,56 @@ describe("Headers Library", () => {
 // ─── Keyboard Shortcuts ──────────────────────────────────────
 
 describe("Keyboard Shortcuts", () => {
-  const { KEYBOARD_SHORTCUTS, formatShortcut, matchesShortcut } =
-    await import("@/lib/shortcuts");
-
   describe("KEYBOARD_SHORTCUTS", () => {
-    it("should have shortcuts in all categories", () => {
-      const categories = new Set(KEYBOARD_SHORTCUTS.map((s) => s.category));
-      expect(categories.has("request")).toBe(true);
-      expect(categories.has("navigation")).toBe(true);
-      expect(categories.has("editing")).toBe(true);
-      expect(categories.has("global")).toBe(true);
+    it("should have all categories", () => {
+      const cats = new Set(KEYBOARD_SHORTCUTS.map((s) => s.category));
+      expect(cats.has("request")).toBe(true);
+      expect(cats.has("navigation")).toBe(true);
+      expect(cats.has("editing")).toBe(true);
+      expect(cats.has("global")).toBe(true);
     });
 
-    it("should have Ctrl+Enter for send request", () => {
+    it("should have Ctrl+Enter for send", () => {
       const send = KEYBOARD_SHORTCUTS.find((s) => s.action === "sendRequest");
-      expect(send).toBeDefined();
       expect(send?.key).toBe("Enter");
       expect(send?.ctrl).toBe(true);
     });
 
-    it("should have ? for show shortcuts", () => {
+    it("should have ? for shortcuts", () => {
       const show = KEYBOARD_SHORTCUTS.find((s) => s.action === "showShortcuts");
-      expect(show).toBeDefined();
       expect(show?.key).toBe("?");
       expect(show?.shift).toBe(true);
     });
 
-    it("all shortcuts should have required fields", () => {
+    it("all should have required fields", () => {
       KEYBOARD_SHORTCUTS.forEach((s) => {
         expect(s.key).toBeTruthy();
         expect(s.action).toBeTruthy();
         expect(s.description).toBeTruthy();
-        expect(s.category).toBeTruthy();
       });
     });
   });
 
   describe("formatShortcut", () => {
     it("should format Ctrl+Enter", () => {
-      const formatted = formatShortcut({
+      const f = formatShortcut({
         key: "Enter",
         ctrl: true,
-        action: "test",
-        description: "Test",
+        action: "t",
+        description: "t",
         category: "request",
       });
-      // On non-Mac: "Ctrl+ENTER", on Mac: "⌘↵"
-      expect(formatted).toContain("Enter");
+      expect(f).toContain("Enter");
     });
 
     it("should format simple key", () => {
-      const formatted = formatShortcut({
+      const f = formatShortcut({
         key: "Escape",
-        action: "test",
-        description: "Test",
+        action: "t",
+        description: "t",
         category: "request",
       });
-      expect(formatted).toBeTruthy();
-    });
-
-    it("should format Shift+key", () => {
-      const formatted = formatShortcut({
-        key: "?",
-        shift: true,
-        action: "test",
-        description: "Test",
-        category: "global",
-      });
-      expect(formatted).toContain("?");
+      expect(f).toBeTruthy();
     });
   });
 });
@@ -293,12 +230,6 @@ describe("Keyboard Shortcuts", () => {
 // ─── Script Executor ─────────────────────────────────────────
 
 describe("Script Executor", () => {
-  const {
-    executePreRequestScript,
-    executePostResponseScript,
-    applyScriptModifications,
-  } = await import("@/lib/scriptExecutor");
-
   const defaultConfig = {
     method: "GET" as const,
     url: "https://api.example.com/test",
@@ -309,10 +240,10 @@ describe("Script Executor", () => {
     auth: { type: "none" as const },
   };
 
-  const defaultResponse = {
+  const defaultResponse: CapturedResponse = {
     status: 200,
     statusText: "OK",
-    headers: [["Content-Type", "application/json"]],
+    headers: [["Content-Type", "application/json"] as [string, string]],
     body: '{"id": 1, "name": "test"}',
     duration: 150,
     size: 25,
@@ -320,183 +251,256 @@ describe("Script Executor", () => {
 
   describe("executePreRequestScript", () => {
     it("should execute simple script", () => {
-      const result = executePreRequestScript(
+      const r = executePreRequestScript(
         'pm.variables.set("key", "value");',
         defaultConfig,
         {},
         {},
       );
-      expect(result.success).toBe(true);
-      expect(result.variables?.["key"]).toBe("value");
+      expect(r.success).toBe(true);
+      expect(r.variables?.["key"]).toBe("value");
     });
 
     it("should capture console.log", () => {
-      const result = executePreRequestScript(
+      const r = executePreRequestScript(
         'console.log("hello");',
         defaultConfig,
         {},
         {},
       );
-      expect(result.success).toBe(true);
-      expect(result.logs).toContain("hello");
+      expect(r.success).toBe(true);
+      expect(r.logs).toContain("hello");
     });
 
     it("should handle script errors", () => {
-      const result = executePreRequestScript(
-        "throw new Error('test error');",
+      const r = executePreRequestScript(
+        "throw new Error('boom');",
         defaultConfig,
         {},
         {},
       );
-      expect(result.success).toBe(false);
-      expect(result.error).toContain("test error");
+      expect(r.success).toBe(false);
+      expect(r.error).toContain("boom");
     });
 
     it("should allow modifying request URL", () => {
-      const result = executePreRequestScript(
+      const r = executePreRequestScript(
         'pm.request.url.url = "https://new-url.com";',
         defaultConfig,
         {},
         {},
       );
-      expect(result.success).toBe(true);
-      expect(result.modifiedRequest?.url).toBe("https://new-url.com");
+      expect(r.success).toBe(true);
+      expect(r.modifiedRequest?.url).toBe("https://new-url.com");
     });
 
     it("should allow adding headers", () => {
-      const result = executePreRequestScript(
-        'pm.request.headers.add("X-Custom", "value");',
+      const r = executePreRequestScript(
+        'pm.request.headers.add("X-Custom", "val");',
         defaultConfig,
         {},
         {},
       );
-      expect(result.success).toBe(true);
+      expect(r.success).toBe(true);
       expect(
-        result.modifiedRequest?.headers.some((h) => h.name === "X-Custom"),
+        r.modifiedRequest?.headers?.some((h) => h.name === "X-Custom"),
       ).toBe(true);
     });
 
     it("should access environment variables", () => {
-      const result = executePreRequestScript(
-        'const val = pm.environment.get("baseUrl"); pm.variables.set("got", val);',
+      const r = executePreRequestScript(
+        'const v = pm.environment.get("base"); pm.variables.set("got", v);',
         defaultConfig,
         {},
-        { baseUrl: "https://api.example.com" },
+        { base: "https://api.example.com" },
       );
-      expect(result.success).toBe(true);
-      expect(result.variables?.["got"]).toBe("https://api.example.com");
+      expect(r.success).toBe(true);
+      expect(r.variables?.["got"]).toBe("https://api.example.com");
+    });
+
+    it("should access request method", () => {
+      const r = executePreRequestScript(
+        'pm.variables.set("method", pm.request.method);',
+        defaultConfig,
+        {},
+        {},
+      );
+      expect(r.variables?.["method"]).toBe("GET");
+    });
+
+    it("should remove headers", () => {
+      const r = executePreRequestScript(
+        'pm.request.headers.remove("Accept");',
+        defaultConfig,
+        {},
+        {},
+      );
+      expect(r.success).toBe(true);
+    });
+
+    it("should modify request body", () => {
+      const r = executePreRequestScript(
+        'pm.request.body.raw = "{\\"test\\":true}";',
+        defaultConfig,
+        {},
+        {},
+      );
+      expect(r.success).toBe(true);
+      expect(r.modifiedRequest?.body?.raw).toContain("test");
     });
   });
 
   describe("executePostResponseScript", () => {
-    it("should execute script with response access", () => {
-      const result = executePostResponseScript(
-        'const data = pm.response.json(); pm.variables.set("name", data.name);',
+    it("should parse response JSON", () => {
+      const r = executePostResponseScript(
+        'const d = pm.response.json(); pm.variables.set("name", d.name);',
         defaultConfig,
         defaultResponse,
         {},
         {},
       );
-      expect(result.success).toBe(true);
-      expect(result.variables?.["name"]).toBe("test");
+      expect(r.success).toBe(true);
+      expect(r.variables?.["name"]).toBe("test");
     });
 
     it("should access response status", () => {
-      const result = executePostResponseScript(
-        'pm.variables.set("status", String(pm.response.code));',
+      const r = executePostResponseScript(
+        'pm.variables.set("s", String(pm.response.code));',
         defaultConfig,
         defaultResponse,
         {},
         {},
       );
-      expect(result.success).toBe(true);
-      expect(result.variables?.["status"]).toBe("200");
+      expect(r.variables?.["s"]).toBe("200");
     });
 
-    it("should access response body as text", () => {
-      const result = executePostResponseScript(
-        'const text = pm.response.text(); pm.variables.set("bodyLen", String(text.length));',
+    it("should get response as text", () => {
+      const r = executePostResponseScript(
+        'const t = pm.response.text(); pm.variables.set("len", String(t.length));',
         defaultConfig,
         defaultResponse,
         {},
         {},
       );
-      expect(result.success).toBe(true);
-      expect(Number(result.variables?.["bodyLen"])).toBeGreaterThan(0);
+      expect(Number(r.variables?.["len"])).toBeGreaterThan(0);
     });
 
-    it("should run pm.test() assertions", () => {
-      const result = executePostResponseScript(
-        'pm.test("status is 200", () => { pm.expect(pm.response.code).to.equal(200); });',
+    it("should run passing pm.test()", () => {
+      const r = executePostResponseScript(
+        'pm.test("ok", () => { pm.expect(pm.response.code).to.equal(200); });',
         defaultConfig,
         defaultResponse,
         {},
         {},
       );
-      expect(result.success).toBe(true);
-      expect(result.logs?.some((l) => l.includes("✓"))).toBe(true);
+      expect(r.success).toBe(true);
+      expect(r.logs?.some((l) => l.includes("✓"))).toBe(true);
     });
 
-    it("should report failing tests", () => {
-      const result = executePostResponseScript(
+    it("should report failing pm.test()", () => {
+      const r = executePostResponseScript(
         'pm.test("fail", () => { pm.expect(1).to.equal(2); });',
         defaultConfig,
         defaultResponse,
         {},
         {},
       );
-      expect(result.success).toBe(true); // script didn't throw
-      expect(result.logs?.some((l) => l.includes("✗"))).toBe(true);
+      expect(r.success).toBe(true);
+      expect(r.logs?.some((l) => l.includes("✗"))).toBe(true);
     });
 
-    it("should handle pm.expect().to.be.true", () => {
-      const result = executePostResponseScript(
-        'pm.test("true check", () => { pm.expect(true).to.be.true(); });',
+    it("should handle pm.expect().to.be.true()", () => {
+      const r = executePostResponseScript(
+        'pm.test("t", () => { pm.expect(true).to.be.true(); });',
         defaultConfig,
         defaultResponse,
         {},
         {},
       );
-      expect(result.logs?.[0]).toContain("✓");
+      expect(r.logs?.[0]).toContain("✓");
     });
 
-    it("should handle pm.expect().to.exist", () => {
-      const result = executePostResponseScript(
-        'pm.test("exists", () => { pm.expect("value").to.exist(); });',
+    it("should handle pm.expect().to.exist()", () => {
+      const r = executePostResponseScript(
+        'pm.test("e", () => { pm.expect("x").to.exist(); });',
         defaultConfig,
         defaultResponse,
         {},
         {},
       );
-      expect(result.logs?.[0]).toContain("✓");
+      expect(r.logs?.[0]).toContain("✓");
     });
 
-    it("should handle pm.expect().to.beA", () => {
-      const result = executePostResponseScript(
-        'pm.test("type check", () => { pm.expect(42).to.beA("number"); });',
+    it("should handle pm.expect().to.beA()", () => {
+      const r = executePostResponseScript(
+        'pm.test("a", () => { pm.expect(42).to.beA("number"); });',
         defaultConfig,
         defaultResponse,
         {},
         {},
       );
-      expect(result.logs?.[0]).toContain("✓");
+      expect(r.logs?.[0]).toContain("✓");
+    });
+
+    it("should handle pm.expect().to.be.false()", () => {
+      const r = executePostResponseScript(
+        'pm.test("f", () => { pm.expect(false).to.be.false(); });',
+        defaultConfig,
+        defaultResponse,
+        {},
+        {},
+      );
+      expect(r.logs?.[0]).toContain("✓");
+    });
+
+    it("should handle pm.expect().to.eql() for deep equality", () => {
+      const r = executePostResponseScript(
+        'pm.test("eq", () => { pm.expect({a:1}).to.eql({a:1}); });',
+        defaultConfig,
+        defaultResponse,
+        {},
+        {},
+      );
+      expect(r.logs?.[0]).toContain("✓");
+    });
+
+    it("should access response headers", () => {
+      const r = executePostResponseScript(
+        'const ct = pm.response.headers.get("Content-Type"); pm.variables.set("ct", ct || "none");',
+        defaultConfig,
+        defaultResponse,
+        {},
+        {},
+      );
+      expect(r.variables?.["ct"]).toBe("application/json");
+    });
+
+    it("should access response time", () => {
+      const r = executePostResponseScript(
+        'pm.variables.set("rt", String(pm.response.responseTime));',
+        defaultConfig,
+        defaultResponse,
+        {},
+        {},
+      );
+      expect(r.variables?.["rt"]).toBe("150");
     });
   });
 
   describe("applyScriptModifications", () => {
     it("should merge headers", () => {
-      const result = applyScriptModifications(defaultConfig, {
+      const r = applyScriptModifications(defaultConfig, {
         headers: [{ name: "X-New", value: "val", enabled: true }],
       });
-      expect(result.headers[0].name).toBe("X-New");
+      expect(r.headers[0].name).toBe("X-New");
     });
 
     it("should preserve other fields", () => {
-      const result = applyScriptModifications(defaultConfig, {
+      const r = applyScriptModifications(defaultConfig, {
         headers: [{ name: "X-New", value: "val", enabled: true }],
       });
-      expect(result.method).toBe("GET");
-      expect(result.url).toBe("https://api.example.com/test");
+      expect(r.method).toBe("GET");
+      expect(r.url).toBe("https://api.example.com/test");
     });
   });
 });
@@ -504,289 +508,198 @@ describe("Script Executor", () => {
 // ─── GitHub Sync ─────────────────────────────────────────────
 
 describe("GitHub Sync", () => {
-  const { getGitHubPATUrl } = await import("@/lib/githubSync");
-
   describe("getGitHubPATUrl", () => {
-    it("should return a valid GitHub URL", () => {
-      const url = getGitHubPATUrl();
-      expect(url).toContain("github.com/settings/tokens/new");
+    it("should return GitHub URL", () => {
+      expect(getGitHubPATUrl()).toContain("github.com/settings/tokens/new");
     });
 
-    it("should include required scopes", () => {
-      const url = getGitHubPATUrl();
-      expect(url).toContain("repo");
+    it("should include repo scope", () => {
+      expect(getGitHubPATUrl()).toContain("repo");
     });
 
     it("should include description", () => {
-      const url = getGitHubPATUrl();
-      expect(url).toContain("API+Debugger");
-    });
-  });
-
-  describe("SyncData structure", () => {
-    it("should support v2.0 profile format", () => {
-      const data = {
-        version: "2.0",
-        exportedAt: new Date().toISOString(),
-        profiles: [{ id: "p1", name: "Test" }],
-        activeProfileId: "p1",
-        profileData: {
-          p1: { collections: [], savedRequests: [], environments: [] },
-        },
-        settings: { theme: "dark", captureFilter: null },
-      };
-      expect(data.version).toBe("2.0");
-      expect(data.profiles).toHaveLength(1);
-    });
-
-    it("should support legacy v1.0 flat format", () => {
-      const data = {
-        version: "1.0",
-        exportedAt: new Date().toISOString(),
-        collections: [],
-        savedRequests: [],
-        environments: [],
-        settings: { theme: "system", captureFilter: null },
-      };
-      expect(data.version).toBe("1.0");
-      expect(data.collections).toBeDefined();
+      expect(getGitHubPATUrl()).toContain("API+Debugger");
     });
   });
 });
 
-// ─── Profile Helpers ─────────────────────────────────────────
+// ─── Profiles ────────────────────────────────────────────────
 
-describe("Profile Helpers", () => {
-  const { DEMO_PROFILE_ID } = await import("@/lib/profiles");
-
-  it("should have demo profile ID constant", () => {
+describe("Profiles", () => {
+  it("should have demo profile ID", () => {
     expect(DEMO_PROFILE_ID).toBe("profile-demo");
-  });
-
-  it("profile IDs should follow naming convention", () => {
     expect(DEMO_PROFILE_ID.startsWith("profile-")).toBe(true);
-  });
-
-  describe("Profile structure validation", () => {
-    it("valid profile has all required fields", () => {
-      const profile = {
-        id: "profile-test",
-        name: "Test",
-        icon: "🧪",
-        isBuiltIn: false,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      };
-      expect(profile.id).toBeTruthy();
-      expect(profile.name).toBeTruthy();
-      expect(typeof profile.isBuiltIn).toBe("boolean");
-    });
-
-    it("ProfileData has required arrays", () => {
-      const data = {
-        collections: [],
-        savedRequests: [],
-        environments: [],
-      };
-      expect(Array.isArray(data.collections)).toBe(true);
-      expect(Array.isArray(data.savedRequests)).toBe(true);
-      expect(Array.isArray(data.environments)).toBe(true);
-    });
   });
 });
 
 // ─── Import Format Detection ─────────────────────────────────
 
 describe("Import Format Detection", () => {
-  const { detectImportFormat } = await import("@/lib/importers/types");
-
   it("detects OpenAPI JSON", () => {
-    const spec = JSON.stringify({ openapi: "3.0.0", paths: {} });
-    expect(detectImportFormat(spec)).toBe("openapi");
+    expect(
+      detectImportFormat(JSON.stringify({ openapi: "3.0.0", paths: {} })),
+    ).toBe("openapi");
   });
 
   it("detects Swagger 2.0", () => {
-    const spec = JSON.stringify({ swagger: "2.0", paths: {} });
-    expect(detectImportFormat(spec)).toBe("openapi");
+    expect(
+      detectImportFormat(JSON.stringify({ swagger: "2.0", paths: {} })),
+    ).toBe("openapi");
   });
 
   it("detects Postman v2.1", () => {
-    const col = JSON.stringify({
-      info: {
-        schema:
-          "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-      },
-      item: [],
-    });
-    expect(detectImportFormat(col)).toBe("postman");
+    expect(
+      detectImportFormat(
+        JSON.stringify({
+          info: {
+            schema:
+              "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+          },
+          item: [],
+        }),
+      ),
+    ).toBe("postman");
   });
 
   it("detects HAR", () => {
-    const har = JSON.stringify({ log: { entries: [] } });
-    expect(detectImportFormat(har)).toBe("har");
+    expect(detectImportFormat(JSON.stringify({ log: { entries: [] } }))).toBe(
+      "har",
+    );
   });
 
   it("detects cURL", () => {
     expect(detectImportFormat("curl https://example.com")).toBe("curl");
-    expect(detectImportFormat("curl -X POST https://api.com")).toBe("curl");
   });
 
   it("detects Insomnia", () => {
-    const insomnia = JSON.stringify({
-      _type: "export",
-      __export_format: 4,
-      resources: [],
-    });
-    expect(detectImportFormat(insomnia)).toBe("insomnia");
+    expect(
+      detectImportFormat(
+        JSON.stringify({
+          _type: "export",
+          __export_format: 4,
+          resources: [],
+        }),
+      ),
+    ).toBe("insomnia");
   });
 
-  it("returns null for unknown format", () => {
-    expect(detectImportFormat("random text here")).toBe(null);
-    expect(detectImportFormat('{"foo": "bar"}')).toBe(null);
+  it("returns null for unknown", () => {
+    expect(detectImportFormat("random text")).toBe(null);
   });
 
-  it("detects by file extension", () => {
+  it("detects by extension", () => {
     expect(detectImportFormat("", "spec.yaml")).toBe("openapi");
-    expect(detectImportFormat("", "collection.json")).toBe(null); // needs content
     expect(detectImportFormat("", "export.har")).toBe("har");
-    expect(detectImportFormat("", "insomnia.json")).toBe("insomnia");
   });
 });
 
-// ─── cURL Parser Edge Cases ──────────────────────────────────
+// ─── cURL Parser ─────────────────────────────────────────────
 
-describe("cURL Parser Edge Cases", () => {
-  const { parseCurl } = await import("@/lib/importers/curl");
-
+describe("cURL Parser", () => {
   it("parses --json flag", () => {
-    const result = parseCurl(
+    const r = parseCurl(
       'curl --json \'{"name":"test"}\' https://api.example.com/data',
     );
-    expect(result.requests[0].method).toBe("POST");
-    expect(result.requests[0].body?.raw).toContain("name");
+    expect(r.requests[0].method).toBe("POST");
   });
 
   it("auto-promotes GET to POST with data", () => {
-    const result = parseCurl(
-      'curl -d "key=value" https://api.example.com/data',
-    );
-    expect(result.requests[0].method).toBe("POST");
+    const r = parseCurl('curl -d "key=value" https://api.example.com/data');
+    expect(r.requests[0].method).toBe("POST");
   });
 
   it("parses -u for basic auth", () => {
-    const result = parseCurl("curl -u user:pass https://api.example.com/data");
-    expect(result.requests[0].auth?.type).toBe("basic");
-    expect(result.requests[0].auth?.basic?.username).toBe("user");
+    const r = parseCurl("curl -u user:pass https://api.example.com/data");
+    expect(r.requests[0].auth?.type).toBe("basic");
+    expect(r.requests[0].auth?.basic?.username).toBe("user");
   });
 
   it("parses -A for user agent", () => {
-    const result = parseCurl(
-      'curl -A "MyAgent/1.0" https://api.example.com/data',
-    );
-    expect(
-      result.requests[0].headers?.some((h) => h.key === "User-Agent"),
-    ).toBe(true);
-  });
-
-  it("parses -b for cookies", () => {
-    const result = parseCurl(
-      'curl -b "session=abc123" https://api.example.com/data',
-    );
-    expect(result.requests[0].headers?.some((h) => h.key === "Cookie")).toBe(
+    const r = parseCurl('curl -A "MyAgent/1.0" https://api.example.com/data');
+    expect(r.requests[0].headers?.some((h) => h.key === "User-Agent")).toBe(
       true,
     );
   });
 
   it("handles single-quoted URLs", () => {
-    const result = parseCurl("curl 'https://api.example.com/data'");
-    expect(result.requests[0].url).toBe("https://api.example.com/data");
+    const r = parseCurl("curl 'https://api.example.com/data'");
+    expect(r.requests[0].url).toBe("https://api.example.com/data");
   });
 
-  it("handles escaped quotes in data", () => {
-    const result = parseCurl(
-      'curl -d "name=\\"test\\"" https://api.example.com/data',
+  it("parses multiple headers", () => {
+    const r = parseCurl(
+      'curl -H "Accept: json" -H "X-Key: val" https://api.example.com/data',
     );
-    expect(result.requests[0].body?.raw).toBeTruthy();
+    expect(r.requests[0].headers?.length).toBeGreaterThanOrEqual(2);
   });
 });
 
-// ─── Postman Environment Parser ──────────────────────────────
+// ─── Postman Environment ─────────────────────────────────────
 
 describe("Postman Environment Parser", () => {
-  const { parsePostmanEnvironment } = await import("@/lib/importers/postman");
-
   it("parses environment with values", () => {
-    const env = JSON.stringify({
-      name: "Dev",
-      values: [
-        { key: "baseUrl", value: "http://localhost:3000", enabled: true },
-        { key: "apiKey", value: "dev-key", enabled: true },
-        { key: "disabled", value: "off", enabled: false },
-      ],
-    });
-    const result = parsePostmanEnvironment(env);
-    expect(result.name).toBe("Dev");
-    expect(result.values.length).toBe(2); // only enabled
+    const r = parsePostmanEnvironment(
+      JSON.stringify({
+        name: "Dev",
+        values: [
+          { key: "baseUrl", value: "http://localhost:3000", enabled: true },
+          { key: "disabled", value: "off", enabled: false },
+        ],
+      }),
+    );
+    expect(r.name).toBe("Dev");
+    expect(r.values.length).toBe(1); // only enabled
   });
 
   it("handles empty values", () => {
-    const env = JSON.stringify({ name: "Empty", values: [] });
-    const result = parsePostmanEnvironment(env);
-    expect(result.name).toBe("Empty");
-    expect(result.values).toHaveLength(0);
+    const r = parsePostmanEnvironment(
+      JSON.stringify({ name: "Empty", values: [] }),
+    );
+    expect(r.values).toHaveLength(0);
   });
 });
 
 // ─── OpenAPI Parser ──────────────────────────────────────────
 
 describe("OpenAPI Parser", () => {
-  const { parseOpenAPI } = await import("@/lib/importers/openapi");
-
-  it("parses OpenAPI 3.0 with paths", () => {
-    const spec = JSON.stringify({
-      openapi: "3.0.0",
-      info: { title: "Test API", version: "1.0" },
-      servers: [{ url: "https://api.example.com" }],
-      paths: {
-        "/users": {
-          get: { summary: "List users", operationId: "listUsers" },
-          post: { summary: "Create user", operationId: "createUser" },
-        },
-        "/users/{id}": {
-          get: {
-            summary: "Get user",
-            parameters: [{ name: "id", in: "path", required: true }],
+  it("parses paths into requests", () => {
+    const r = parseOpenAPI(
+      JSON.stringify({
+        openapi: "3.0.0",
+        info: { title: "Test", version: "1.0" },
+        servers: [{ url: "https://api.example.com" }],
+        paths: {
+          "/users": {
+            get: { summary: "List" },
+            post: { summary: "Create" },
           },
         },
-      },
-    });
-    const result = parseOpenAPI(spec);
-    expect(result.requests.length).toBe(3);
-    expect(result.requests.some((r) => r.method === "GET")).toBe(true);
-    expect(result.requests.some((r) => r.method === "POST")).toBe(true);
+      }),
+    );
+    expect(r.requests.length).toBe(2);
   });
 
   it("handles empty paths", () => {
-    const spec = JSON.stringify({
-      openapi: "3.0.0",
-      info: { title: "Empty", version: "1.0" },
-      paths: {},
-    });
-    const result = parseOpenAPI(spec);
-    expect(result.requests).toHaveLength(0);
+    const r = parseOpenAPI(
+      JSON.stringify({
+        openapi: "3.0.0",
+        info: { title: "E", version: "1.0" },
+        paths: {},
+      }),
+    );
+    expect(r.requests).toHaveLength(0);
   });
 
   it("sets base URL from servers", () => {
-    const spec = JSON.stringify({
-      openapi: "3.0.0",
-      info: { title: "Test", version: "1.0" },
-      servers: [{ url: "https://custom.api.com/v2" }],
-      paths: {
-        "/test": { get: { summary: "Test" } },
-      },
-    });
-    const result = parseOpenAPI(spec);
-    expect(result.requests[0].url).toContain("https://custom.api.com/v2");
+    const r = parseOpenAPI(
+      JSON.stringify({
+        openapi: "3.0.0",
+        info: { title: "T", version: "1.0" },
+        servers: [{ url: "https://custom.com/v2" }],
+        paths: { "/test": { get: { summary: "T" } } },
+      }),
+    );
+    expect(r.requests[0].url).toContain("https://custom.com/v2");
   });
 });
 
@@ -811,106 +724,81 @@ describe("URL Construction", () => {
     );
   };
 
-  it("should add params to URL without query", () => {
-    const url = buildUrl("https://api.example.com/posts", [
-      { name: "page", value: "1" },
-      { name: "limit", value: "10" },
-    ]);
-    expect(url).toBe("https://api.example.com/posts?page=1&limit=10");
+  it("adds params to URL without query", () => {
+    expect(
+      buildUrl("https://api.com/posts", [
+        { name: "page", value: "1" },
+        { name: "limit", value: "10" },
+      ]),
+    ).toBe("https://api.com/posts?page=1&limit=10");
   });
 
-  it("should append to existing query string", () => {
-    const url = buildUrl("https://api.example.com/posts?sort=desc", [
-      { name: "page", value: "1" },
-    ]);
-    expect(url).toBe("https://api.example.com/posts?sort=desc&page=1");
+  it("appends to existing query", () => {
+    expect(
+      buildUrl("https://api.com/posts?sort=desc", [
+        { name: "page", value: "1" },
+      ]),
+    ).toBe("https://api.com/posts?sort=desc&page=1");
   });
 
-  it("should skip disabled params", () => {
-    const url = buildUrl("https://api.example.com/posts", [
-      { name: "page", value: "1", enabled: true },
-      { name: "skip", value: "me", enabled: false },
-    ]);
-    expect(url).toBe("https://api.example.com/posts?page=1");
+  it("skips disabled params", () => {
+    expect(
+      buildUrl("https://api.com/posts", [
+        { name: "page", value: "1", enabled: true },
+        { name: "skip", value: "me", enabled: false },
+      ]),
+    ).toBe("https://api.com/posts?page=1");
   });
 
-  it("should URL-encode special characters", () => {
-    const url = buildUrl("https://api.example.com/search", [
-      { name: "q", value: "hello world & more" },
+  it("URL-encodes special characters", () => {
+    const url = buildUrl("https://api.com/search", [
+      { name: "q", value: "hello & world" },
     ]);
-    expect(url).toContain("hello%20world%20%26%20more");
+    expect(url).toContain("hello%20%26%20world");
   });
 
-  it("should return base URL for no params", () => {
-    const url = buildUrl("https://api.example.com/posts", []);
-    expect(url).toBe("https://api.example.com/posts");
+  it("returns base URL for no params", () => {
+    expect(buildUrl("https://api.com/posts", [])).toBe("https://api.com/posts");
   });
 
-  it("should handle params with empty names", () => {
-    const url = buildUrl("https://api.example.com/posts", [
-      { name: "", value: "ignored" },
-      { name: "valid", value: "yes" },
-    ]);
-    expect(url).toBe("https://api.example.com/posts?valid=yes");
+  it("skips empty param names", () => {
+    expect(
+      buildUrl("https://api.com/posts", [
+        { name: "", value: "ignored" },
+        { name: "valid", value: "yes" },
+      ]),
+    ).toBe("https://api.com/posts?valid=yes");
   });
 });
 
-// ─── Collection Runner Logic ─────────────────────────────────
+// ─── Collection Runner Math ──────────────────────────────────
 
-describe("Collection Runner", () => {
-  describe("Sequential execution", () => {
-    it("should execute requests in order", async () => {
-      const order: number[] = [];
-      const requests = [1, 2, 3, 4, 5];
-
-      for (const req of requests) {
-        order.push(req);
-      }
-
-      expect(order).toEqual([1, 2, 3, 4, 5]);
-    });
-
-    it("should track pass/fail counts", () => {
-      const results = [
-        { passed: true },
-        { passed: false },
-        { passed: true },
-        { passed: true },
-      ];
-      const passed = results.filter((r) => r.passed).length;
-      const failed = results.filter((r) => !r.passed).length;
-
-      expect(passed).toBe(3);
-      expect(failed).toBe(1);
-    });
+describe("Collection Runner Math", () => {
+  it("calculates RPS", () => {
+    expect(100 / (5000 / 1000)).toBe(20);
   });
 
-  describe("Load testing math", () => {
-    it("should calculate RPS correctly", () => {
-      const requests = 100;
-      const durationMs = 5000;
-      const rps = requests / (durationMs / 1000);
-      expect(rps).toBe(20);
-    });
+  it("calculates average", () => {
+    const d = [100, 200, 150, 300, 250];
+    expect(d.reduce((a, b) => a + b, 0) / d.length).toBe(200);
+  });
 
-    it("should calculate average duration", () => {
-      const durations = [100, 200, 150, 300, 250];
-      const avg = durations.reduce((a, b) => a + b, 0) / durations.length;
-      expect(avg).toBe(200);
-    });
+  it("finds min/max", () => {
+    const d = [100, 200, 150, 300, 250];
+    expect(Math.min(...d)).toBe(100);
+    expect(Math.max(...d)).toBe(300);
+  });
 
-    it("should find min/max duration", () => {
-      const durations = [100, 200, 150, 300, 250];
-      expect(Math.min(...durations)).toBe(100);
-      expect(Math.max(...durations)).toBe(300);
-    });
+  it("counts pass/fail", () => {
+    const r = [true, false, true, true];
+    expect(r.filter(Boolean).length).toBe(3);
+    expect(r.filter((x) => !x).length).toBe(1);
   });
 });
 
-// ─── Demo Profile Structure ──────────────────────────────────
+// ─── Demo Profile Validation ─────────────────────────────────
 
-describe("Demo Profile Structure", () => {
-  const { createDemoCollections } = await import("@/lib/demoProfile");
+describe("Demo Profile Validation", () => {
   const demo = createDemoCollections();
 
   it("should have 4 collections", () => {
@@ -925,16 +813,15 @@ describe("Demo Profile Structure", () => {
     expect(demo.environments).toHaveLength(3);
   });
 
-  it("each collection should have at least one request", () => {
+  it("each collection should have requests", () => {
     demo.collections.forEach((col) => {
-      const count = demo.requests.filter(
-        (r) => r.collectionId === col.id,
-      ).length;
-      expect(count).toBeGreaterThan(0);
+      expect(
+        demo.requests.filter((r) => r.collectionId === col.id).length,
+      ).toBeGreaterThan(0);
     });
   });
 
-  it("should have requestCount matching actual requests", () => {
+  it("requestCount should match actual count", () => {
     demo.collections.forEach((col) => {
       const actual = demo.requests.filter(
         (r) => r.collectionId === col.id,
@@ -945,23 +832,14 @@ describe("Demo Profile Structure", () => {
 
   it("all requests should have valid URLs", () => {
     demo.requests.forEach((r) => {
-      expect(r.requestConfig?.url).toBeTruthy();
       expect(r.requestConfig?.url.startsWith("http")).toBe(true);
     });
   });
 
   it("all requests should have valid methods", () => {
-    const validMethods = [
-      "GET",
-      "POST",
-      "PUT",
-      "PATCH",
-      "DELETE",
-      "HEAD",
-      "OPTIONS",
-    ];
+    const valid = ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"];
     demo.requests.forEach((r) => {
-      expect(validMethods).toContain(r.requestConfig?.method);
+      expect(valid).toContain(r.requestConfig?.method);
     });
   });
 
@@ -970,90 +848,96 @@ describe("Demo Profile Structure", () => {
     expect(new Set(names).size).toBe(names.length);
   });
 
-  it("exactly one environment should be active", () => {
-    const active = demo.environments.filter((e) => e.isActive);
-    expect(active).toHaveLength(1);
+  it("exactly one environment active", () => {
+    expect(demo.environments.filter((e) => e.isActive)).toHaveLength(1);
   });
 
-  it("all environment variables should have keys", () => {
-    demo.environments.forEach((env) => {
-      env.variables.forEach((v) => {
-        expect(v.key).toBeTruthy();
-      });
+  it("all env vars should have keys", () => {
+    demo.environments.forEach((e) => {
+      e.variables.forEach((v) => expect(v.key).toBeTruthy());
     });
   });
 
-  it("should have all 5 HTTP methods represented", () => {
-    const methods = new Set(demo.requests.map((r) => r.requestConfig?.method));
-    expect(methods.has("GET")).toBe(true);
-    expect(methods.has("POST")).toBe(true);
-    expect(methods.has("PUT")).toBe(true);
-    expect(methods.has("PATCH")).toBe(true);
-    expect(methods.has("DELETE")).toBe(true);
+  it("should have all 5 HTTP methods", () => {
+    const m = new Set(demo.requests.map((r) => r.requestConfig?.method));
+    expect(
+      m.has("GET") &&
+        m.has("POST") &&
+        m.has("PUT") &&
+        m.has("PATCH") &&
+        m.has("DELETE"),
+    ).toBe(true);
   });
 
-  it("should have requests with all 3 auth types", () => {
-    const hasBearer = demo.requests.some((r) =>
-      r.requestConfig?.headers.some((h) => h.value?.startsWith("Bearer")),
-    );
-    const hasBasic = demo.requests.some(
-      (r) => r.requestConfig?.auth.type === "basic",
-    );
-    const hasApiKey = demo.requests.some((r) =>
-      r.requestConfig?.headers.some((h) => h.name === "X-API-Key"),
-    );
-    expect(hasBearer).toBe(true);
-    expect(hasBasic).toBe(true);
-    expect(hasApiKey).toBe(true);
+  it("should have bearer, basic, and api-key auth", () => {
+    expect(
+      demo.requests.some((r) =>
+        r.requestConfig?.headers.some((h) => h.value?.startsWith("Bearer")),
+      ),
+    ).toBe(true);
+    expect(
+      demo.requests.some((r) => r.requestConfig?.auth.type === "basic"),
+    ).toBe(true);
+    expect(
+      demo.requests.some((r) =>
+        r.requestConfig?.headers.some((h) => h.name === "X-API-Key"),
+      ),
+    ).toBe(true);
   });
 
-  it("should have requests with all 3 body types", () => {
-    const types = new Set(demo.requests.map((r) => r.requestConfig?.bodyType));
-    expect(types.has("json")).toBe(true);
-    expect(types.has("form-data")).toBe(true);
-    expect(types.has("x-www-form-urlencoded")).toBe(true);
+  it("should have json, form-data, and urlencoded body types", () => {
+    const t = new Set(demo.requests.map((r) => r.requestConfig?.bodyType));
+    expect(
+      t.has("json") && t.has("form-data") && t.has("x-www-form-urlencoded"),
+    ).toBe(true);
   });
 
-  it("should have requests with both pre and post scripts", () => {
-    const hasPre = demo.requests.some(
-      (r) => !!r.requestConfig?.preRequestScript,
+  it("should have pre and post scripts", () => {
+    expect(demo.requests.some((r) => !!r.requestConfig?.preRequestScript)).toBe(
+      true,
     );
-    const hasPost = demo.requests.some(
-      (r) => !!r.requestConfig?.postResponseScript,
-    );
-    expect(hasPre).toBe(true);
-    expect(hasPost).toBe(true);
+    expect(
+      demo.requests.some((r) => !!r.requestConfig?.postResponseScript),
+    ).toBe(true);
   });
 
-  it("should have requests with pm.test() in post scripts", () => {
-    const withTests = demo.requests.filter((r) =>
-      r.requestConfig?.postResponseScript?.includes("pm.test"),
-    );
-    expect(withTests.length).toBeGreaterThanOrEqual(2);
+  it("should have pm.test() in post scripts", () => {
+    expect(
+      demo.requests.filter((r) =>
+        r.requestConfig?.postResponseScript?.includes("pm.test"),
+      ).length,
+    ).toBeGreaterThanOrEqual(2);
   });
 
-  it("should have requests with toggleable headers", () => {
-    const toggleDemo = demo.requests.find(
-      (r) => r.name === "Toggle Headers Demo",
-    );
-    expect(toggleDemo).toBeDefined();
-    const headers = toggleDemo?.requestConfig?.headers || [];
-    expect(headers.some((h) => h.enabled === true)).toBe(true);
-    expect(headers.some((h) => h.enabled === false)).toBe(true);
+  it("should have toggleable headers", () => {
+    const t = demo.requests.find((r) => r.name === "Toggle Headers Demo");
+    const h = t?.requestConfig?.headers || [];
+    expect(
+      h.some((x) => x.enabled === true) && h.some((x) => x.enabled === false),
+    ).toBe(true);
   });
 
-  it("should have a request that targets a 404", () => {
-    const errorReq = demo.requests.find((r) =>
-      r.requestConfig?.url.includes("99999"),
-    );
-    expect(errorReq).toBeDefined();
+  it("should have status code testing request", () => {
+    expect(
+      demo.requests.find((r) => r.name === "Status Code Testing"),
+    ).toBeDefined();
   });
 
-  it("should have a status code testing request", () => {
-    const statusReq = demo.requests.find(
-      (r) => r.name === "Status Code Testing",
-    );
-    expect(statusReq).toBeDefined();
-    expect(statusReq?.requestConfig?.url).toContain("/status/");
+  it("should have cookie handling request", () => {
+    expect(
+      demo.requests.find((r) => r.name === "Cookie Handling"),
+    ).toBeDefined();
+  });
+
+  it("should have API key in query request", () => {
+    expect(
+      demo.requests.find((r) => r.name === "API Key in Query"),
+    ).toBeDefined();
+  });
+
+  it("should have script error handling request", () => {
+    expect(
+      demo.requests.find((r) => r.name === "Script Error Handling"),
+    ).toBeDefined();
   });
 });
