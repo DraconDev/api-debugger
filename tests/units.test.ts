@@ -599,40 +599,6 @@ describe("Import Format Detection", () => {
   });
 });
 
-  it("detects cURL", () => {
-    expect(detectImportFormat("curl https://example.com")).toBe("curl");
-  });
-
-  it("detects Insomnia", () => {
-    expect(
-      detectImportFormat(
-        JSON.stringify({
-          _type: "export",
-          __export_format: 4,
-          resources: [],
-        }),
-      ),
-    ).toBe("insomnia");
-  });
-
-  it("returns null for unknown", () => {
-    expect(detectImportFormat("random text")).toBe(null);
-  });
-
-  it("detects by extension", () => {
-    expect(detectImportFormat("", "spec.yaml")).toBe("openapi");
-    expect(detectImportFormat("", "export.har")).toBe("har");
-  });
-
-  it("detects Bruno by extension", () => {
-    expect(detectImportFormat("", "collection.bru")).toBe("bruno");
-  });
-
-  it("returns null for unknown", () => {
-    expect(detectImportFormat("random text")).toBe(null);
-  });
-});
-
 // ─── cURL Parser ─────────────────────────────────────────────
 
 describe("cURL Parser", () => {
