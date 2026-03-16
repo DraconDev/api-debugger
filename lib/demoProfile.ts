@@ -305,6 +305,32 @@ export function createDemoCollections(): {
         "});",
       ].join("\n"),
     }),
+    req("demo-req-script-error", "Script Error Handling", colScripts, {
+      method: "GET",
+      url: "https://jsonplaceholder.typicode.com/posts/99999",
+      headers: [],
+      params: [],
+      body: { raw: "" },
+      bodyType: "none",
+      auth: { type: "none" },
+      postResponseScript: [
+        "// Handle both success and error responses",
+        "try {",
+        "  const data = pm.response.json();",
+        '  pm.test("Has title", () => {',
+        "    pm.expect(data.title).to.be.a('string');",
+        "  });",
+        "} catch (e) {",
+        '  pm.test("Handles error gracefully", () => {',
+        "    pm.expect(pm.response.status).to.be.a('number');",
+        "  });",
+        "}",
+        'pm.test("Status is valid HTTP code", () => {',
+        "  pm.expect(pm.response.status >= 200).to.equal(true);",
+        "  pm.expect(pm.response.status < 600).to.equal(true);",
+        "});",
+      ].join("\n"),
+    }),
 
     // ─── Advanced Features Collection ─────────────────────────
     req("demo-req-headers", "Multiple Headers", colAdvanced, {
