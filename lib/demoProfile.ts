@@ -234,6 +234,18 @@ export function createDemoCollections(): {
       bodyType: "none",
       auth: { type: "none" },
     }),
+    req("demo-req-apikey-query", "API Key in Query", colAuth, {
+      method: "GET",
+      url: "https://httpbin.org/get",
+      headers: [],
+      params: [
+        { name: "api_key", value: "demo-key-456", enabled: true },
+        { name: "format", value: "json", enabled: true },
+      ],
+      body: { raw: "" },
+      bodyType: "none",
+      auth: { type: "none" },
+    }),
 
     // ─── Scripts Collection ───────────────────────────────────
     req("demo-req-scripts", "Set & Use Variables", colScripts, {
