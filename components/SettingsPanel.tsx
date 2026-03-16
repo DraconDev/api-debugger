@@ -70,6 +70,12 @@ export function SettingsPanel() {
     setIsSaving(true);
     try {
       await chrome.storage.sync.set({ [STORAGE_KEY]: settings });
+
+      // Also save to active profile so it syncs with GitHub
+      const activeId = await getActiveProfileId();
+      const profileData = await getProfileData(activeId);
+      profileData.aiSettings = settings;
+      await saveProfileData(activeId, profileData);
     } catch (err) {
       console.error("Failed to save settings:", err);
     } finally {
