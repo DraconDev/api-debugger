@@ -645,36 +645,6 @@ describe("cURL Parser", () => {
     );
     expect(r.requests?.[0].headers?.length).toBeGreaterThanOrEqual(2);
   });
-
-  it("auto-promotes GET to POST with data", () => {
-    const r = parseCurl('curl -d "key=value" https://api.example.com/data');
-    expect(r.requests[0].method).toBe("POST");
-  });
-
-  it("parses -u for basic auth", () => {
-    const r = parseCurl("curl -u user:pass https://api.example.com/data");
-    expect(r.requests[0].auth?.type).toBe("basic");
-    expect(r.requests[0].auth?.basic?.username).toBe("user");
-  });
-
-  it("parses -A for user agent", () => {
-    const r = parseCurl('curl -A "MyAgent/1.0" https://api.example.com/data');
-    expect(r.requests[0].headers?.some((h) => h.key === "User-Agent")).toBe(
-      true,
-    );
-  });
-
-  it("handles single-quoted URLs", () => {
-    const r = parseCurl("curl 'https://api.example.com/data'");
-    expect(r.requests[0].url).toBe("https://api.example.com/data");
-  });
-
-  it("parses multiple headers", () => {
-    const r = parseCurl(
-      'curl -H "Accept: json" -H "X-Key: val" https://api.example.com/data',
-    );
-    expect(r.requests[0].headers?.length).toBeGreaterThanOrEqual(2);
-  });
 });
 
 // ─── Postman Environment ─────────────────────────────────────
