@@ -36,8 +36,6 @@ import {
   getProfileData,
   saveProfileData,
 } from "@/lib/profiles";
-import { GettingStarted } from "@/components/GettingStarted";
-import { completeChecklistItem } from "@/lib/checklist";
 
 type ViewType =
   | "builder"
