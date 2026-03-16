@@ -105,7 +105,7 @@ export function createDemoCollections(): {
       description: "Headers, params, body types, edge cases",
       createdAt: Date.now(),
       updatedAt: Date.now(),
-      requestCount: 8,
+      requestCount: 7,
     },
   ];
 
