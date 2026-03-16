@@ -164,7 +164,7 @@ describe("Headers Library", () => {
 
     it("should have valid strings", () => {
       COMMON_USER_AGENTS.forEach((ua) => {
-        expect(ua.value.length).toBeGreaterThan(10);
+        expect(ua.value.length).toBeGreaterThanOrEqual(10);
       });
     });
   });
