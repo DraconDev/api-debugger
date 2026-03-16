@@ -125,43 +125,77 @@ export function GitHubSyncPanel() {
 
         await sync.createRepoIfNotExists();
 
-        if (direction === "push") {
-          const [collectionsRes, requestsRes, envRes, settingsRes] =
-            await Promise.all([
-              chrome.storage.sync.get("apiDebugger_collections"),
-              chrome.storage.sync.get("apiDebugger_savedRequests"),
-              chrome.storage.sync.get("apiDebugger_environments"),
-              chrome.storage.sync.get(["sync:theme", "captureFilter"]),
-            ]);
+      if (direction === "push") {
+        // Read all profiles and their data
+        const [profiles, activeProfileId, settingsRes] = await Promise.all([
+          getProfiles(),
+          getActiveProfileId(),
+          chrome.storage.sync.get(["sync:theme", "captureFilter"]),
+        ]);
 
-          const syncData: SyncData = {
-            version: "1.0",
-            exportedAt: new Date().toISOString(),
-            collections: collectionsRes.apiDebugger_collections || [],
-            savedRequests: requestsRes.apiDebugger_savedRequests || [],
-            environments: envRes.apiDebugger_environments || [],
-            settings: {
-              theme: settingsRes["sync:theme"] || "system",
-              captureFilter: settingsRes.captureFilter || null,
-            },
-          };
+        const profileData: Record<string, unknown> = {};
+        for (const profile of profiles) {
+          profileData[profile.id] = await getProfileData(profile.id);
+        }
 
-          const { sha } = await sync.getFile();
-          await sync.push(syncData, sha);
+        const syncData: SyncData = {
+          version: "2.0",
+          exportedAt: new Date().toISOString(),
+          profiles,
+          activeProfileId,
+          profileData: profileData as SyncData["profileData"],
+          settings: {
+            theme: settingsRes["sync:theme"] || "system",
+            captureFilter: settingsRes.captureFilter || null,
+          },
+        };
+
+        const { sha } = await sync.getFile();
+        await sync.push(syncData, sha);
+        
+        const now = Date.now();
+        await setGitHubConfig({ ...config, lastSync: now });
+        setLastSync(now);
+        setSuccess("Successfully pushed to GitHub");
+      } else {
+        const { content } = await sync.getFile();
+        
+        if (content) {
+          if (content.version === "2.0" && content.profiles) {
+            // New profile-based format
+            await saveProfiles(content.profiles as Profile[]);
+            if (content.profileData) {
+              for (const [profileId, data] of Object.entries(content.profileData)) {
+                await saveProfileData(profileId, data);
+              }
+            }
+            if (content.activeProfileId) {
+              await setActiveProfileId(content.activeProfileId);
+            }
+          } else if (content.collections) {
+            // Legacy format - migrate into the active profile
+            const activeId = await getActiveProfileId();
+            await saveProfileData(activeId, {
+              collections: content.collections || [],
+              savedRequests: content.savedRequests || [],
+              environments: content.environments || [],
+            });
+          }
+          if (content.settings) {
+            await chrome.storage.sync.set({ 
+              "sync:theme": content.settings.theme,
+              captureFilter: content.settings.captureFilter 
+            });
+          }
 
           const now = Date.now();
           await setGitHubConfig({ ...config, lastSync: now });
           setLastSync(now);
-          setSuccess("Successfully pushed to GitHub");
+          setSuccess("Successfully pulled from GitHub");
         } else {
-          const { content } = await sync.getFile();
-
-          if (content) {
-            if (content.collections) {
-              await chrome.storage.sync.set({
-                apiDebugger_collections: content.collections,
-              });
-            }
+          setError("No synced data found in repository");
+        }
+      }
             if (content.savedRequests) {
               await chrome.storage.sync.set({
                 apiDebugger_savedRequests: content.savedRequests,
