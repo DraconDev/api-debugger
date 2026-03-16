@@ -518,7 +518,7 @@ describe("GitHub Sync", () => {
     });
 
     it("should include description", () => {
-      expect(getGitHubPATUrl()).toContain("API+Debugger");
+      expect(getGitHubPATUrl()).toContain("API%20Debugger");
     });
   });
 });
