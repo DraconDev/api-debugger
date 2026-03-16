@@ -101,20 +101,6 @@ export default function Dashboard() {
     loadData();
   }, []);
 
-  // Auto-complete checklist items based on navigation
-  useEffect(() => {
-    const viewToChecklist: Record<string, string> = {
-      websocket: "try-websocket",
-      sse: "try-sse",
-      test: "try-test-mode",
-      workflows: "run-workflow",
-    };
-    const checklistId = viewToChecklist[view];
-    if (checklistId) {
-      completeChecklistItem(checklistId);
-    }
-  }, [view]);
-
   const handleImport = useCallback(
     async (result: ImportResult) => {
       const activeId = await getActiveProfileId();
