@@ -651,28 +651,24 @@ describe("cURL Parser", () => {
 
 describe("Postman Environment Parser", () => {
   it("parses environment with values", () => {
-    const r = parsePostmanEnvironment(JSON.stringify({
-      name: "Dev",
-      values: [
-        { key: "baseUrl", value: "http://localhost:3000", enabled: true },
-        { key: "disabled", value: "off", enabled: false },
-      ],
-    }));
+    const r = parsePostmanEnvironment(
+      JSON.stringify({
+        name: "Dev",
+        values: [
+          { key: "baseUrl", value: "http://localhost:3000", enabled: true },
+          { key: "disabled", value: "off", enabled: false },
+        ],
+      }),
+    );
     expect(r.environments?.[0].name).toBe("Dev");
     expect(r.environments?.[0].values.length).toBe(1); // only enabled
   });
 
   it("handles empty values", () => {
-    const r = parsePostmanEnvironment(JSON.stringify({ name: "Empty", values: [] }));
-    expect(r.environments?.[0].values).toHaveLength(0);
-  });
-});
-
-  it("handles empty values", () => {
     const r = parsePostmanEnvironment(
       JSON.stringify({ name: "Empty", values: [] }),
     );
-    expect(r.values).toHaveLength(0);
+    expect(r.environments?.[0].values).toHaveLength(0);
   });
 });
 
