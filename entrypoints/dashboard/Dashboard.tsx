@@ -226,7 +226,6 @@ export default function Dashboard() {
       }
 
       await saveProfileData(activeId, currentData);
-      await completeChecklistItem("import-collection");
       setShowImport(false);
     },
     [state.collections],
