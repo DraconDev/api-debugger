@@ -562,9 +562,40 @@ describe("Import Format Detection", () => {
   });
 
   it("detects HAR", () => {
-    expect(detectImportFormat(JSON.stringify({ log: { entries: [] } }))).toBe(
-      "har",
-    );
+    expect(
+      detectImportFormat(
+        JSON.stringify({ log: { entries: [], version: "1.2" } }),
+      ),
+    ).toBe("har");
+  });
+
+  it("detects cURL", () => {
+    expect(detectImportFormat("curl https://example.com")).toBe("curl");
+  });
+
+  it("detects Insomnia", () => {
+    expect(
+      detectImportFormat(
+        JSON.stringify({
+          _type: "export",
+          __export_format: 4,
+          resources: [],
+        }),
+      ),
+    ).toBe("insomnia");
+  });
+
+  it("detects Bruno by content", () => {
+    expect(detectImportFormat("meta { name: test }")).toBe("bruno");
+  });
+
+  it("returns null for unknown", () => {
+    expect(detectImportFormat("random text")).toBe(null);
+  });
+
+  it("detects OpenAPI by yaml extension + content", () => {
+    expect(detectImportFormat("openapi: '3.0.0'", "spec.yaml")).toBe("openapi");
+    expect(detectImportFormat("swagger: '2.0'", "spec.yml")).toBe("openapi");
   });
 
   it("detects cURL", () => {
