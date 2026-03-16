@@ -474,6 +474,13 @@ export default function Dashboard() {
             collapsed={sidebarCollapsed}
           />
           <NavItem
+            active={view === "test"}
+            onClick={() => setView("test")}
+            icon={<TestTubeIcon />}
+            label="Test Mode"
+            collapsed={sidebarCollapsed}
+          />
+          <NavItem
             active={view === "cookies"}
             onClick={() => setView("cookies")}
             icon={<CookieIcon />}
