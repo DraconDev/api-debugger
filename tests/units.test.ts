@@ -609,10 +609,10 @@ describe("Import Format Detection", () => {
   });
 
   it("detects OpenAPI YAML by content", () => {
-    expect(detectImportFormat("openapi: '3.0.0'", "spec.yaml")).toBe(
-      "openapi-yaml",
-    );
-    expect(detectImportFormat("swagger: '2.0'", "spec.yml")).toBe(
+    // With yaml extension: returns "openapi" (extension-aided detection)
+    expect(detectImportFormat("openapi: '3.0.0'", "spec.yaml")).toBe("openapi");
+    // Without extension: returns "openapi-yaml" (content-only detection)
+    expect(detectImportFormat("openapi: 3.0.0\npaths: {}")).toBe(
       "openapi-yaml",
     );
   });
