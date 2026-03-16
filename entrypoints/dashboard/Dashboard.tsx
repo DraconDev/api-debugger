@@ -1232,8 +1232,6 @@ function CollectionsView({
     const headerPairs: [string, string][] = [];
     response.headers.forEach((v, k) => headerPairs.push([k, v]));
 
-    completeChecklistItem("send-request");
-
     return {
       status: response.status,
       statusText: response.statusText,
