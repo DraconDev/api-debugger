@@ -794,6 +794,7 @@ export default function Dashboard() {
           />
         )}
 
+        {view === "test" && <TestMode />}
         {view === "settings" && <SettingsView />}
       </main>
 
