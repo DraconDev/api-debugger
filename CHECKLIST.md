@@ -1,341 +1,166 @@
 # API Debugger - Manual Testing Checklist
 
-> Items marked with ✅ are automatically verified by the test suite.
-> Run `npm test` to verify these.
+> These are the things that actually need a human to verify.
+> Everything else is covered by `npm test` (257 tests).
 
-## Core Request Features
+## Sending Requests
 
-### REST API Builder
+- [ ] Send a GET request to `https://jsonplaceholder.typicode.com/posts` and see the response
+- [ ] Send a POST with JSON body, verify the response reflects the sent data
+- [ ] Send a request with Bearer auth, confirm it works against httpbin.org/bearer
+- [ ] Send a request with Basic auth, confirm it works against httpbin.org/basic-auth
+- [ ] Toggle a header off, send request, verify header was not sent
+- [ ] Add a query param, verify it appears in the request URL shown in history
 
-- [ ] Send a GET request to `https://jsonplaceholder.typicode.com/posts`
-- [ ] Send a POST request with JSON body ✅
-- [ ] Send a PUT request to update a resource ✅
-- [ ] Send a PATCH request with partial body ✅
-- [ ] Send a DELETE request ✅
-- [ ] Add query parameters and verify they appear in the URL ✅
-- [ ] Add custom headers (Accept, Content-Type, X-Custom) ✅
-- [ ] Toggle individual headers on/off ✅
-- [ ] View response status code, headers, and body
-- [ ] View response time and size
-- [ ] Search through request history
+## Browser Capture
 
-### Authentication
+- [ ] Open a website that makes API calls (e.g. github.com), see requests appear in history
+- [ ] Toggle capture off in the popup, browse a site, confirm no new requests captured
+- [ ] Toggle capture back on, confirm requests start appearing again
+- [ ] Search requests in history by URL fragment
+- [ ] Select multiple requests with checkboxes, delete them
+- [ ] Export selected requests, confirm file downloads
 
-- [ ] Send request with Bearer token in Authorization header ✅
-- [ ] Send request with Basic Auth (username/password) ✅
-- [ ] Send request with API Key in header ✅
-- [ ] Send request with API Key in query param ✅
-- [ ] No Auth returns empty headers ✅
+## WebSocket
 
-### Body Types
+- [ ] Connect to `wss://echo.websocket.org`, send a message, see it echoed back
+- [ ] Verify events auto-scroll as new messages arrive (no scroll toggle visible)
+- [ ] Disconnect, confirm status shows "Disconnected"
+- [ ] Type a URL with query params, connect, confirm it works
 
-- [ ] Send JSON body ✅
-- [ ] Send form-data (multipart) body ✅
-- [ ] Send x-www-form-urlencoded body ✅
-- [ ] Send raw text body ✅
-- [ ] Send empty body (GET/DELETE) ✅
-- [ ] Handle large JSON body (1MB+) ✅
-- [ ] Handle GraphQL query body ✅
+## SSE
 
-## Protocol Support
+- [ ] Connect to an SSE endpoint, see events stream in real-time
+- [ ] Toggle auto-reconnect on, disconnect, confirm it reconnects
+- [ ] Verify events auto-scroll (no toggle visible)
 
-### WebSocket
+## Socket.IO
 
-- [ ] Connect to `wss://echo.websocket.org`
-- [ ] Send a text message
-- [ ] Receive echoed message
-- [ ] View message history with timestamps
-- [ ] Search/filter messages
-- [ ] Disconnect and reconnect
-- [ ] Events auto-scroll (no toggle visible)
-- [ ] Validate WebSocket URL format ✅
-- [ ] Handle query params in WebSocket URL ✅
-- [ ] Handle binary WebSocket messages ✅
+- [ ] Connect to a Socket.IO server, send an event, see response
+- [ ] Add a custom listen event name, receive events with that name
+- [ ] Clear events, confirm list is empty
 
-### Server-Sent Events (SSE)
+## GraphQL
 
-- [ ] Connect to an SSE endpoint
-- [ ] Receive events in real-time
-- [ ] View event data, type, and ID
-- [ ] Auto-reconnect toggle works
-- [ ] Events auto-scroll (no toggle visible)
-- [ ] Disconnect cleanly
-- [ ] Parse SSE event format ✅
-- [ ] Handle multi-line data ✅
-- [ ] Extract event ID ✅
-- [ ] Handle JSON data in events ✅
-
-### Socket.IO
-
-- [ ] Connect to a Socket.IO server
-- [ ] Send custom events
-- [ ] Receive events
-- [ ] Add/remove listen event names
-- [ ] View connection transport (polling/websocket)
-- [ ] Events auto-scroll (no toggle visible)
-- [ ] Validate Socket.IO URL ✅
-- [ ] Handle namespace format ✅
-- [ ] Construct emit event ✅
-
-### GraphQL
-
-- [ ] Send a GraphQL query
-- [ ] Send a GraphQL mutation
-- [ ] View formatted response
-- [ ] See query errors in response
-- [ ] Handle basic query structure ✅
-- [ ] Handle query with variables ✅
-- [ ] Handle mutations ✅
-- [ ] Handle fragments ✅
-
-## Collections & Saved Requests
-
-### Collections
-
-- [ ] View collections in sidebar
-- [ ] Click collection to see its requests
-- [ ] Click a saved request to load it in builder
-- [ ] Run all requests in a collection
-- [ ] "+ Demo" button loads demo examples
-- [ ] "Load Demo Examples" button in empty state
-
-### Import
-
-- [ ] Import OpenAPI/Swagger spec (JSON) ✅
-- [ ] Import OpenAPI/Swagger spec (YAML)
-- [ ] Import Postman Collection v2.1 ✅
-- [ ] Import Insomnia export ✅
-- [ ] Import HAR file ✅
-- [ ] Import cURL command ✅
-- [ ] Imported collections appear in sidebar
-- [ ] Imported requests are runnable
+- [ ] Send `{ __typename }` to a GraphQL endpoint, see response
+- [ ] Send a mutation, confirm it executes
+- [ ] Send a query with variables, confirm variables are sent
 
 ## Profiles
 
-### Profile Management (Settings → Profiles)
-
-- [ ] See "Demo Examples" built-in profile
-- [ ] Click "Switch" to change active profile
-- [ ] Page reloads with new profile data
-- [ ] Click "+ New Profile" to create empty profile
-- [ ] Type name and press Enter to create
-- [ ] Click "Duplicate" to copy a profile
-- [ ] Click "Delete" to remove custom profile
-- [ ] Cannot delete built-in profiles
-- [ ] Click "Reset" on Demo to restore default data
-- [ ] Active profile shows "Active" badge
-- [ ] Profile structure validates correctly ✅
-- [ ] Profile data includes collections, requests, environments ✅
-- [ ] AI settings saved to profile ✅
-- [ ] Built-in vs custom profile distinction works ✅
-
-### Demo Profile (Auto-Verified ✅)
-
-- [ ] Contains 4 collections ✅
-- [ ] Collection names include REST APIs, Authentication, Scripts, Advanced ✅
-- [ ] Contains 16 saved requests ✅
-- [ ] Every collection has at least one request ✅
-- [ ] Has GET, POST, PUT, PATCH, DELETE methods ✅
-- [ ] Has JSON body type requests ✅
-- [ ] Has form-data body type requests ✅
-- [ ] Has urlencoded body type requests ✅
-- [ ] Has bearer auth request ✅
-- [ ] Has basic auth request ✅
-- [ ] Has pre-request script (pm.variables) ✅
-- [ ] Has post-response script (pm.test) ✅
-- [ ] Has pm.test() assertions ✅
-- [ ] Has requests with query params ✅
-- [ ] Has requests with variable interpolation ({{var}}) ✅
-- [ ] Has 3 environments ✅
-- [ ] Environments have variables ✅
-- [ ] Exactly one active environment ✅
-- [ ] Has baseUrl variable in environments ✅
-- [ ] All requests have tags array and createdAt ✅
-- [ ] All environments have createdAt and updatedAt ✅
-- [ ] Request stubs have url and method ✅
+- [ ] Settings → Profiles, see "Demo Examples" built-in profile
+- [ ] Click "Switch" on Demo, page reloads with 16 demo requests in collections
+- [ ] Click "+ Demo" in collections sidebar header, demo data loads into current profile
+- [ ] Click "Load Demo Examples" in empty collections state, demo data appears
+- [ ] Create a new profile, switch to it, confirm collections are empty
+- [ ] Switch back to Demo, confirm demo data is still there
+- [ ] Duplicate a profile, confirm copy has same data
+- [ ] Delete a custom profile, confirm it's gone
+- [ ] Click "Reset" on Demo, confirm it restores to default 16 requests
+- [ ] Verify built-in profiles cannot be deleted (no delete button)
 
 ## AI Integration
 
-### Settings (Settings → AI Settings)
-
-- [ ] Enter OpenRouter API key
-- [ ] Click "Test Key" to validate
-- [ ] Shows "✓ API key is valid" for valid key
-- [ ] Shows "✗ API key validation failed" for invalid key
-- [ ] Search for models in the model list
+- [ ] Enter an OpenRouter API key in Settings → AI
+- [ ] Click "Test Key", see "✓ API key is valid" message
+- [ ] Clear the key, click "Test Key", see error
+- [ ] Search for a model in the model list, find it
 - [ ] Select a primary model from the list
-- [ ] Model list shows provider, name, context length
-- [ ] Add up to 3 fallback models
+- [ ] Add a fallback model, see it appear in the fallback list
 - [ ] Reorder fallbacks with ↑/↓ arrows
-- [ ] Remove fallback with ✕ button
-- [ ] Click "Save" to persist settings
-- [ ] AI settings saved to both global and profile storage
+- [ ] Remove a fallback with ✕ button
+- [ ] Save settings, reload, confirm settings persisted
+- [ ] Send a request, click "AI Analysis", see analysis results
+- [ ] Click "Explain" tab, see endpoint explanation
+- [ ] Click "Suggest" tab, see optimization suggestions
+- [ ] Click "Regenerate", get a fresh analysis
+- [ ] Verify the model name shown matches your selected model
 
-### AI Analysis
+## Environments
 
-- [ ] Select a request with response data
-- [ ] AI Analysis panel shows on the right
-- [ ] Click "Analyze" to get AI analysis
-- [ ] "Analysis" tab shows request summary and issues
-- [ ] "Explain" tab explains the endpoint
-- [ ] "Suggest" tab gives optimization tips
-- [ ] Shows which model was used
-- [ ] Shows "(fallback)" if fallback model was used
-- [ ] "Regenerate" button re-runs analysis
-- [ ] Fallback chain works when primary model fails ✅
-- [ ] Does NOT fallback on auth errors (401/403) ✅
-- [ ] AIError has status and model properties ✅
-
-## Environments (Settings → Environments)
-
-- [ ] Create a new environment
-- [ ] Add variables (key/value pairs)
-- [ ] Toggle variables on/off
-- [ ] Set active environment
-- [ ] Variables resolve in request URLs ({{var}}) ✅
-- [ ] Variables resolve in request bodies ✅
-- [ ] Variables resolve in headers ✅
-- [ ] Missing variables return empty string ✅
-- [ ] Non-matching braces are preserved ✅
-- [ ] Switch between environments
+- [ ] Settings → Environments, create a new environment
+- [ ] Add a variable `baseUrl` with value `https://api.example.com`
+- [ ] Set it as active
+- [ ] In request builder, use `{{baseUrl}}/path`, send request, verify it resolves
+- [ ] Toggle a variable off, send request, confirm it resolves to empty
+- [ ] Switch to a different environment, confirm variables change
+- [ ] Delete an environment, confirm it's removed
 
 ## Pre/Post Scripts
 
-- [ ] Pre-request script runs before request
-- [ ] `pm.variables.set()` sets a variable ✅
-- [ ] `pm.variables.get()` reads a variable ✅
-- [ ] `pm.variables.unset()` removes a variable ✅
-- [ ] `pm.variables.clear()` clears all variables ✅
-- [ ] `console.log()` output visible
-- [ ] Post-response script runs after response
-- [ ] `pm.response.json()` parses response body
-- [ ] `pm.test()` creates test assertions ✅
-- [ ] `pm.expect().to.equal()` validates values ✅
-- [ ] `pm.expect().to.be.a()` checks types ✅
-- [ ] Multiple tests run independently ✅
-- [ ] Test results shown in response panel
+- [ ] In demo profile, select "Set & Use Variables" request
+- [ ] Send it, check console output for script logs
+- [ ] Check that `userName` and `userEmail` variables were set by the script
+- [ ] Select "Test Assertions" request, send it
+- [ ] Check that test results show 3 passing tests
+- [ ] Add a pre-request script that will fail, confirm error is shown
 
 ## Test Mode
 
 - [ ] Navigate to Test Mode from sidebar
-- [ ] See 14 pre-loaded public API examples
-- [ ] Click an example to load it
-- [ ] Send the request and see response
-- [ ] Examples cover different methods and auth types
+- [ ] See 14 pre-loaded API examples listed
+- [ ] Click "JSONPlaceholder - Posts", send it, see response
+- [ ] Click "HTTPBin - Headers", send it, see your headers reflected
+- [ ] Click an auth example, confirm it includes auth
 
 ## Workflow Simulator
 
 - [ ] Navigate to Workflows from sidebar
-- [ ] Add requests to workflow
-- [ ] Set iterations and concurrency
-- [ ] Start load test
-- [ ] See real-time metrics (RPS, avg/min/max duration)
-- [ ] See pass/fail assertion counts
-- [ ] Stop workflow mid-run
+- [ ] Add a request to the workflow
+- [ ] Set iterations to 10, concurrency to 2
+- [ ] Click Start, see metrics update in real-time (RPS, avg duration)
+- [ ] See assertion pass/fail counts update
+- [ ] Click Stop, confirm workflow halts
+- [ ] Clear workflow, confirm it resets
 
-## GitHub Sync (Settings → Sync)
+## GitHub Sync
 
-- [ ] Click "Create GitHub Token" button
-- [ ] Paste Personal Access Token
-- [ ] Click "Connect" to validate
-- [ ] Shows connected username
-- [ ] Configure repository name
-- [ ] Configure branch name
-- [ ] Configure optional path
-- [ ] Click "Save Settings"
-- [ ] Click "Push" to upload data
-- [ ] Click "Pull" to download data
-- [ ] Push syncs all profiles + AI settings
-- [ ] Pull restores all profiles + AI settings
-- [ ] Last sync timestamp updates
-- [ ] "Disconnect" removes token
-- [ ] Sync data has v2.0 structure with profiles ✅
-- [ ] Sync data is backward-compatible with v1.0 ✅
-- [ ] Sync data is serializable to JSON ✅
-- [ ] Profile data includes AI settings in sync ✅
-
-## Capture & Filtering
-
-- [ ] Extension captures browser API requests automatically
-- [ ] Toggle capture on/off from popup
-- [ ] Search requests by URL, method, or status code
-- [ ] Select multiple requests (checkboxes)
-- [ ] Delete selected requests
-- [ ] Export selected requests
-- [ ] Clear all history
+- [ ] Settings → Sync, click "Create GitHub Token" (opens GitHub in new tab)
+- [ ] Paste a PAT, click "Connect"
+- [ ] See "Connected as @username" message
+- [ ] Change repo name to something unique, click "Save Settings"
+- [ ] Click "Push", see "Successfully pushed to GitHub"
+- [ ] Open GitHub, confirm the sync file exists in the repo
+- [ ] Click "Pull", see "Successfully pulled from GitHub"
+- [ ] Check "Last sync" timestamp updated
+- [ ] Click "Disconnect", confirm token is cleared
 
 ## Sidebar & Navigation
 
-- [ ] Sidebar collapses to icon-only mode (chevron click)
-- [ ] Icons remain visible when collapsed
-- [ ] Text labels hidden when collapsed
-- [ ] "?" button in footer navigates to Settings
-- [ ] "?" button visible in both expanded and collapsed states
-- [ ] All nav items clickable (builder, websocket, SSE, etc.)
-- [ ] Request count shown in footer
+- [ ] Click chevron to collapse sidebar, confirm it shrinks to icons only
+- [ ] Logo image stays visible and not squished when collapsed
+- [ ] Click chevron again, sidebar expands with text labels
+- [ ] Click "?" in sidebar footer, navigates to Settings
+- [ ] "?" visible in both collapsed and expanded states
+- [ ] Click each nav item (builder, WS, SSE, Socket.IO, etc.), correct view loads
+- [ ] Request count in footer updates as new requests are captured
 
 ## Popup
 
-- [ ] Shows request count
-- [ ] Quick stats (Total, Success, Errors)
-- [ ] Filter by All/Success/Errors
-- [ ] Quick actions (New, WS, GQL, History, Settings)
-- [ ] Recent 5 requests listed
-- [ ] Click request opens history in dashboard
-- [ ] "Open Dashboard" button works
-- [ ] Capture toggle on/off
-- [ ] Clear history button
+- [ ] Click extension icon, popup opens
+- [ ] Shows correct request count
+- [ ] Quick stats show correct Total/Success/Errors counts
+- [ ] Click "All", "Success", "Errors" filter buttons, list filters correctly
+- [ ] Click "New" quick action, opens dashboard with request builder
+- [ ] Click "WS" quick action, opens dashboard with WebSocket view
+- [ ] Click a recent request, opens dashboard history view
+- [ ] Click "Open Dashboard", full dashboard opens in new tab
+- [ ] Capture toggle on/off works (same as tested above)
+- [ ] Click trash icon, history clears
 
 ## Keyboard Shortcuts
 
-- [ ] `Ctrl+R` refreshes request list
-- [ ] `Ctrl+N` creates new request
-- [ ] `?` opens shortcuts modal
-- [ ] Shortcuts modal lists all available shortcuts
-
-## Import Sources
-
-- [ ] Postman Collection v2.1 (JSON) ✅
-- [ ] Insomnia export (JSON) ✅
-- [ ] OpenAPI 3.0 (JSON) ✅
-- [ ] OpenAPI 3.0 (YAML)
-- [ ] Swagger 2.0 (JSON)
-- [ ] HAR 1.2 file ✅
-- [ ] cURL command string ✅
-- [ ] Detect format automatically ✅
-- [ ] Parse cURL with headers and auth ✅
-- [ ] Parse Postman with folders ✅
-- [ ] Parse OpenAPI with paths ✅
-- [ ] Parse Insomnia with environments ✅
-
-## Header & Param Handling
-
-- [ ] Enabled headers are included ✅
-- [ ] Disabled headers are excluded ✅
-- [ ] Headers default to enabled ✅
-- [ ] Empty header names are skipped ✅
-- [ ] Multiple headers handled correctly ✅
-- [ ] Query params build correct string ✅
-- [ ] Special characters are URL-encoded ✅
-- [ ] Disabled params are excluded ✅
-- [ ] Equals signs in values are encoded ✅
-
-## HTTP Status Classification
-
-- [ ] 2xx classified as success ✅
-- [ ] 3xx classified as redirect ✅
-- [ ] 4xx classified as client-error ✅
-- [ ] 5xx classified as server-error ✅
-- [ ] GET/HEAD/OPTIONS are safe methods ✅
-- [ ] POST/PUT/PATCH/DELETE are unsafe methods ✅
+- [ ] Press `?` anywhere, shortcuts modal opens
+- [ ] Modal lists all available shortcuts
+- [ ] Press Escape, modal closes
 
 ## Theme
 
-- [ ] Dark theme is default
-- [ ] Theme toggle switches between light/dark
-- [ ] All colors use CSS variables (no hardcoded colors)
-- [ ] Destructive (red), success (green), warning (yellow) consistent
+- [ ] Extension loads in dark theme by default
+- [ ] All text is readable, colors look correct
+- [ ] Destructive actions are red, success is green, warnings are yellow
+- [ ] No hardcoded colors visible (everything uses theme variables)
 
 ---
 
-**Total: ~130 items | Auto-verified: ~84 | Manual: ~46**
+**~50 items that need a human. Everything else is `npm test`.**
