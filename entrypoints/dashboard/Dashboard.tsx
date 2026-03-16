@@ -567,10 +567,28 @@ export default function Dashboard() {
 
         {/* Footer */}
         {!sidebarCollapsed && (
-          <div className="p-4 border-t border-border">
+          <div className="p-4 border-t border-border flex items-center justify-between">
             <div className="text-xs text-muted-foreground">
               {state.requests.length} requests captured
             </div>
+            <button
+              onClick={() => setView("settings")}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              title="Help & Settings"
+            >
+              ?
+            </button>
+          </div>
+        )}
+        {sidebarCollapsed && (
+          <div className="p-2 border-t border-border flex justify-center">
+            <button
+              onClick={() => setView("settings")}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              title="Help & Settings"
+            >
+              ?
+            </button>
           </div>
         )}
       </aside>
