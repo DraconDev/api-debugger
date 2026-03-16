@@ -6,10 +6,25 @@
  * Demonstrates every feature: methods, auth, scripts, environments, folders.
  */
 
-import type { Collection, SavedRequest, Environment } from "@/types";
+import type { Collection, SavedRequest, Environment, RequestRecord } from "@/types";
 
-function id(prefix: string): string {
-  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+const NOW = Date.now();
+
+function stubRequest(url: string, method: string): RequestRecord {
+  return {
+    id: `stub-${method}-${Math.random().toString(36).slice(2, 7)}`,
+    url,
+    method,
+    statusCode: 0,
+    tabId: 0,
+    startTime: NOW,
+    timeStamp: NOW,
+    duration: 0,
+    requestHeaders: [],
+    requestBody: null,
+    requestBodyText: null,
+    responseHeaders: [],
+  };
 }
 
 export function createDemoCollections(): {
