@@ -121,9 +121,9 @@ export async function getProfileData(profileId: string): Promise<ProfileData> {
 
   if (data) return data;
 
-  // Auto-populate default profile with demo data on first access
-  if (profileId === "profile-default") {
-    console.log("[Profiles] Loading demo data into workspace...");
+  // Auto-populate profile with demo data on first access
+  if (profileId === DEMO_PROFILE_ID) {
+    console.log("[Profiles] Loading demo data...");
     const demo = createDemoCollections();
     const demoData: ProfileData = {
       collections: demo.collections,
