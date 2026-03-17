@@ -164,6 +164,7 @@ export async function createProfile(
     name,
     description,
     icon: "📋",
+    isBuiltIn: false,
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };
