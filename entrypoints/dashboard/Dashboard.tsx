@@ -402,6 +402,9 @@ export default function Dashboard() {
         {/* Profile Selector - top */}
         {!sidebarCollapsed && (
           <div className="px-3 pt-3 pb-2 border-b border-border">
+            <label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 block">
+              Profile
+            </label>
             <select
               value={activeProfileId}
               onChange={async (e) => {
