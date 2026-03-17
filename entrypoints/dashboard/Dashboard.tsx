@@ -35,6 +35,9 @@ import {
   getActiveProfileId,
   getProfileData,
   saveProfileData,
+  getProfiles,
+  setActiveProfileId as saveActiveProfileId,
+  type Profile,
 } from "@/lib/profiles";
 
 type ViewType =
