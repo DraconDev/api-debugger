@@ -1301,6 +1301,23 @@ function CollectionsView({
     (r) => r.id === selectedRequestId,
   );
 
+  const getMethodColor = (m: string) => {
+    switch (m) {
+      case "GET":
+        return "text-green-600 dark:text-green-400";
+      case "POST":
+        return "text-blue-600 dark:text-blue-400";
+      case "PUT":
+        return "text-amber-600 dark:text-amber-400";
+      case "PATCH":
+        return "text-purple-600 dark:text-purple-400";
+      case "DELETE":
+        return "text-red-600 dark:text-red-400";
+      default:
+        return "text-muted-foreground";
+    }
+  };
+
   const sendRequest = async (config: SavedRequest["requestConfig"]) => {
     if (!config) {
       throw new Error("No request config");
