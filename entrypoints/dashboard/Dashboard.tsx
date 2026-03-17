@@ -239,10 +239,6 @@ export default function Dashboard() {
     loadData();
   }, []);
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
   const loadData = async () => {
     setState((s) => ({ ...s, isLoading: true }));
     try {
