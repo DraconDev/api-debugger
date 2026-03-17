@@ -13,7 +13,6 @@ declare module "wxt/browser" {
     | "/icon/32.png"
     | "/icon/48.png"
     | "/icon/96.png"
-    | "/popup.html"
   type HtmlPublicPath = Extract<PublicPath, `${string}.html`>
   export interface WxtRuntime {
     getURL(path: PublicPath): string;
