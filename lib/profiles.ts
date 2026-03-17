@@ -219,86 +219,40 @@ export async function updateProfile(
 }
 
 /**
- * Initialize profiles - creates demo profile if it doesn't exist
- * Migrates existing data to the demo profile
+ * Initialize profiles - handles migration of old data.
+ * Profile creation is now handled by getProfiles() automatically.
  */
 export async function initializeProfiles(): Promise<void> {
-  let profiles = await getProfiles();
-  console.log("[Profiles] Current profiles:", profiles.length);
+  // getProfiles() creates default profiles if none exist
+  const profiles = await getProfiles();
+  console.log("[Profiles] Profiles:", profiles.length);
 
-  // Check if demo profile exists
-  if (!profiles.some((p) => p.id === DEMO_PROFILE_ID)) {
-    console.log("[Profiles] Creating default and demo profiles...");
+  // Migrate old flat storage data if it exists
+  const existing = await chrome.storage.sync.get([
+    "apiDebugger_collections",
+    "apiDebugger_savedRequests",
+  ]);
+  const hasOldData = (existing.apiDebugger_collections || []).length > 0;
 
-    // Check if there's existing data to migrate
-    const existing = await chrome.storage.sync.get([
+  if (hasOldData) {
+    console.log("[Profiles] Migrating old data...");
+    await saveProfileData("profile-default", {
+      collections: existing.apiDebugger_collections || [],
+      savedRequests: existing.apiDebugger_savedRequests || [],
+      environments: [],
+    });
+    await setActiveProfileId("profile-default");
+    // Clean up old keys
+    await chrome.storage.sync.remove([
       "apiDebugger_collections",
       "apiDebugger_savedRequests",
-      "apiDebugger_environments",
-      "sync:ai_settings",
     ]);
-
-    const hasExistingData =
-      (existing.apiDebugger_collections || []).length > 0 ||
-      (existing.apiDebugger_savedRequests || []).length > 0;
-
-    // Always create Default (empty) profile
-    const defaultProfile: Profile = {
-      id: "profile-default",
-      name: "Default",
-      description: "Empty workspace for your own work",
-      icon: "📁",
-      isBuiltIn: true,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-    profiles.push(defaultProfile);
-    await saveProfileData(defaultProfile.id, {
-      collections: [],
-      savedRequests: [],
-      environments: [],
-      aiSettings: existing["sync:ai_settings"],
-    });
-
-    // Create Demo profile with pre-loaded data
-    const demo = createDemoCollections();
-    console.log(
-      "[Profiles] Demo data:",
-      demo.collections.length,
-      "collections,",
-      demo.requests.length,
-      "requests",
-    );
-
-    const demoProfile: Profile = {
-      id: DEMO_PROFILE_ID,
-      name: "Demo Examples",
-      description: "21 pre-loaded requests to explore",
-      icon: "🎯",
-      isBuiltIn: true,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-    profiles.push(demoProfile);
-    await saveProfileData(DEMO_PROFILE_ID, {
-      collections: demo.collections,
-      savedRequests: demo.requests,
-      environments: demo.environments,
-    });
-
-    await saveProfiles(profiles);
-    console.log("[Profiles] Saved", profiles.length, "profiles");
-
-    // On first launch: start with Default (empty) profile
-    if (!hasExistingData) {
-      await setActiveProfileId("profile-default");
-      console.log("[Profiles] Set active to profile-default");
-    }
+    return;
   }
 
-  // Ensure there's always an active profile
-  const activeId = await getActiveProfileId();
-  if (!profiles.some((p) => p.id === activeId)) {
+  // Set default profile as active if no active profile set
+  const activeId = await getActiveProfileId().catch(() => "");
+  if (!activeId || !profiles.some((p) => p.id === activeId)) {
     await setActiveProfileId("profile-default");
   }
 }

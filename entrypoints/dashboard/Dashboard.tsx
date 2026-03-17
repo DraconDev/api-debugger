@@ -238,16 +238,11 @@ export default function Dashboard() {
   const loadData = async () => {
     setState((s) => ({ ...s, isLoading: true }));
     try {
-      // Load profiles first - if none exist, initialize them
-      let allProfiles = await getProfiles();
-      if (allProfiles.length === 0) {
-        console.log("[Dashboard] No profiles found, initializing...");
-        await initializeProfiles();
-        allProfiles = await getProfiles();
-        console.log("[Dashboard] After init:", allProfiles.length, "profiles");
-      }
-
+      // Initialize (migrate old data if needed) then get profiles
+      await initializeProfiles();
+      const allProfiles = await getProfiles();
       const activeId = await getActiveProfileId();
+
       setProfiles(allProfiles);
       setActiveProfileIdState(activeId);
 
@@ -256,15 +251,7 @@ export default function Dashboard() {
         chrome.runtime
           .sendMessage({ type: "GET_REQUESTS" })
           .catch(() => ({ requests: [] })),
-        getProfileData(activeId).catch(
-          () =>
-            ({
-              collections: [],
-              savedRequests: [],
-              environments: [],
-              aiSettings: undefined,
-            }) as ProfileData,
-        ),
+        getProfileData(activeId),
       ]);
 
       if (profileData.environments && profileData.environments.length > 0) {
