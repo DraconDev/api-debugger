@@ -102,7 +102,7 @@ export async function saveProfiles(profiles: Profile[]): Promise<void> {
 
 /**
  * Get data for a specific profile.
- * For the demo profile, auto-creates data on first read.
+ * Default profile auto-creates demo data on first access.
  */
 export async function getProfileData(profileId: string): Promise<ProfileData> {
   const key = `apiDebugger_pd_${profileId}`;
@@ -111,9 +111,9 @@ export async function getProfileData(profileId: string): Promise<ProfileData> {
 
   if (data) return data;
 
-  // Auto-initialize demo profile data on first access
-  if (profileId === DEMO_PROFILE_ID) {
-    console.log("[Profiles] Initializing demo data...");
+  // Auto-populate default profile with demo data on first access
+  if (profileId === "profile-default") {
+    console.log("[Profiles] Loading demo data into workspace...");
     const demo = createDemoCollections();
     const demoData: ProfileData = {
       collections: demo.collections,
