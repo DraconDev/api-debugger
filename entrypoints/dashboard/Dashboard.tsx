@@ -425,37 +425,9 @@ export default function Dashboard() {
       <aside
         className={`${sidebarCollapsed ? "w-14" : "w-56"} flex-shrink-0 bg-card border-r border-border flex flex-col transition-all duration-200`}
       >
-        {/* Logo */}
-        <div className="p-3 border-b border-border flex items-center justify-between">
-          <div
-            className={`flex items-center ${sidebarCollapsed ? "justify-center w-full" : "gap-2"}`}
-          >
-            <img
-              src={chrome.runtime.getURL("/icon/32.png")}
-              alt="API Debugger"
-              className="w-8 h-8 rounded-lg cursor-pointer flex-shrink-0"
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            />
-            {!sidebarCollapsed && (
-              <div>
-                <h1 className="font-semibold text-sm">API Debugger</h1>
-                <p className="text-xs text-muted-foreground">v0.1.0</p>
-              </div>
-            )}
-          </div>
-          {!sidebarCollapsed && (
-            <button
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="p-1 hover:bg-accent rounded text-muted-foreground flex-shrink-0"
-            >
-              <ChevronIcon className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-
-        {/* Profile Switcher */}
+        {/* Profile Selector - top */}
         {!sidebarCollapsed && profiles.length > 0 && (
-          <div className="px-3 py-2 border-b border-border">
+          <div className="px-3 pt-3 pb-2 border-b border-border">
             <select
               value={activeProfileId}
               onChange={async (e) => {
@@ -475,6 +447,31 @@ export default function Dashboard() {
             </select>
           </div>
         )}
+
+        {/* Logo */}
+        <div
+          className={`p-3 flex items-center ${sidebarCollapsed ? "justify-center" : "gap-2"}`}
+        >
+          <img
+            src={chrome.runtime.getURL("/icon/32.png")}
+            alt="API Debugger"
+            className="w-8 h-8 rounded-lg cursor-pointer flex-shrink-0"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          />
+          {!sidebarCollapsed && (
+            <div className="flex-1 min-w-0">
+              <h1 className="font-semibold text-sm truncate">API Debugger</h1>
+            </div>
+          )}
+          {!sidebarCollapsed && (
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="p-1 hover:bg-accent rounded text-muted-foreground flex-shrink-0"
+            >
+              <ChevronIcon className="w-4 h-4" />
+            </button>
+          )}
+        </div>
 
         {/* Navigation */}
         <nav className="flex-1 p-2 space-y-0.5 overflow-y-auto">
@@ -570,31 +567,24 @@ export default function Dashboard() {
             collapsed={sidebarCollapsed}
           />
           <NavItem
-            active={view === "docs"}
-            onClick={() => setView("docs")}
-            icon={<DocsIcon />}
-            label="Docs"
+            active={view === "certs"}
+            onClick={() => setView("certs")}
+            icon={<CertIcon />}
+            label="Certs"
             collapsed={sidebarCollapsed}
           />
+          {!sidebarCollapsed && (
+            <div className="pt-2 pb-1">
+              <span className="px-3 text-xs text-muted-foreground">
+                Settings
+              </span>
+            </div>
+          )}
           <NavItem
             active={view === "sync"}
             onClick={() => setView("sync")}
             icon={<SyncIcon />}
             label="Sync"
-            collapsed={sidebarCollapsed}
-          />
-          <NavItem
-            active={view === "diff"}
-            onClick={() => setView("diff")}
-            icon={<DiffIcon />}
-            label="Diff"
-            collapsed={sidebarCollapsed}
-          />
-          <NavItem
-            active={view === "certs"}
-            onClick={() => setView("certs")}
-            icon={<CertIcon />}
-            label="Certs"
             collapsed={sidebarCollapsed}
           />
           <NavItem
