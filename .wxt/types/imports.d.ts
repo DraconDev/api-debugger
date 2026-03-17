@@ -12,7 +12,6 @@ declare global {
   const EnvironmentManager: typeof import('/home/dracon/Dev/extensions/api-debugger/components/EnvironmentManager').EnvironmentManager
   const ExportPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ExportPanel').ExportPanel
   const GitHubSyncPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/GitHubSyncPanel').GitHubSyncPanel
-  const ImportExport: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ImportExport').ImportExport
   const ImportModal: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ImportModal').ImportModal
   const InvalidMatchPattern: typeof import('wxt/utils/match-patterns').InvalidMatchPattern
   const MatchPattern: typeof import('wxt/utils/match-patterns').MatchPattern
@@ -21,18 +20,13 @@ declare global {
   const ReplayPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ReplayPanel').ReplayPanel
   const RequestBody: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestBody').RequestBody
   const RequestBuilderView: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestBuilderView').RequestBuilderView
-  const RequestDetail: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestDetail').RequestDetail
   const RequestHeaders: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestHeaders').RequestHeaders
-  const RequestList: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestList').RequestList
   const RequestTemplates: typeof import('/home/dracon/Dev/extensions/api-debugger/components/RequestTemplates').RequestTemplates
   const RuntimeVariablesProvider: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useRuntimeVariables').RuntimeVariablesProvider
-  const SAMPLE_COLLECTIONS: typeof import('/home/dracon/Dev/extensions/api-debugger/components/WelcomeScreen').SAMPLE_COLLECTIONS
   const SaveToCollection: typeof import('/home/dracon/Dev/extensions/api-debugger/components/SaveToCollection').SaveToCollection
   const SettingsPanel: typeof import('/home/dracon/Dev/extensions/api-debugger/components/SettingsPanel').SettingsPanel
   const ShortcutsModal: typeof import('/home/dracon/Dev/extensions/api-debugger/components/ShortcutsModal').ShortcutsModal
-  const TestMode: typeof import('/home/dracon/Dev/extensions/api-debugger/components/TestMode').TestMode
   const ThemeToggle: typeof import('/home/dracon/Dev/extensions/api-debugger/hooks/useTheme').ThemeToggle
-  const WelcomeScreen: typeof import('/home/dracon/Dev/extensions/api-debugger/components/WelcomeScreen').WelcomeScreen
   const WorkflowSimulator: typeof import('/home/dracon/Dev/extensions/api-debugger/components/WorkflowSimulator').WorkflowSimulator
   const browser: typeof import('wxt/browser').browser
   const createAIClient: typeof import('/home/dracon/Dev/extensions/api-debugger/utils/ai-client').createAIClient
