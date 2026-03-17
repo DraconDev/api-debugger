@@ -6,6 +6,7 @@
  */
 
 import type { Collection, SavedRequest, Environment } from "@/types";
+import { createDemoCollections } from "@/lib/demoProfile";
 
 export interface Profile {
   id: string;
@@ -191,7 +192,6 @@ export async function initializeProfiles(): Promise<void> {
     });
 
     // Create Demo profile with pre-loaded data
-    const { createDemoCollections } = await import("@/lib/demoProfile");
     const demo = createDemoCollections();
 
     const demoProfile: Profile = {
