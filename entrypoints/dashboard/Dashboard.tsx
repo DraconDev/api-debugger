@@ -415,7 +415,7 @@ export default function Dashboard() {
     <div className="flex h-screen bg-background text-foreground dark">
       {/* Sidebar */}
       <aside
-        className={`${sidebarCollapsed ? "w-14" : "w-56"} flex-shrink-0 bg-card border-r border-border flex flex-col transition-all duration-200 overflow-hidden`}
+        className={`${sidebarCollapsed ? "w-14" : "w-56"} flex-shrink-0 bg-card border-r border-border flex flex-col transition-all duration-200`}
       >
         {/* Logo */}
         <div className="p-3 border-b border-border flex items-center justify-between">
