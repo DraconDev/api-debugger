@@ -290,7 +290,7 @@ export async function duplicateProfile(
     id: `profile-${Date.now()}`,
     name: newName || `${source?.name || "Profile"} (copy)`,
     description: source?.description,
-    icon: source?.icon || "📁",
+    icon: source?.icon || "📋",
     isBuiltIn: false,
     createdAt: Date.now(),
     updatedAt: Date.now(),
