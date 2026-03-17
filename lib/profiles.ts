@@ -212,16 +212,16 @@ export async function initializeProfiles(): Promise<void> {
 
     await saveProfiles(profiles);
 
-    // On first launch: if no existing data, start with Demo; otherwise keep migrated data
+    // On first launch: start with Default (empty) profile
     if (!hasExistingData) {
-      await setActiveProfileId(DEMO_PROFILE_ID);
+      await setActiveProfileId("profile-default");
     }
   }
 
   // Ensure there's always an active profile
   const activeId = await getActiveProfileId();
   if (!profiles.some((p) => p.id === activeId)) {
-    await setActiveProfileId(DEMO_PROFILE_ID);
+    await setActiveProfileId("profile-default");
   }
 }
 
