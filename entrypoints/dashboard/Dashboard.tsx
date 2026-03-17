@@ -1288,12 +1288,18 @@ function CollectionsView({
   onSelectCollection: (id: string | null) => void;
 }) {
   const [isRunning, setIsRunning] = useState(false);
+  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(
+    null,
+  );
   const selectedCollection = collections.find(
     (c) => c.id === selectedCollectionId,
   );
   const collectionRequests = selectedCollectionId
     ? savedRequests.filter((r) => r.collectionId === selectedCollectionId)
     : [];
+  const selectedRequest = collectionRequests.find(
+    (r) => r.id === selectedRequestId,
+  );
 
   const sendRequest = async (config: SavedRequest["requestConfig"]) => {
     if (!config) {
