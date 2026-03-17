@@ -1292,11 +1292,13 @@ function CollectionsView({
   savedRequests,
   selectedCollectionId,
   onSelectCollection,
+  onOpenInBuilder,
 }: {
   collections: Collection[];
   savedRequests: SavedRequest[];
   selectedCollectionId: string | null;
   onSelectCollection: (id: string | null) => void;
+  onOpenInBuilder: (config: RequestConfig) => void;
 }) {
   const [isRunning, setIsRunning] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(
