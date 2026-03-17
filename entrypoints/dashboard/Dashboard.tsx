@@ -80,6 +80,8 @@ export default function Dashboard() {
   });
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showImport, setShowImport] = useState(false);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [activeProfileId, setActiveProfileIdState] = useState<string>("");
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [state, setState] = useState<DashboardState>({
     requests: [],
