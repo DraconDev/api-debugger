@@ -71,17 +71,17 @@ export function UrlEditor({
   const methodColor = (m: string) => {
     switch (m) {
       case "GET":
-        return "bg-success/15 text-success border border-success/30";
+        return "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20";
       case "POST":
-        return "bg-primary/15 text-primary border border-primary/30";
+        return "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20";
       case "PUT":
-        return "bg-warning/15 text-warning border border-warning/30";
+        return "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20";
       case "PATCH":
-        return "bg-accent text-accent-foreground border border-accent";
+        return "bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20";
       case "DELETE":
-        return "bg-destructive/15 text-destructive border border-destructive/30";
+        return "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20";
       default:
-        return "bg-muted text-muted-foreground border border-border";
+        return "bg-muted text-muted-foreground border-border";
     }
   };
 
@@ -89,17 +89,32 @@ export function UrlEditor({
     <div className="space-y-2">
       <div className="flex gap-2">
         {/* Method Selector */}
-        <select
-          value={method}
-          onChange={(e) => onMethodChange(e.target.value)}
-          className={`px-3 py-2 text-xs font-mono font-semibold rounded-md cursor-pointer ${methodColor(method)}`}
-        >
-          {METHODS.map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            value={method}
+            onChange={(e) => onMethodChange(e.target.value)}
+            className={`appearance-none pl-3 pr-7 py-2 text-xs font-mono font-bold rounded-md cursor-pointer border ${methodColor(method)} focus:outline-none focus:ring-2 focus:ring-ring min-w-[80px]`}
+          >
+            {METHODS.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
+          <svg
+            className="w-3 h-3 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </div>
 
         {/* URL Input */}
         <div className="flex-1 relative">
