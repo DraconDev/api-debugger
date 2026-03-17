@@ -822,7 +822,6 @@ export default function Dashboard() {
                 selectedRequestId: null,
               }))
             }
-            onLoadDemo={loadDemoProfile}
           />
         )}
 
