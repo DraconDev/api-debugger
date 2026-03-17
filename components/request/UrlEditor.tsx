@@ -92,7 +92,7 @@ export function UrlEditor({
         <select
           value={method}
           onChange={(e) => onMethodChange(e.target.value)}
-          className={`px-3 py-2 text-xs font-mono font-semibold text-white rounded-md cursor-pointer ${methodColor(method)}`}
+          className={`px-3 py-2 text-xs font-mono font-semibold rounded-md cursor-pointer ${methodColor(method)}`}
         >
           {METHODS.map((m) => (
             <option key={m} value={m}>
