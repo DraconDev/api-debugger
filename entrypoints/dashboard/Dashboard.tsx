@@ -252,8 +252,14 @@ export default function Dashboard() {
 
       // Load history and profile data in parallel
       const [historyRes, profileData] = await Promise.all([
-        chrome.runtime.sendMessage({ type: "GET_REQUESTS" }).catch(() => ({ requests: [] })),
-        getProfileData(activeId).catch(() => ({ collections: [], savedRequests: [], environments: [] })),
+        chrome.runtime
+          .sendMessage({ type: "GET_REQUESTS" })
+          .catch(() => ({ requests: [] })),
+        getProfileData(activeId).catch(() => ({
+          collections: [],
+          savedRequests: [],
+          environments: [],
+        })),
       ]);
 
       if (profileData.environments && profileData.environments.length > 0) {
@@ -288,27 +294,6 @@ export default function Dashboard() {
       }));
     } catch (err) {
       console.error("[Dashboard] Failed to load data:", err);
-      setState((s) => ({ ...s, isLoading: false }));
-    }
-  };
-
-      // Auto-select first collection and first request so the builder isn't empty
-      const firstCol = collections[0] || null;
-      const firstReq = firstCol
-        ? savedRequests.find((r) => r.collectionId === firstCol.id) || null
-        : null;
-
-      setState((s) => ({
-        ...s,
-        requests: historyRes.requests || [],
-        collections,
-        savedRequests,
-        selectedCollectionId: firstCol?.id || null,
-        selectedRequestId: firstReq?.id || null,
-        isLoading: false,
-      }));
-    } catch (err) {
-      console.error("Failed to load data:", err);
       setState((s) => ({ ...s, isLoading: false }));
     }
   };
