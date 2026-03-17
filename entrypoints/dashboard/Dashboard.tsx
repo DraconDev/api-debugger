@@ -1409,11 +1409,11 @@ function CollectionsView({
   return (
     <div className="flex-1 flex">
       {/* Collections List */}
-      <div className="w-64 border-r border-border">
+      <div className="w-48 border-r border-border flex flex-col">
         <div className="p-3 border-b border-border">
           <h2 className="text-sm font-medium">Collections</h2>
         </div>
-        <div className="p-2 space-y-1">
+        <div className="p-2 space-y-1 overflow-y-auto flex-1">
           {collections.length === 0 ? (
             <div className="p-4 text-center space-y-2">
               <p className="text-sm text-muted-foreground">
