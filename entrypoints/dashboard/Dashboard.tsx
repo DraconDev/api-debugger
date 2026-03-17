@@ -1530,18 +1530,18 @@ function CollectionsView({
             </div>
           </div>
         )}
-      </div>
 
-      {/* Request Detail Panel */}
-      {selectedRequest && (
-        <div className="w-80 border-l border-border overflow-y-auto">
-          <SavedRequestDetail
-            request={selectedRequest}
-            onClose={() => setSelectedRequestId(null)}
-            onOpenInBuilder={onOpenInBuilder}
-          />
-        </div>
-      )}
+        {/* Detail Panel */}
+        {selectedRequest && (
+          <div className="flex-1 overflow-y-auto p-4">
+            <SavedRequestDetail
+              request={selectedRequest}
+              onClose={() => setSelectedRequestId(null)}
+              onOpenInBuilder={onOpenInBuilder}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
