@@ -439,6 +439,13 @@ export default function Dashboard() {
         {/* Navigation */}
         <nav className="flex-1 p-2 space-y-1">
           <NavItem
+            active={view === "overview"}
+            onClick={() => setView("overview")}
+            icon={<HomeIcon />}
+            label="Overview"
+            collapsed={sidebarCollapsed}
+          />
+          <NavItem
             active={view === "builder"}
             onClick={() => setView("builder")}
             icon={<PlusIcon />}
