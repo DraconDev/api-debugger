@@ -7,9 +7,9 @@ interface DiagnosticsPanelProps {
 }
 
 interface AISettings {
-  provider: AIProvider;
   apiKey: string;
   model: string;
+  fallbacks: string[];
 }
 
 const AI_STORAGE_KEY = "sync:ai_settings";
