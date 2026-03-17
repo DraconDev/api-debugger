@@ -1570,11 +1570,23 @@ function SavedRequestDetail({
           className="p-1 hover:bg-accent rounded text-muted-foreground"
           title="Back to list"
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
         </button>
-        <h3 className="text-base font-medium flex-1 truncate">{request.name}</h3>
+        <h3 className="text-base font-medium flex-1 truncate">
+          {request.name}
+        </h3>
         <button
           onClick={() => onOpenInBuilder(config)}
           className="px-3 py-1.5 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
@@ -1587,121 +1599,169 @@ function SavedRequestDetail({
       <div className="flex-1 flex gap-4 overflow-hidden pt-4">
         {/* Left: Request details */}
         <div className="flex-1 overflow-y-auto space-y-4">
-        {/* Method + URL */}
-        <div>
-          <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
-            Request
-          </label>
-          <div className="mt-1 flex items-center gap-2">
-            <span className="px-2 py-0.5 text-xs font-mono font-bold rounded bg-muted">
-              {config.method}
-            </span>
-            <span className="text-xs font-mono truncate flex-1">
-              {config.url}
-            </span>
+          {/* Method + URL */}
+          <div>
+            <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+              Request
+            </label>
+            <div className="mt-1 flex items-center gap-2">
+              <span className="px-2 py-0.5 text-xs font-mono font-bold rounded bg-muted">
+                {config.method}
+              </span>
+              <span className="text-xs font-mono truncate flex-1">
+                {config.url}
+              </span>
+            </div>
           </div>
+
+          {/* Auth */}
+          {config.auth.type !== "none" && (
+            <div>
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                Auth
+              </label>
+              <div className="mt-1 text-xs">
+                <span className="px-2 py-0.5 rounded bg-muted">
+                  {config.auth.type}
+                </span>
+                {config.auth.type === "bearer" && (
+                  <span className="ml-2 font-mono text-muted-foreground">
+                    {config.auth.bearer?.token?.slice(0, 20)}...
+                  </span>
+                )}
+                {config.auth.type === "basic" && (
+                  <span className="ml-2 font-mono text-muted-foreground">
+                    {config.auth.basic?.username}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Headers */}
+          {config.headers.length > 0 && (
+            <div>
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                Headers (
+                {config.headers.filter((h) => h.enabled !== false).length})
+              </label>
+              <div className="mt-1 space-y-1">
+                {config.headers
+                  .filter((h) => h.enabled !== false)
+                  .map((h, i) => (
+                    <div key={i} className="text-xs font-mono">
+                      <span className="text-primary">{h.name}</span>
+                      <span className="text-muted-foreground">: </span>
+                      <span className="text-muted-foreground truncate">
+                        {h.value}
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {/* Params */}
+          {config.params.length > 0 && (
+            <div>
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                Params (
+                {config.params.filter((p) => p.enabled !== false).length})
+              </label>
+              <div className="mt-1 space-y-1">
+                {config.params
+                  .filter((p) => p.enabled !== false)
+                  .map((p, i) => (
+                    <div key={i} className="text-xs font-mono">
+                      <span className="text-primary">{p.name}</span>
+                      <span className="text-muted-foreground">=</span>
+                      <span className="text-muted-foreground">{p.value}</span>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {/* Body */}
+          {config.bodyType !== "none" && (
+            <div>
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                Body ({config.bodyType})
+              </label>
+              <pre className="mt-1 text-xs font-mono bg-muted p-2 rounded overflow-x-auto max-h-40">
+                {config.body.raw || config.body.json || "(empty)"}
+              </pre>
+            </div>
+          )}
+
+          {/* Scripts */}
+          {config.preRequestScript && (
+            <div>
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                Pre-request Script
+              </label>
+              <pre className="mt-1 text-xs font-mono bg-muted p-2 rounded overflow-x-auto max-h-32">
+                {config.preRequestScript}
+              </pre>
+            </div>
+          )}
+          {config.postResponseScript && (
+            <div>
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                Post-response Script
+              </label>
+              <pre className="mt-1 text-xs font-mono bg-muted p-2 rounded overflow-x-auto max-h-32">
+                {config.postResponseScript}
+              </pre>
+            </div>
+          )}
         </div>
 
-        {/* Auth */}
-        {config.auth.type !== "none" && (
+        {/* Right: Quick info */}
+        <div className="w-48 space-y-3 overflow-y-auto border-l border-border pl-4">
           <div>
             <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              Auth
+              Method
             </label>
-            <div className="mt-1 text-xs">
-              <span className="px-2 py-0.5 rounded bg-muted">
-                {config.auth.type}
-              </span>
-              {config.auth.type === "bearer" && (
-                <span className="ml-2 font-mono text-muted-foreground">
-                  {config.auth.bearer?.token?.slice(0, 20)}...
-                </span>
-              )}
-              {config.auth.type === "basic" && (
-                <span className="ml-2 font-mono text-muted-foreground">
-                  {config.auth.basic?.username}
-                </span>
-              )}
+            <div className="mt-1 text-sm font-mono font-bold">
+              {config.method}
             </div>
           </div>
-        )}
-
-        {/* Headers */}
-        {config.headers.length > 0 && (
+          {config.auth.type !== "none" && (
+            <div>
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                Auth
+              </label>
+              <div className="mt-1 text-xs">{config.auth.type}</div>
+            </div>
+          )}
           <div>
             <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              Headers (
-              {config.headers.filter((h) => h.enabled !== false).length})
+              Headers
             </label>
-            <div className="mt-1 space-y-1">
-              {config.headers
-                .filter((h) => h.enabled !== false)
-                .map((h, i) => (
-                  <div key={i} className="text-xs font-mono">
-                    <span className="text-primary">{h.name}</span>
-                    <span className="text-muted-foreground">: </span>
-                    <span className="text-muted-foreground truncate">
-                      {h.value}
-                    </span>
-                  </div>
-                ))}
+            <div className="mt-1 text-sm font-mono">
+              {config.headers.filter((h) => h.enabled !== false).length}
             </div>
           </div>
-        )}
-
-        {/* Params */}
-        {config.params.length > 0 && (
-          <div>
-            <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              Params ({config.params.filter((p) => p.enabled !== false).length})
-            </label>
-            <div className="mt-1 space-y-1">
-              {config.params
-                .filter((p) => p.enabled !== false)
-                .map((p, i) => (
-                  <div key={i} className="text-xs font-mono">
-                    <span className="text-primary">{p.name}</span>
-                    <span className="text-muted-foreground">=</span>
-                    <span className="text-muted-foreground">{p.value}</span>
-                  </div>
-                ))}
+          {config.params.length > 0 && (
+            <div>
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                Params
+              </label>
+              <div className="mt-1 text-sm font-mono">
+                {config.params.filter((p) => p.enabled !== false).length}
+              </div>
             </div>
-          </div>
-        )}
-
-        {/* Body */}
-        {config.bodyType !== "none" && (
-          <div>
-            <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              Body ({config.bodyType})
-            </label>
-            <pre className="mt-1 text-xs font-mono bg-muted p-2 rounded overflow-x-auto max-h-40">
-              {config.body.raw || config.body.json || "(empty)"}
-            </pre>
-          </div>
-        )}
-
-        {/* Scripts */}
-        {config.preRequestScript && (
-          <div>
-            <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              Pre-request Script
-            </label>
-            <pre className="mt-1 text-xs font-mono bg-muted p-2 rounded overflow-x-auto max-h-32">
-              {config.preRequestScript}
-            </pre>
-          </div>
-        )}
-        {config.postResponseScript && (
-          <div>
-            <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              Post-response Script
-            </label>
-            <pre className="mt-1 text-xs font-mono bg-muted p-2 rounded overflow-x-auto max-h-32">
-              {config.postResponseScript}
-            </pre>
-          </div>
-        )}
+          )}
+          {config.bodyType !== "none" && (
+            <div>
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                Body
+              </label>
+              <div className="mt-1 text-xs">{config.bodyType}</div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
