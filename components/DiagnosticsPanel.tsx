@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { RequestRecord, Diagnostic } from "@/types";
-import { createAIClient, type AIProvider } from "@/utils/ai-client";
+import { createAI } from "@/lib/ai-client";
 
 interface DiagnosticsPanelProps {
   request: RequestRecord;
