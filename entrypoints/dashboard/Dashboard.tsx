@@ -27,7 +27,6 @@ import { CertificateViewer } from "@/components/CertificateViewer";
 import { ImportModal } from "@/components/ImportModal";
 import { ShortcutsModal } from "@/components/ShortcutsModal";
 import { type ImportResult } from "@/lib/importers";
-import { createDemoCollections } from "@/lib/demoProfile";
 import { ProfileManager } from "@/components/ProfileManager";
 import {
   initializeProfiles,
@@ -285,31 +284,6 @@ export default function Dashboard() {
       console.error("Failed to load data:", err);
       setState((s) => ({ ...s, isLoading: false }));
     }
-  };
-
-  const loadDemoProfile = async () => {
-    const demo = createDemoCollections();
-    const activeId = await getActiveProfileId();
-    await saveProfileData(activeId, {
-      collections: demo.collections,
-      savedRequests: demo.requests,
-      environments: demo.environments,
-    });
-
-    // Auto-select first collection and first request
-    const firstCol = demo.collections[0];
-    const firstReq = demo.requests.find((r) => r.collectionId === firstCol?.id);
-
-    setState((s) => ({
-      ...s,
-      collections: demo.collections,
-      savedRequests: demo.requests,
-      selectedCollectionId: firstCol?.id || null,
-      selectedRequestId: firstReq?.id || null,
-    }));
-
-    // Switch to collections view so user sees the demo requests
-    setView("collections");
   };
 
   const filteredRequests = useMemo(() => {
