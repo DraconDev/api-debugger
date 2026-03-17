@@ -163,8 +163,7 @@ export async function createProfile(
     id: `profile-${Date.now()}`,
     name,
     description,
-    icon: "📁",
-    isBuiltIn: false,
+    icon: "📋",
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };
