@@ -240,16 +240,29 @@ export default function Dashboard() {
       // Initialize profiles (non-fatal if it fails)
       try {
         await initializeProfiles();
+        console.log("[Dashboard] Profiles initialized");
       } catch (initErr) {
-        console.error("Profile init failed:", initErr);
+        console.error("[Dashboard] Profile init failed:", initErr);
       }
 
       const [historyRes, activeId, allProfiles] = await Promise.all([
         chrome.runtime.sendMessage({ type: "GET_REQUESTS" }),
-        getActiveProfileId().catch(() => "profile-default"),
-        getProfiles().catch(() => []),
+        getActiveProfileId().catch((e) => {
+          console.error("[Dashboard] getActiveProfileId failed:", e);
+          return "profile-default";
+        }),
+        getProfiles().catch((e) => {
+          console.error("[Dashboard] getProfiles failed:", e);
+          return [];
+        }),
       ]);
 
+      console.log(
+        "[Dashboard] Profiles loaded:",
+        allProfiles.length,
+        "Active:",
+        activeId,
+      );
       setProfiles(allProfiles);
       setActiveProfileIdState(activeId);
 
