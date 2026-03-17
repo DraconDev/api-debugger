@@ -26,6 +26,8 @@ import { SettingsPanel } from "@/components/SettingsPanel";
 import { CertificateViewer } from "@/components/CertificateViewer";
 import { ImportModal } from "@/components/ImportModal";
 import { ShortcutsModal } from "@/components/ShortcutsModal";
+import { type ImportResult } from "@/lib/importers";
+import { createDemoCollections } from "@/lib/demoProfile";
 import { ProfileManager } from "@/components/ProfileManager";
 import {
   initializeProfiles,
@@ -53,8 +55,7 @@ type ViewType =
   | "sync"
   | "diff"
   | "certs"
-  | "settings"
-  | "test";
+  | "settings";
 
 interface DashboardState {
   requests: RequestRecord[];
