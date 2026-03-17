@@ -4,6 +4,7 @@ import type {
   Collection,
   SavedRequest,
   Environment,
+  RequestConfig,
 } from "@/types";
 import { RequestBuilderView } from "@/components/RequestBuilderView";
 import { EnvironmentManager } from "@/components/EnvironmentManager";
