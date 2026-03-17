@@ -511,19 +511,6 @@ export default function Dashboard() {
             label="GraphQL"
             collapsed={sidebarCollapsed}
           />
-          {!sidebarCollapsed && (
-            <div className="px-3 pt-3 pb-2 border-b border-border">
-              <ProfileSelector
-                profiles={profiles}
-                activeProfileId={activeProfileId}
-                onSelect={async (id) => {
-                  await saveActiveProfileId(id);
-                  setActiveProfileIdState(id);
-                  window.location.reload();
-                }}
-              />
-            </div>
-          )}
           <NavItem
             active={view === "history"}
             onClick={() => setView("history")}
