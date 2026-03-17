@@ -1536,6 +1536,7 @@ function CollectionsView({
           <SavedRequestDetail
             request={selectedRequest}
             onClose={() => setSelectedRequestId(null)}
+            onOpenInBuilder={onOpenInBuilder}
           />
         </div>
       )}
