@@ -470,7 +470,7 @@ export default function Dashboard() {
         )}
 
         {/* Navigation */}
-        <nav className="flex-1 p-2 space-y-1">
+        <nav className="flex-1 p-2 space-y-0.5 overflow-y-auto">
           <NavItem
             active={view === "overview"}
             onClick={() => setView("overview")}
