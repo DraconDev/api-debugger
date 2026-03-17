@@ -285,7 +285,9 @@ export default function Dashboard() {
       // Auto-select first collection and first request so the builder isn't empty
       const firstCol = collections[0] || null;
       const firstReq = firstCol
-        ? savedRequests.find((r) => r.collectionId === firstCol.id) || null
+        ? savedRequests.find(
+            (r: SavedRequest) => r.collectionId === firstCol.id,
+          ) || null
         : null;
 
       setState((s) => ({
