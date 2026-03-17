@@ -1310,30 +1310,18 @@ function CollectionsView({
     <div className="flex-1 flex">
       {/* Collections List */}
       <div className="w-64 border-r border-border">
-        <div className="p-3 border-b border-border flex items-center justify-between">
+        <div className="p-3 border-b border-border">
           <h2 className="text-sm font-medium">Collections</h2>
-          <button
-            onClick={onLoadDemo}
-            className="text-xs text-primary hover:text-primary/80 transition-colors"
-            title="Load demo examples"
-          >
-            + Demo
-          </button>
         </div>
         <div className="p-2 space-y-1">
           {collections.length === 0 ? (
-            <div className="p-4 text-center space-y-3">
+            <div className="p-4 text-center space-y-2">
               <p className="text-sm text-muted-foreground">
                 No collections yet
               </p>
-              <button
-                onClick={onLoadDemo}
-                className="w-full px-3 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-              >
-                Load Demo Examples
-              </button>
               <p className="text-xs text-muted-foreground">
-                21 requests across 4 collections with auth, scripts, and more
+                Create a new request or switch to the Demo profile to explore
+                examples
               </p>
             </div>
           ) : (
