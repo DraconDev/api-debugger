@@ -1452,8 +1452,10 @@ function CollectionsView({
         </div>
       </div>
 
-      {/* Collection Content */}
-      <div className="flex-1">
+      {/* Collection Content + Detail */}
+      <div className="flex-1 flex">
+        {/* Request List */}
+        <div className={`${selectedRequest ? "w-72 border-r border-border" : "flex-1"} overflow-y-auto`}>
         {selectedCollection ? (
           isRunning ? (
             <CollectionRunner
