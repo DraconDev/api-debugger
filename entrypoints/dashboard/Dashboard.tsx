@@ -237,36 +237,24 @@ export default function Dashboard() {
   const loadData = async () => {
     setState((s) => ({ ...s, isLoading: true }));
     try {
-      // Initialize profiles (non-fatal if it fails)
-      try {
+      // Load profiles first - if none exist, initialize them
+      let allProfiles = await getProfiles();
+      if (allProfiles.length === 0) {
+        console.log("[Dashboard] No profiles found, initializing...");
         await initializeProfiles();
-        console.log("[Dashboard] Profiles initialized");
-      } catch (initErr) {
-        console.error("[Dashboard] Profile init failed:", initErr);
+        allProfiles = await getProfiles();
+        console.log("[Dashboard] After init:", allProfiles.length, "profiles");
       }
 
-      const [historyRes, activeId, allProfiles] = await Promise.all([
-        chrome.runtime.sendMessage({ type: "GET_REQUESTS" }),
-        getActiveProfileId().catch((e) => {
-          console.error("[Dashboard] getActiveProfileId failed:", e);
-          return "profile-default";
-        }),
-        getProfiles().catch((e) => {
-          console.error("[Dashboard] getProfiles failed:", e);
-          return [];
-        }),
-      ]);
-
-      console.log(
-        "[Dashboard] Profiles loaded:",
-        allProfiles.length,
-        "Active:",
-        activeId,
-      );
+      const activeId = await getActiveProfileId();
       setProfiles(allProfiles);
       setActiveProfileIdState(activeId);
 
-      const profileData = await getProfileData(activeId);
+      // Load history and profile data in parallel
+      const [historyRes, profileData] = await Promise.all([
+        chrome.runtime.sendMessage({ type: "GET_REQUESTS" }).catch(() => ({ requests: [] })),
+        getProfileData(activeId).catch(() => ({ collections: [], savedRequests: [], environments: [] })),
+      ]);
 
       if (profileData.environments && profileData.environments.length > 0) {
         await chrome.storage.sync.set({
@@ -282,6 +270,27 @@ export default function Dashboard() {
 
       const collections = profileData.collections || [];
       const savedRequests = profileData.savedRequests || [];
+
+      // Auto-select first collection and first request so the builder isn't empty
+      const firstCol = collections[0] || null;
+      const firstReq = firstCol
+        ? savedRequests.find((r) => r.collectionId === firstCol.id) || null
+        : null;
+
+      setState((s) => ({
+        ...s,
+        requests: historyRes.requests || [],
+        collections,
+        savedRequests,
+        selectedCollectionId: firstCol?.id || null,
+        selectedRequestId: firstReq?.id || null,
+        isLoading: false,
+      }));
+    } catch (err) {
+      console.error("[Dashboard] Failed to load data:", err);
+      setState((s) => ({ ...s, isLoading: false }));
+    }
+  };
 
       // Auto-select first collection and first request so the builder isn't empty
       const firstCol = collections[0] || null;
