@@ -830,8 +830,8 @@ describe("Demo Profile Validation", () => {
     expect(demo.collections).toHaveLength(4);
   });
 
-  it("should have 21 requests", () => {
-    expect(demo.requests).toHaveLength(21);
+  it("should have 26 requests", () => {
+    expect(demo.requests).toHaveLength(26);
   });
 
   it("should have 3 environments", () => {
