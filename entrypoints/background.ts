@@ -1,6 +1,11 @@
 export default defineBackground(() => {
   console.log("[API Debugger] Background service worker started");
 
+  // Open dashboard when clicking extension icon (no popup)
+  chrome.action.onClicked.addListener(() => {
+    chrome.tabs.create({ url: chrome.runtime.getURL("/dashboard.html") });
+  });
+
   const MAX_HISTORY = 200;
   const textDecoder = new TextDecoder("utf-8");
 

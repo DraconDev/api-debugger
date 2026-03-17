@@ -2,7 +2,7 @@
   "name": "@dracon/api-debugger",
   "description": "API Debugger - Browser-first API debugging tool",
   "private": true,
-  "version": "0.1.530",
+  "version": "0.1.531",
   "type": "module",
   "scripts": {
     "dev": "wxt",
