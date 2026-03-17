@@ -400,7 +400,7 @@ export default function Dashboard() {
         className={`${sidebarCollapsed ? "w-14" : "w-56"} flex-shrink-0 bg-card border-r border-border flex flex-col transition-all duration-200`}
       >
         {/* Profile Selector - top */}
-        {!sidebarCollapsed && profiles.length > 0 && (
+        {!sidebarCollapsed && (
           <div className="px-3 pt-3 pb-2 border-b border-border">
             <select
               value={activeProfileId}
@@ -413,6 +413,7 @@ export default function Dashboard() {
               className="w-full px-2 py-1.5 text-xs bg-input border border-border rounded-md cursor-pointer font-medium"
               title="Switch profile"
             >
+              {profiles.length === 0 && <option value="">Loading...</option>}
               {profiles.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.icon} {p.name}
