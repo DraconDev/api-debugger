@@ -255,11 +255,15 @@ export default function Dashboard() {
         chrome.runtime
           .sendMessage({ type: "GET_REQUESTS" })
           .catch(() => ({ requests: [] })),
-        getProfileData(activeId).catch(() => ({
-          collections: [],
-          savedRequests: [],
-          environments: [],
-        })),
+        getProfileData(activeId).catch(
+          () =>
+            ({
+              collections: [],
+              savedRequests: [],
+              environments: [],
+              aiSettings: undefined,
+            }) as ProfileData,
+        ),
       ]);
 
       if (profileData.environments && profileData.environments.length > 0) {
