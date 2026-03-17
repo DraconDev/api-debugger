@@ -101,10 +101,6 @@ export default function Dashboard() {
     onSendRequest: () => {},
   });
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
   const handleImport = useCallback(
     async (result: ImportResult) => {
       const activeId = await getActiveProfileId();
