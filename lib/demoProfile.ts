@@ -451,6 +451,56 @@ export function createDemoCollections(): {
         "});",
       ].join("\n"),
     }),
+    req("demo-req-redirect", "Redirect Chain", colAdvanced, {
+      method: "GET",
+      url: "https://httpbin.org/redirect-to",
+      headers: [],
+      params: [
+        { name: "url", value: "https://httpbin.org/get", enabled: true },
+        { name: "status_code", value: "302", enabled: true },
+      ],
+      body: { raw: "" },
+      bodyType: "none",
+      auth: { type: "none" },
+    }),
+    req("demo-req-delay", "Slow Response (2s delay)", colAdvanced, {
+      method: "GET",
+      url: "https://httpbin.org/delay/2",
+      headers: [],
+      params: [],
+      body: { raw: "" },
+      bodyType: "none",
+      auth: { type: "none" },
+    }),
+    req("demo-req-gzip", "Compressed Response", colAdvanced, {
+      method: "GET",
+      url: "https://httpbin.org/gzip",
+      headers: [
+        { name: "Accept-Encoding", value: "gzip, deflate", enabled: true },
+      ],
+      params: [],
+      body: { raw: "" },
+      bodyType: "none",
+      auth: { type: "none" },
+    }),
+    req("demo-req-html", "HTML Response", colAdvanced, {
+      method: "GET",
+      url: "https://httpbin.org/html",
+      headers: [{ name: "Accept", value: "text/html", enabled: true }],
+      params: [],
+      body: { raw: "" },
+      bodyType: "none",
+      auth: { type: "none" },
+    }),
+    req("demo-req-xml", "XML Response", colAdvanced, {
+      method: "GET",
+      url: "https://httpbin.org/xml",
+      headers: [{ name: "Accept", value: "application/xml", enabled: true }],
+      params: [],
+      body: { raw: "" },
+      bodyType: "none",
+      auth: { type: "none" },
+    }),
   ];
 
   const environments: Environment[] = [
