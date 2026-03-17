@@ -35,12 +35,57 @@ const ACTIVE_PROFILE_KEY = "apiDebugger_activeProfile";
 export const DEMO_PROFILE_ID = "profile-demo";
 
 /**
- * Get all profiles
+ * Get all profiles. If none exist, creates default profiles automatically.
  */
 export async function getProfiles(): Promise<Profile[]> {
-  const result = await chrome.storage.sync.get(PROFILES_KEY);
-  const profiles: Profile[] = result[PROFILES_KEY] || [];
-  return profiles;
+  try {
+    const result = await chrome.storage.sync.get(PROFILES_KEY);
+    const profiles: Profile[] = result[PROFILES_KEY] || [];
+
+    // If no profiles exist, create defaults inline
+    if (profiles.length === 0) {
+      console.log("[Profiles] Creating default profiles...");
+      const defaultProfiles = createDefaultProfiles();
+      try {
+        await chrome.storage.sync.set({ [PROFILES_KEY]: defaultProfiles });
+      } catch (e) {
+        console.warn("[Profiles] Failed to save to storage:", e);
+      }
+      return defaultProfiles;
+    }
+
+    return profiles;
+  } catch (e) {
+    console.error("[Profiles] Storage read failed:", e);
+    return createDefaultProfiles();
+  }
+}
+
+/**
+ * Create the default set of profiles (Default + Demo)
+ */
+function createDefaultProfiles(): Profile[] {
+  const now = Date.now();
+  return [
+    {
+      id: "profile-default",
+      name: "Default",
+      description: "Empty workspace",
+      icon: "📁",
+      isBuiltIn: true,
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: DEMO_PROFILE_ID,
+      name: "Demo Examples",
+      description: "21 pre-loaded requests to explore",
+      icon: "🎯",
+      isBuiltIn: true,
+      createdAt: now,
+      updatedAt: now,
+    },
+  ];
 }
 
 /**
