@@ -38,6 +38,7 @@ import {
 } from "@/lib/profiles";
 
 type ViewType =
+  | "overview"
   | "builder"
   | "websocket"
   | "sse"
