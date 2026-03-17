@@ -603,6 +603,17 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="flex-1 flex">
+        {view === "overview" && (
+          <OverviewView
+            requests={state.requests}
+            onNavigate={(v) => setView(v as ViewType)}
+            onClearHistory={async () => {
+              await chrome.runtime.sendMessage({ type: "CLEAR_REQUESTS" });
+              setState((s) => ({ ...s, requests: [] }));
+            }}
+          />
+        )}
+
         {view === "builder" && (
           <RuntimeVariablesProvider>
             <RequestBuilderView />
