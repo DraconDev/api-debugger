@@ -455,17 +455,16 @@ export default function Dashboard() {
 
         {/* Profile Switcher */}
         {!sidebarCollapsed && profiles.length > 0 && (
-          <div className="px-3 pb-2">
+          <div className="px-3 py-2 border-b border-border">
             <select
               value={activeProfileId}
               onChange={async (e) => {
                 const newId = e.target.value;
                 await saveActiveProfileId(newId);
                 setActiveProfileIdState(newId);
-                // Reload to apply new profile data
                 window.location.reload();
               }}
-              className="w-full px-2 py-1.5 text-xs bg-input border border-border rounded-md cursor-pointer"
+              className="w-full px-2 py-1.5 text-xs bg-input border border-border rounded-md cursor-pointer font-medium"
               title="Switch profile"
             >
               {profiles.map((p) => (
