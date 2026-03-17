@@ -567,6 +567,20 @@ export default function Dashboard() {
             collapsed={sidebarCollapsed}
           />
           <NavItem
+            active={view === "docs"}
+            onClick={() => setView("docs")}
+            icon={<DocsIcon />}
+            label="Docs"
+            collapsed={sidebarCollapsed}
+          />
+          <NavItem
+            active={view === "diff"}
+            onClick={() => setView("diff")}
+            icon={<DiffIcon />}
+            label="Diff"
+            collapsed={sidebarCollapsed}
+          />
+          <NavItem
             active={view === "certs"}
             onClick={() => setView("certs")}
             icon={<CertIcon />}
