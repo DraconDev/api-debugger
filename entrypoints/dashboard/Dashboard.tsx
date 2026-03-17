@@ -404,34 +404,18 @@ export default function Dashboard() {
       <aside
         className={`${sidebarCollapsed ? "w-14" : "w-56"} flex-shrink-0 bg-card border-r border-border flex flex-col transition-all duration-200`}
       >
-        {/* Profile Selector - top */}
+        {/* Profile Selector */}
         {!sidebarCollapsed && (
           <div className="px-3 pt-3 pb-2 border-b border-border">
-            <label className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1 block">
-              Profile
-            </label>
-            <select
-              value={activeProfileId}
-              onChange={async (e) => {
-                const newId = e.target.value;
-                if (!newId) return;
-                await saveActiveProfileId(newId);
-                setActiveProfileIdState(newId);
+            <ProfileSelector
+              profiles={profiles}
+              activeProfileId={activeProfileId}
+              onSelect={async (id: string) => {
+                await saveActiveProfileId(id);
+                setActiveProfileIdState(id);
                 window.location.reload();
               }}
-              className="w-full px-2 py-1.5 text-xs bg-input border border-border rounded-md cursor-pointer font-medium"
-              title="Switch profile"
-            >
-              {profiles.length === 0 ? (
-                <option value="">No profiles</option>
-              ) : (
-                profiles.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.icon} {p.name}
-                  </option>
-                ))
-              )}
-            </select>
+            />
           </div>
         )}
 
