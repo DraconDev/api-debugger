@@ -931,6 +931,107 @@ export default function Dashboard() {
 
 // Components
 
+function ProfileSelector({
+  profiles,
+  activeProfileId,
+  onSelect,
+}: {
+  profiles: Profile[];
+  activeProfileId: string;
+  onSelect: (id: string) => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const active = profiles.find((p) => p.id === activeProfileId);
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center gap-2 px-2.5 py-2 bg-input border border-border rounded-md hover:bg-accent/30 transition-colors text-left"
+      >
+        <span className="text-base flex-shrink-0">{active?.icon || "📁"}</span>
+        <div className="flex-1 min-w-0">
+          <div className="text-xs font-medium truncate">
+            {active?.name || "Select profile"}
+          </div>
+          {active?.description && (
+            <div className="text-[10px] text-muted-foreground truncate">
+              {active.description}
+            </div>
+          )}
+        </div>
+        <svg
+          className={`w-3 h-3 text-muted-foreground flex-shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-md shadow-lg z-50 py-1 max-h-64 overflow-y-auto">
+            {profiles.length === 0 ? (
+              <div className="px-3 py-2 text-xs text-muted-foreground">
+                No profiles yet
+              </div>
+            ) : (
+              profiles.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => {
+                    setIsOpen(false);
+                    onSelect(p.id);
+                  }}
+                  className={`w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-accent/50 transition-colors ${
+                    p.id === activeProfileId ? "bg-accent/30" : ""
+                  }`}
+                >
+                  <span className="text-base flex-shrink-0">{p.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs font-medium truncate">{p.name}</div>
+                    {p.description && (
+                      <div className="text-[10px] text-muted-foreground truncate">
+                        {p.description}
+                      </div>
+                    )}
+                  </div>
+                  {p.id === activeProfileId && (
+                    <svg
+                      className="w-3 h-3 text-primary flex-shrink-0"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={3}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  )}
+                </button>
+              ))
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 function NavItem({
   active,
   onClick,
