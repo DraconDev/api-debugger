@@ -76,7 +76,7 @@ export default function Dashboard() {
     if (viewParam === "graphql") return "graphql";
     if (viewParam === "history") return "history";
     if (viewParam === "settings") return "settings";
-    return "history";
+    return "overview";
   });
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showImport, setShowImport] = useState(false);
