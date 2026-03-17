@@ -414,6 +414,7 @@ export default function Dashboard() {
               value={activeProfileId}
               onChange={async (e) => {
                 const newId = e.target.value;
+                if (!newId) return;
                 await saveActiveProfileId(newId);
                 setActiveProfileIdState(newId);
                 window.location.reload();
@@ -421,12 +422,15 @@ export default function Dashboard() {
               className="w-full px-2 py-1.5 text-xs bg-input border border-border rounded-md cursor-pointer font-medium"
               title="Switch profile"
             >
-              {profiles.length === 0 && <option value="">Loading...</option>}
-              {profiles.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.icon} {p.name}
-                </option>
-              ))}
+              {profiles.length === 0 ? (
+                <option value="">No profiles</option>
+              ) : (
+                profiles.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.icon} {p.name}
+                  </option>
+                ))
+              )}
             </select>
           </div>
         )}
