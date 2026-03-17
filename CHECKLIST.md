@@ -46,7 +46,7 @@
 ## Capture & Sync
 
 - [ ] Browse github.com → requests appear in History
-- [ ] Popup → toggle capture off/on
+- [ ] Overview → toggle capture on/off
 - [ ] GitHub Sync → connect → Push → verify file on GitHub → Pull
 
 ## UI
