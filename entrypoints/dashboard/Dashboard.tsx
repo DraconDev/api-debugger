@@ -1455,81 +1455,84 @@ function CollectionsView({
       {/* Collection Content + Detail */}
       <div className="flex-1 flex">
         {/* Request List */}
-        <div className={`${selectedRequest ? "w-72 border-r border-border" : "flex-1"} overflow-y-auto`}>
-        {selectedCollection ? (
-          isRunning ? (
-            <CollectionRunner
-              requests={collectionRequests}
-              onRequestSend={sendRequest}
-            />
-          ) : (
-            <div>
-              <div className="p-4 border-b border-border flex items-start justify-between">
-                <div>
-                  <h2 className="font-medium">{selectedCollection.name}</h2>
-                  {selectedCollection.description && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {selectedCollection.description}
-                    </p>
+        <div
+          className={`${selectedRequest ? "w-72 border-r border-border" : "flex-1"} overflow-y-auto`}
+        >
+          {selectedCollection ? (
+            isRunning ? (
+              <CollectionRunner
+                requests={collectionRequests}
+                onRequestSend={sendRequest}
+              />
+            ) : (
+              <div>
+                <div className="p-4 border-b border-border flex items-start justify-between">
+                  <div>
+                    <h2 className="font-medium">{selectedCollection.name}</h2>
+                    {selectedCollection.description && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {selectedCollection.description}
+                      </p>
+                    )}
+                  </div>
+                  {collectionRequests.length > 0 && (
+                    <button
+                      onClick={() => setIsRunning(true)}
+                      className="px-3 py-1.5 bg-primary text-primary-foreground text-sm rounded hover:bg-primary/90 flex items-center gap-2"
+                    >
+                      <PlayIcon className="w-4 h-4" />
+                      Run
+                    </button>
                   )}
                 </div>
-                {collectionRequests.length > 0 && (
-                  <button
-                    onClick={() => setIsRunning(true)}
-                    className="px-3 py-1.5 bg-primary text-primary-foreground text-sm rounded hover:bg-primary/90 flex items-center gap-2"
-                  >
-                    <PlayIcon className="w-4 h-4" />
-                    Run
-                  </button>
-                )}
-              </div>
-              <div className="p-2">
-                {collectionRequests.length === 0 ? (
-                  <div className="p-4 text-sm text-muted-foreground text-center">
-                    No requests in this collection
-                  </div>
-                ) : (
-                  collectionRequests.map((req) => (
-                    <div
-                      key={req.id}
-                      onClick={() =>
-                        setSelectedRequestId(
-                          selectedRequestId === req.id ? null : req.id,
-                        )
-                      }
-                      className={`px-3 py-2 border-b border-border cursor-pointer transition-colors ${
-                        selectedRequestId === req.id
-                          ? "bg-accent"
-                          : "hover:bg-accent/50"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`font-mono text-xs font-bold ${getMethodColor(req.requestConfig?.method || req.request.method)}`}
-                        >
-                          {req.requestConfig?.method || req.request.method}
-                        </span>
-                        <span className="text-sm text-foreground">
-                          {req.name}
-                        </span>
-                      </div>
-                      <div className="text-xs text-muted-foreground truncate mt-1 font-mono">
-                        {req.requestConfig?.url || req.request.url}
-                      </div>
+                <div className="p-2">
+                  {collectionRequests.length === 0 ? (
+                    <div className="p-4 text-sm text-muted-foreground text-center">
+                      No requests in this collection
                     </div>
-                  ))
-                )}
+                  ) : (
+                    collectionRequests.map((req) => (
+                      <div
+                        key={req.id}
+                        onClick={() =>
+                          setSelectedRequestId(
+                            selectedRequestId === req.id ? null : req.id,
+                          )
+                        }
+                        className={`px-3 py-2 border-b border-border cursor-pointer transition-colors ${
+                          selectedRequestId === req.id
+                            ? "bg-accent"
+                            : "hover:bg-accent/50"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`font-mono text-xs font-bold ${getMethodColor(req.requestConfig?.method || req.request.method)}`}
+                          >
+                            {req.requestConfig?.method || req.request.method}
+                          </span>
+                          <span className="text-sm text-foreground">
+                            {req.name}
+                          </span>
+                        </div>
+                        <div className="text-xs text-muted-foreground truncate mt-1 font-mono">
+                          {req.requestConfig?.url || req.request.url}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )
+          ) : (
+            <div className="flex-1 flex items-center justify-center text-muted-foreground">
+              <div className="text-center">
+                <FolderIcon className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
+                <p className="text-sm">Select a collection to view</p>
               </div>
             </div>
-          )
-        ) : (
-          <div className="flex-1 flex items-center justify-center text-muted-foreground">
-            <div className="text-center">
-              <FolderIcon className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
-              <p className="text-sm">Select a collection to view</p>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Detail Panel */}
         {selectedRequest && (
