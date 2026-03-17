@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   KEYBOARD_SHORTCUTS,
   formatShortcut,
@@ -9,6 +10,13 @@ interface ShortcutsModalProps {
 }
 
 export function ShortcutsModal({ onClose }: ShortcutsModalProps) {
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [onClose]);
   const groupedShortcuts = KEYBOARD_SHORTCUTS.reduce(
     (acc, shortcut) => {
       const category = shortcut.category;
