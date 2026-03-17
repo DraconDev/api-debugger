@@ -172,40 +172,47 @@ export async function initializeProfiles(): Promise<void> {
       (existing.apiDebugger_collections || []).length > 0 ||
       (existing.apiDebugger_savedRequests || []).length > 0;
 
-    if (hasExistingData) {
-      // Migrate existing data into a "My Workspace" profile
-      const migratedProfile: Profile = {
-        id: "profile-migrated",
-        name: "My Workspace",
-        description: "Your existing collections and requests",
-        icon: "💼",
-        isBuiltIn: false,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      };
-      profiles.push(migratedProfile);
-      await saveProfileData(migratedProfile.id, {
-        collections: existing.apiDebugger_collections || [],
-        savedRequests: existing.apiDebugger_savedRequests || [],
-        environments: existing.apiDebugger_environments || [],
-        aiSettings: existing["sync:ai_settings"],
-      });
-      await setActiveProfileId(migratedProfile.id);
-    }
+    // Always create Default (empty) profile
+    const defaultProfile: Profile = {
+      id: "profile-default",
+      name: "Default",
+      description: "Empty workspace for your own work",
+      icon: "📁",
+      isBuiltIn: true,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    profiles.push(defaultProfile);
+    await saveProfileData(defaultProfile.id, {
+      collections: [],
+      savedRequests: [],
+      environments: [],
+      aiSettings: existing["sync:ai_settings"],
+    });
 
-    // Create the demo profile
+    // Create Demo profile with pre-loaded data
+    const { createDemoCollections } = await import("@/lib/demoProfile");
+    const demo = createDemoCollections();
+
     const demoProfile: Profile = {
       id: DEMO_PROFILE_ID,
       name: "Demo Examples",
-      description: "21 pre-loaded requests across 4 collections",
+      description: "21 pre-loaded requests to explore",
       icon: "🎯",
       isBuiltIn: true,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
     profiles.push(demoProfile);
+    await saveProfileData(DEMO_PROFILE_ID, {
+      collections: demo.collections,
+      savedRequests: demo.requests,
+      environments: demo.environments,
+    });
+
     await saveProfiles(profiles);
 
+    // On first launch: if no existing data, start with Demo; otherwise keep migrated data
     if (!hasExistingData) {
       await setActiveProfileId(DEMO_PROFILE_ID);
     }
