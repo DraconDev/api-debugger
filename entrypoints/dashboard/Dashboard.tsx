@@ -526,8 +526,16 @@ export default function Dashboard() {
             collapsed={sidebarCollapsed}
           />
           {!sidebarCollapsed && (
-            <div className="pt-2 pb-1">
-              <span className="px-3 text-xs text-muted-foreground">Tools</span>
+            <div className="px-3 pt-3 pb-2 border-b border-border">
+              <ProfileSelector
+                profiles={profiles}
+                activeProfileId={activeProfileId}
+                onSelect={async (id) => {
+                  await saveActiveProfileId(id);
+                  setActiveProfileIdState(id);
+                  window.location.reload();
+                }}
+              />
             </div>
           )}
           <NavItem
