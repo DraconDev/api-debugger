@@ -79,7 +79,7 @@ function createDefaultProfiles(): Profile[] {
     {
       id: DEMO_PROFILE_ID,
       name: "Demo Examples",
-      description: "21 requests to explore",
+      description: "26 requests to explore",
       icon: "🎯",
       isBuiltIn: true,
       createdAt: now,
