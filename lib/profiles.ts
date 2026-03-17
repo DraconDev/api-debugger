@@ -158,9 +158,12 @@ export async function updateProfile(
  */
 export async function initializeProfiles(): Promise<void> {
   let profiles = await getProfiles();
+  console.log("[Profiles] Current profiles:", profiles.length);
 
   // Check if demo profile exists
   if (!profiles.some((p) => p.id === DEMO_PROFILE_ID)) {
+    console.log("[Profiles] Creating default and demo profiles...");
+
     // Check if there's existing data to migrate
     const existing = await chrome.storage.sync.get([
       "apiDebugger_collections",
@@ -193,6 +196,13 @@ export async function initializeProfiles(): Promise<void> {
 
     // Create Demo profile with pre-loaded data
     const demo = createDemoCollections();
+    console.log(
+      "[Profiles] Demo data:",
+      demo.collections.length,
+      "collections,",
+      demo.requests.length,
+      "requests",
+    );
 
     const demoProfile: Profile = {
       id: DEMO_PROFILE_ID,
@@ -211,10 +221,12 @@ export async function initializeProfiles(): Promise<void> {
     });
 
     await saveProfiles(profiles);
+    console.log("[Profiles] Saved", profiles.length, "profiles");
 
     // On first launch: start with Default (empty) profile
     if (!hasExistingData) {
       await setActiveProfileId("profile-default");
+      console.log("[Profiles] Set active to profile-default");
     }
   }
 
