@@ -445,6 +445,30 @@ export default function Dashboard() {
           )}
         </div>
 
+        {/* Profile Switcher */}
+        {!sidebarCollapsed && profiles.length > 0 && (
+          <div className="px-3 pb-2">
+            <select
+              value={activeProfileId}
+              onChange={async (e) => {
+                const newId = e.target.value;
+                await saveActiveProfileId(newId);
+                setActiveProfileIdState(newId);
+                // Reload to apply new profile data
+                window.location.reload();
+              }}
+              className="w-full px-2 py-1.5 text-xs bg-input border border-border rounded-md cursor-pointer"
+              title="Switch profile"
+            >
+              {profiles.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.icon} {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         {/* Navigation */}
         <nav className="flex-1 p-2 space-y-1">
           <NavItem
