@@ -935,7 +935,7 @@ function ProfileSelector({
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center gap-2 px-2.5 py-2 bg-input border border-border rounded-md hover:bg-accent/30 transition-colors text-left"
       >
-        <span className="text-base flex-shrink-0">{active?.icon || "📁"}</span>
+        <span className="text-base flex-shrink-0">{active?.icon || "🏠"}</span>
         <div className="flex-1 min-w-0">
           <div className="text-xs font-medium truncate">
             {active?.name || "Select profile"}
