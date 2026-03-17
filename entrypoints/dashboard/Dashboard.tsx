@@ -1530,7 +1530,7 @@ function CollectionsView({
   );
 }
 
-function RequestDetailView({
+function SavedRequestDetail({
   request,
   onClose,
 }: {
