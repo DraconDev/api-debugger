@@ -1214,13 +1214,11 @@ function CollectionsView({
   savedRequests,
   selectedCollectionId,
   onSelectCollection,
-  onLoadDemo,
 }: {
   collections: Collection[];
   savedRequests: SavedRequest[];
   selectedCollectionId: string | null;
   onSelectCollection: (id: string | null) => void;
-  onLoadDemo: () => void;
 }) {
   const [isRunning, setIsRunning] = useState(false);
   const selectedCollection = collections.find(
