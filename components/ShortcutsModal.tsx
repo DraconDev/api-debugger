@@ -1,16 +1,23 @@
-import { KEYBOARD_SHORTCUTS, formatShortcut, type KeyboardShortcut } from "@/lib/shortcuts";
+import {
+  KEYBOARD_SHORTCUTS,
+  formatShortcut,
+  type KeyboardShortcut,
+} from "@/lib/shortcuts";
 
 interface ShortcutsModalProps {
   onClose: () => void;
 }
 
 export function ShortcutsModal({ onClose }: ShortcutsModalProps) {
-  const groupedShortcuts = KEYBOARD_SHORTCUTS.reduce((acc, shortcut) => {
-    const category = shortcut.category;
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(shortcut);
-    return acc;
-  }, {} as Record<string, KeyboardShortcut[]>);
+  const groupedShortcuts = KEYBOARD_SHORTCUTS.reduce(
+    (acc, shortcut) => {
+      const category = shortcut.category;
+      if (!acc[category]) acc[category] = [];
+      acc[category].push(shortcut);
+      return acc;
+    },
+    {} as Record<string, KeyboardShortcut[]>,
+  );
 
   const categoryLabels: Record<string, string> = {
     request: "Request",
@@ -20,7 +27,7 @@ export function ShortcutsModal({ onClose }: ShortcutsModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div
         className="bg-card border border-border rounded-xl shadow-2xl max-w-lg w-full mx-4 max-h-[80vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
@@ -59,7 +66,11 @@ export function ShortcutsModal({ onClose }: ShortcutsModalProps) {
         </div>
 
         <div className="p-4 border-t border-border text-xs text-muted-foreground text-center">
-          Press <kbd className="px-1 py-0.5 bg-muted border border-border rounded font-mono">Escape</kbd> to close
+          Press{" "}
+          <kbd className="px-1 py-0.5 bg-muted border border-border rounded font-mono">
+            Escape
+          </kbd>{" "}
+          to close
         </div>
       </div>
     </div>
@@ -68,8 +79,18 @@ export function ShortcutsModal({ onClose }: ShortcutsModalProps) {
 
 function CloseIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M6 18L18 6M6 6l12 12"
+      />
     </svg>
   );
 }
