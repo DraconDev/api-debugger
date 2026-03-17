@@ -629,7 +629,7 @@ export default function Dashboard() {
 
         {view === "builder" && (
           <RuntimeVariablesProvider>
-            <RequestBuilderView />
+            <RequestBuilderView initialConfig={builderConfig || undefined} />
           </RuntimeVariablesProvider>
         )}
 
