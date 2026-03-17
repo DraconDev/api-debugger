@@ -75,10 +75,15 @@ export function AIAnalysisPanel({ request, response }: AIAnalysisPanelProps) {
     }
 
     if (response?.headers?.length || request.responseHeaders?.length) {
-      const headers = response?.headers || request.responseHeaders || [];
-      parts.push(
-        `### Response Headers\n${headers.map((h: { name: string; value: string }) => `${h.name}: ${h.value}`).join("\n")}`,
-      );
+      if (response?.headers?.length) {
+        parts.push(
+          `### Response Headers\n${response.headers.map((h) => `${h[0]}: ${h[1]}`).join("\n")}`,
+        );
+      } else if (request.responseHeaders?.length) {
+        parts.push(
+          `### Response Headers\n${request.responseHeaders.map((h) => `${h.name}: ${h.value}`).join("\n")}`,
+        );
+      }
     }
 
     return parts.join("\n\n");
