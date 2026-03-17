@@ -13,8 +13,15 @@ import {
 import { ScriptEditor } from "@/components/request/ScriptEditorPanel";
 import { TestRunner } from "@/components/testing";
 import { RequestTemplates } from "@/components/RequestTemplates";
-import { useRuntimeVariables, interpolateVariables } from "@/hooks/useRuntimeVariables";
-import { executePreRequestScript, executePostResponseScript, applyScriptModifications } from "@/lib/scriptExecutor";
+import {
+  useRuntimeVariables,
+  interpolateVariables,
+} from "@/hooks/useRuntimeVariables";
+import {
+  executePreRequestScript,
+  executePostResponseScript,
+  applyScriptModifications,
+} from "@/lib/scriptExecutor";
 import type { RequestConfig, CapturedResponse } from "@/types";
 
 const DEFAULT_CONFIG: RequestConfig = {
@@ -30,18 +37,27 @@ const DEFAULT_CONFIG: RequestConfig = {
   postResponseScript: "",
 };
 
-export function RequestBuilderView() {
-  const [config, setConfig] = useState<RequestConfig>(DEFAULT_CONFIG);
+export function RequestBuilderView({
+  initialConfig,
+}: { initialConfig?: RequestConfig } = {}) {
+  const [config, setConfig] = useState<RequestConfig>(
+    initialConfig || DEFAULT_CONFIG,
+  );
   const [response, setResponse] = useState<CapturedResponse | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"params" | "headers" | "body" | "auth" | "scripts" | "extractions">("headers");
-  const [responseTab, setResponseTab] = useState<"body" | "headers" | "timing" | "tests" | "code" | "ai">("body");
+  const [activeTab, setActiveTab] = useState<
+    "params" | "headers" | "body" | "auth" | "scripts" | "extractions"
+  >("headers");
+  const [responseTab, setResponseTab] = useState<
+    "body" | "headers" | "timing" | "tests" | "code" | "ai"
+  >("body");
   const [scriptLogs, setScriptLogs] = useState<string[]>([]);
   const [scriptError, setScriptError] = useState<string | null>(null);
   const [showTemplates, setShowTemplates] = useState(false);
-  
-  const { variables, extractFromResponse, clearVariables, setVariables } = useRuntimeVariables();
+
+  const { variables, extractFromResponse, clearVariables, setVariables } =
+    useRuntimeVariables();
 
   const sendRequest = async () => {
     if (!config.url) return;
@@ -54,26 +70,29 @@ export function RequestBuilderView() {
 
     try {
       let finalConfig = interpolateConfigVariables(config, variables);
-      
+
       if (config.preRequestScript) {
         const preResult = executePreRequestScript(
           config.preRequestScript,
           config,
           variables,
-          {}
+          {},
         );
         setScriptLogs(preResult.logs);
-        
+
         if (!preResult.success) {
           setScriptError(preResult.error || "Pre-request script failed");
           setIsSending(false);
           return;
         }
-        
+
         setVariables(preResult.variables);
-        
+
         if (preResult.modifiedRequest) {
-          finalConfig = applyScriptModifications(finalConfig, preResult.modifiedRequest);
+          finalConfig = applyScriptModifications(
+            finalConfig,
+            preResult.modifiedRequest,
+          );
         }
       }
 
@@ -84,25 +103,25 @@ export function RequestBuilderView() {
 
       if (result.success) {
         setResponse(result.response);
-        
+
         if (config.extractions && config.extractions.length > 0) {
           extractFromResponse(
             result.response.body,
             result.response.headers,
-            config.extractions
+            config.extractions,
           );
         }
-        
+
         if (config.postResponseScript) {
           const postResult = executePostResponseScript(
             config.postResponseScript,
             finalConfig,
             result.response,
             variables,
-            {}
+            {},
           );
           setScriptLogs((prev) => [...prev, ...postResult.logs]);
-          
+
           if (!postResult.success) {
             setScriptError(postResult.error || "Post-response script failed");
           } else {
@@ -119,7 +138,10 @@ export function RequestBuilderView() {
     }
   };
 
-  const updateConfig = <K extends keyof RequestConfig>(key: K, value: RequestConfig[K]) => {
+  const updateConfig = <K extends keyof RequestConfig>(
+    key: K,
+    value: RequestConfig[K],
+  ) => {
     setConfig((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -132,8 +154,8 @@ export function RequestBuilderView() {
     ? response.status >= 400
       ? "text-destructive"
       : response.status >= 300
-      ? "text-warning"
-      : "text-success"
+        ? "text-warning"
+        : "text-success"
     : "";
 
   return (
@@ -173,7 +195,16 @@ export function RequestBuilderView() {
         <div className="w-1/2 flex flex-col border-r border-border">
           {/* Request Tabs */}
           <div className="flex border-b border-border bg-muted/30">
-            {(["params", "headers", "body", "auth", "scripts", "extractions"] as const).map((tab) => (
+            {(
+              [
+                "params",
+                "headers",
+                "body",
+                "auth",
+                "scripts",
+                "extractions",
+              ] as const
+            ).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -184,18 +215,40 @@ export function RequestBuilderView() {
                 }`}
               >
                 {tab === "extractions" ? "Vars" : tab}
-                {tab === "params" && config.params.filter((p) => p.enabled !== false).length > 0 && (
-                  <span className="ml-1.5 text-[10px] text-primary font-normal">({config.params.filter((p) => p.enabled !== false).length})</span>
-                )}
-                {tab === "headers" && config.headers.filter((h) => h.enabled !== false).length > 0 && (
-                  <span className="ml-1.5 text-[10px] text-primary font-normal">({config.headers.filter((h) => h.enabled !== false).length})</span>
-                )}
-                {tab === "scripts" && (config.preRequestScript || config.postResponseScript) && (
-                  <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-primary inline-block" />
-                )}
-                {tab === "extractions" && (config.extractions || []).filter((e) => e.enabled !== false).length > 0 && (
-                  <span className="ml-1.5 text-[10px] text-primary font-normal">({(config.extractions || []).filter((e) => e.enabled !== false).length})</span>
-                )}
+                {tab === "params" &&
+                  config.params.filter((p) => p.enabled !== false).length >
+                    0 && (
+                    <span className="ml-1.5 text-[10px] text-primary font-normal">
+                      ({config.params.filter((p) => p.enabled !== false).length}
+                      )
+                    </span>
+                  )}
+                {tab === "headers" &&
+                  config.headers.filter((h) => h.enabled !== false).length >
+                    0 && (
+                    <span className="ml-1.5 text-[10px] text-primary font-normal">
+                      (
+                      {config.headers.filter((h) => h.enabled !== false).length}
+                      )
+                    </span>
+                  )}
+                {tab === "scripts" &&
+                  (config.preRequestScript || config.postResponseScript) && (
+                    <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-primary inline-block" />
+                  )}
+                {tab === "extractions" &&
+                  (config.extractions || []).filter((e) => e.enabled !== false)
+                    .length > 0 && (
+                    <span className="ml-1.5 text-[10px] text-primary font-normal">
+                      (
+                      {
+                        (config.extractions || []).filter(
+                          (e) => e.enabled !== false,
+                        ).length
+                      }
+                      )
+                    </span>
+                  )}
               </button>
             ))}
           </div>
@@ -215,7 +268,10 @@ export function RequestBuilderView() {
                         checked={param.enabled !== false}
                         onChange={(e) => {
                           const newParams = [...config.params];
-                          newParams[index] = { ...param, enabled: e.target.checked };
+                          newParams[index] = {
+                            ...param,
+                            enabled: e.target.checked,
+                          };
                           updateConfig("params", newParams);
                         }}
                         className="w-4 h-4 rounded border-border"
@@ -236,7 +292,10 @@ export function RequestBuilderView() {
                         value={param.value}
                         onChange={(e) => {
                           const newParams = [...config.params];
-                          newParams[index] = { ...param, value: e.target.value };
+                          newParams[index] = {
+                            ...param,
+                            value: e.target.value,
+                          };
                           updateConfig("params", newParams);
                         }}
                         placeholder="Value"
@@ -246,7 +305,7 @@ export function RequestBuilderView() {
                         onClick={() => {
                           updateConfig(
                             "params",
-                            config.params.filter((_, i) => i !== index)
+                            config.params.filter((_, i) => i !== index),
                           );
                         }}
                         className="p-1 text-muted-foreground hover:text-destructive"
@@ -257,7 +316,10 @@ export function RequestBuilderView() {
                   ))}
                   <button
                     onClick={() => {
-                      updateConfig("params", [...config.params, { name: "", value: "", enabled: true }]);
+                      updateConfig("params", [
+                        ...config.params,
+                        { name: "", value: "", enabled: true },
+                      ]);
                     }}
                     className="w-full py-1.5 text-xs text-primary hover:bg-primary/10 rounded border border-dashed border-border"
                   >
@@ -278,13 +340,18 @@ export function RequestBuilderView() {
               <BodyEditor
                 bodyType={config.bodyType}
                 body={config.body}
-                onBodyTypeChange={(bodyType) => updateConfig("bodyType", bodyType)}
+                onBodyTypeChange={(bodyType) =>
+                  updateConfig("bodyType", bodyType)
+                }
                 onBodyChange={(body) => updateConfig("body", body)}
               />
             )}
 
             {activeTab === "auth" && (
-              <AuthEditor auth={config.auth} onChange={(auth) => updateConfig("auth", auth)} />
+              <AuthEditor
+                auth={config.auth}
+                onChange={(auth) => updateConfig("auth", auth)}
+              />
             )}
 
             {activeTab === "scripts" && (
@@ -292,20 +359,37 @@ export function RequestBuilderView() {
                 <div className="flex-1 border-b border-border">
                   <ScriptEditor
                     script={config.preRequestScript || ""}
-                    onChange={(script) => updateConfig("preRequestScript", script)}
+                    onChange={(script) =>
+                      updateConfig("preRequestScript", script)
+                    }
                     title="Pre-request Script"
                     description="Executes before the request is sent"
-                    logs={scriptLogs.filter((l) => !l.includes("Post-response"))}
+                    logs={scriptLogs.filter(
+                      (l) => !l.includes("Post-response"),
+                    )}
                     error={scriptError && !response ? scriptError : undefined}
                   />
                 </div>
                 <div className="flex-1">
                   <ScriptEditor
                     script={config.postResponseScript || ""}
-                    onChange={(script) => updateConfig("postResponseScript", script)}
+                    onChange={(script) =>
+                      updateConfig("postResponseScript", script)
+                    }
                     title="Post-response Script"
                     description="Executes after the response is received"
-                    logs={response ? scriptLogs.filter((l) => l.includes("Post-response") || scriptLogs.indexOf(l) > scriptLogs.findIndex((s) => s.includes("Response"))) : undefined}
+                    logs={
+                      response
+                        ? scriptLogs.filter(
+                            (l) =>
+                              l.includes("Post-response") ||
+                              scriptLogs.indexOf(l) >
+                                scriptLogs.findIndex((s) =>
+                                  s.includes("Response"),
+                                ),
+                          )
+                        : undefined
+                    }
                     error={scriptError && response ? scriptError : undefined}
                   />
                 </div>
@@ -315,36 +399,48 @@ export function RequestBuilderView() {
             {activeTab === "extractions" && (
               <VariableExtractor
                 extractions={config.extractions || []}
-                onChange={(extractions) => updateConfig("extractions", extractions)}
+                onChange={(extractions) =>
+                  updateConfig("extractions", extractions)
+                }
               />
             )}
-            
-            {activeTab === "extractions" && Object.keys(variables).length > 0 && (
-              <div className="border-t border-border">
-                <div className="p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium">Runtime Variables</span>
-                    <button
-                      onClick={clearVariables}
-                      className="text-xs text-muted-foreground hover:text-foreground"
-                    >
-                      Clear
-                    </button>
-                  </div>
-                  <div className="space-y-1">
-                    {Object.entries(variables).map(([key, value]) => (
-                      <div key={key} className="flex items-center gap-2 text-xs">
-                        <span className="font-mono text-primary">{"{{" + key + "}}"}</span>
-                        <span className="text-muted-foreground">=</span>
-                        <span className="font-mono text-muted-foreground truncate flex-1">
-                          {value.length > 50 ? value.slice(0, 50) + "..." : value}
-                        </span>
-                      </div>
-                    ))}
+
+            {activeTab === "extractions" &&
+              Object.keys(variables).length > 0 && (
+                <div className="border-t border-border">
+                  <div className="p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium">
+                        Runtime Variables
+                      </span>
+                      <button
+                        onClick={clearVariables}
+                        className="text-xs text-muted-foreground hover:text-foreground"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                    <div className="space-y-1">
+                      {Object.entries(variables).map(([key, value]) => (
+                        <div
+                          key={key}
+                          className="flex items-center gap-2 text-xs"
+                        >
+                          <span className="font-mono text-primary">
+                            {"{{" + key + "}}"}
+                          </span>
+                          <span className="text-muted-foreground">=</span>
+                          <span className="font-mono text-muted-foreground truncate flex-1">
+                            {value.length > 50
+                              ? value.slice(0, 50) + "..."
+                              : value}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
         </div>
 
@@ -354,10 +450,14 @@ export function RequestBuilderView() {
           {response && (
             <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/30">
               <div className="flex items-center gap-3">
-                <span className={`font-mono text-sm font-semibold ${statusColor}`}>
+                <span
+                  className={`font-mono text-sm font-semibold ${statusColor}`}
+                >
                   {response.status}
                 </span>
-                <span className="text-xs text-muted-foreground">{response.statusText}</span>
+                <span className="text-xs text-muted-foreground">
+                  {response.statusText}
+                </span>
               </div>
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
                 <span>{response.duration.toFixed(0)}ms</span>
@@ -368,7 +468,9 @@ export function RequestBuilderView() {
 
           {/* Response Tabs */}
           <div className="flex border-b border-border bg-muted/30">
-            {(["body", "headers", "timing", "tests", "code", "ai"] as const).map((tab) => (
+            {(
+              ["body", "headers", "timing", "tests", "code", "ai"] as const
+            ).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setResponseTab(tab)}
@@ -392,7 +494,9 @@ export function RequestBuilderView() {
                     <SendIcon className="w-8 h-8 opacity-50" />
                   </div>
                   <p className="text-sm font-medium">No response yet</p>
-                  <p className="text-xs text-muted-foreground mt-1">Send a request to see the response</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Send a request to see the response
+                  </p>
                 </div>
               </div>
             )}
@@ -403,15 +507,17 @@ export function RequestBuilderView() {
                   <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-destructive/10 flex items-center justify-center">
                     <ErrorIcon className="w-7 h-7 text-destructive" />
                   </div>
-                  <p className="text-sm font-medium text-foreground">Request Failed</p>
+                  <p className="text-sm font-medium text-foreground">
+                    Request Failed
+                  </p>
                   <p className="text-xs text-muted-foreground mt-1">{error}</p>
                 </div>
               </div>
             )}
 
             {response && responseTab === "body" && (
-              <ResponseViewer 
-                body={response.body} 
+              <ResponseViewer
+                body={response.body}
                 statusCode={response.status}
                 headers={Object.fromEntries(response.headers)}
               />
@@ -422,16 +528,20 @@ export function RequestBuilderView() {
                 <div className="space-y-1">
                   {response.headers.map(([name, value], i) => (
                     <div key={i} className="flex text-xs">
-                      <span className="text-primary w-40 flex-shrink-0 truncate">{name}</span>
-                      <span className="text-muted-foreground truncate">{value}</span>
+                      <span className="text-primary w-40 flex-shrink-0 truncate">
+                        {name}
+                      </span>
+                      <span className="text-muted-foreground truncate">
+                        {value}
+                      </span>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {responseTab === "timing" && (
-              response?.timing ? (
+            {responseTab === "timing" &&
+              (response?.timing ? (
                 <div className="overflow-auto">
                   <TimingBreakdown timing={response.timing} />
                 </div>
@@ -439,19 +549,16 @@ export function RequestBuilderView() {
                 <div className="flex items-center justify-center h-full text-muted-foreground">
                   <div className="text-center">
                     <p className="text-sm">No timing data available</p>
-                    <p className="text-xs mt-1">Timing data is only available for manually sent requests</p>
+                    <p className="text-xs mt-1">
+                      Timing data is only available for manually sent requests
+                    </p>
                   </div>
                 </div>
-              )
-            )}
+              ))}
 
-            {responseTab === "tests" && (
-              <TestRunner response={response} />
-            )}
+            {responseTab === "tests" && <TestRunner response={response} />}
 
-            {responseTab === "code" && (
-              <CodeGenerator request={config} />
-            )}
+            {responseTab === "code" && <CodeGenerator request={config} />}
 
             {responseTab === "ai" && response && (
               <AIAnalysisPanel
@@ -468,7 +575,10 @@ export function RequestBuilderView() {
                   requestBody: null,
                   requestBodyText: config.body.json || config.body.raw || null,
                   responseBodyText: response.body,
-                  responseHeaders: response.headers.map(([name, value]) => ({ name, value })),
+                  responseHeaders: response.headers.map(([name, value]) => ({
+                    name,
+                    value,
+                  })),
                 }}
                 response={response}
               />
@@ -482,7 +592,7 @@ export function RequestBuilderView() {
 
 function interpolateConfigVariables(
   config: RequestConfig,
-  variables: Record<string, string>
+  variables: Record<string, string>,
 ): RequestConfig {
   return {
     ...config,
@@ -499,8 +609,12 @@ function interpolateConfigVariables(
     })),
     body: {
       ...config.body,
-      json: config.body.json ? interpolateVariables(config.body.json, variables) : undefined,
-      raw: config.body.raw ? interpolateVariables(config.body.raw, variables) : undefined,
+      json: config.body.json
+        ? interpolateVariables(config.body.json, variables)
+        : undefined,
+      raw: config.body.raw
+        ? interpolateVariables(config.body.raw, variables)
+        : undefined,
       urlEncoded: config.body.urlEncoded?.map((f) => ({
         ...f,
         name: interpolateVariables(f.name, variables),
@@ -509,25 +623,42 @@ function interpolateConfigVariables(
     },
     auth: {
       ...config.auth,
-      bearer: config.auth.bearer ? {
-        token: interpolateVariables(config.auth.bearer.token, variables),
-      } : undefined,
-      basic: config.auth.basic ? {
-        username: interpolateVariables(config.auth.basic.username, variables),
-        password: interpolateVariables(config.auth.basic.password, variables),
-      } : undefined,
-      apiKey: config.auth.apiKey ? {
-        ...config.auth.apiKey,
-        key: interpolateVariables(config.auth.apiKey.key, variables),
-        value: interpolateVariables(config.auth.apiKey.value, variables),
-      } : undefined,
+      bearer: config.auth.bearer
+        ? {
+            token: interpolateVariables(config.auth.bearer.token, variables),
+          }
+        : undefined,
+      basic: config.auth.basic
+        ? {
+            username: interpolateVariables(
+              config.auth.basic.username,
+              variables,
+            ),
+            password: interpolateVariables(
+              config.auth.basic.password,
+              variables,
+            ),
+          }
+        : undefined,
+      apiKey: config.auth.apiKey
+        ? {
+            ...config.auth.apiKey,
+            key: interpolateVariables(config.auth.apiKey.key, variables),
+            value: interpolateVariables(config.auth.apiKey.value, variables),
+          }
+        : undefined,
     },
   };
 }
 
 function SendIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -540,7 +671,12 @@ function SendIcon({ className }: { className?: string }) {
 
 function ErrorIcon({ className }: { className?: string }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
