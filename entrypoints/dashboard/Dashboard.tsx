@@ -798,6 +798,7 @@ export default function Dashboard() {
                 selectedRequestId: null,
               }))
             }
+            onOpenInBuilder={openInBuilder}
           />
         )}
 
