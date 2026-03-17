@@ -111,13 +111,34 @@ export async function saveProfiles(profiles: Profile[]): Promise<void> {
 }
 
 /**
- * Get data for a specific profile
+ * Get data for a specific profile.
+ * For the demo profile, auto-creates data on first read.
  */
 export async function getProfileData(profileId: string): Promise<ProfileData> {
   const key = `apiDebugger_pd_${profileId}`;
   const result = await chrome.storage.sync.get(key);
   const data = result[key] as ProfileData | undefined;
-  return data || { collections: [], savedRequests: [], environments: [] };
+
+  if (data) return data;
+
+  // Auto-initialize demo profile data on first access
+  if (profileId === DEMO_PROFILE_ID) {
+    console.log("[Profiles] Initializing demo data...");
+    const demo = createDemoCollections();
+    const demoData: ProfileData = {
+      collections: demo.collections,
+      savedRequests: demo.requests,
+      environments: demo.environments,
+    };
+    try {
+      await chrome.storage.sync.set({ [key]: demoData });
+    } catch (e) {
+      console.warn("[Profiles] Failed to save demo data:", e);
+    }
+    return demoData;
+  }
+
+  return { collections: [], savedRequests: [], environments: [] };
 }
 
 /**
