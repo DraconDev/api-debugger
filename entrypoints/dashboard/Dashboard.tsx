@@ -1516,6 +1516,16 @@ function CollectionsView({
           </div>
         )}
       </div>
+
+      {/* Request Detail Panel */}
+      {selectedRequest && (
+        <div className="w-80 border-l border-border overflow-y-auto">
+          <RequestDetailView
+            request={selectedRequest}
+            onClose={() => setSelectedRequestId(null)}
+          />
+        </div>
+      )}
     </div>
   );
 }
