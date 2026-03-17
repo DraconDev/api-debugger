@@ -1530,6 +1530,148 @@ function CollectionsView({
   );
 }
 
+function RequestDetailView({
+  request,
+  onClose,
+}: {
+  request: SavedRequest;
+  onClose: () => void;
+}) {
+  const config = request.requestConfig;
+  if (!config) return null;
+
+  return (
+    <div className="h-full flex flex-col">
+      <div className="flex items-center justify-between p-3 border-b border-border">
+        <h3 className="text-sm font-medium truncate">{request.name}</h3>
+        <button
+          onClick={onClose}
+          className="p-1 hover:bg-accent rounded text-muted-foreground"
+        >
+          ✕
+        </button>
+      </div>
+      <div className="flex-1 overflow-y-auto p-3 space-y-4">
+        {/* Method + URL */}
+        <div>
+          <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+            Request
+          </label>
+          <div className="mt-1 flex items-center gap-2">
+            <span className="px-2 py-0.5 text-xs font-mono font-bold rounded bg-muted">
+              {config.method}
+            </span>
+            <span className="text-xs font-mono truncate flex-1">
+              {config.url}
+            </span>
+          </div>
+        </div>
+
+        {/* Auth */}
+        {config.auth.type !== "none" && (
+          <div>
+            <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+              Auth
+            </label>
+            <div className="mt-1 text-xs">
+              <span className="px-2 py-0.5 rounded bg-muted">
+                {config.auth.type}
+              </span>
+              {config.auth.type === "bearer" && (
+                <span className="ml-2 font-mono text-muted-foreground">
+                  {config.auth.bearer?.token?.slice(0, 20)}...
+                </span>
+              )}
+              {config.auth.type === "basic" && (
+                <span className="ml-2 font-mono text-muted-foreground">
+                  {config.auth.basic?.username}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Headers */}
+        {config.headers.length > 0 && (
+          <div>
+            <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+              Headers (
+              {config.headers.filter((h) => h.enabled !== false).length})
+            </label>
+            <div className="mt-1 space-y-1">
+              {config.headers
+                .filter((h) => h.enabled !== false)
+                .map((h, i) => (
+                  <div key={i} className="text-xs font-mono">
+                    <span className="text-primary">{h.name}</span>
+                    <span className="text-muted-foreground">: </span>
+                    <span className="text-muted-foreground truncate">
+                      {h.value}
+                    </span>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
+        {/* Params */}
+        {config.params.length > 0 && (
+          <div>
+            <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+              Params ({config.params.filter((p) => p.enabled !== false).length})
+            </label>
+            <div className="mt-1 space-y-1">
+              {config.params
+                .filter((p) => p.enabled !== false)
+                .map((p, i) => (
+                  <div key={i} className="text-xs font-mono">
+                    <span className="text-primary">{p.name}</span>
+                    <span className="text-muted-foreground">=</span>
+                    <span className="text-muted-foreground">{p.value}</span>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
+        {/* Body */}
+        {config.bodyType !== "none" && (
+          <div>
+            <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+              Body ({config.bodyType})
+            </label>
+            <pre className="mt-1 text-xs font-mono bg-muted p-2 rounded overflow-x-auto max-h-40">
+              {config.body.raw || config.body.json || "(empty)"}
+            </pre>
+          </div>
+        )}
+
+        {/* Scripts */}
+        {config.preRequestScript && (
+          <div>
+            <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+              Pre-request Script
+            </label>
+            <pre className="mt-1 text-xs font-mono bg-muted p-2 rounded overflow-x-auto max-h-32">
+              {config.preRequestScript}
+            </pre>
+          </div>
+        )}
+        {config.postResponseScript && (
+          <div>
+            <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+              Post-response Script
+            </label>
+            <pre className="mt-1 text-xs font-mono bg-muted p-2 rounded overflow-x-auto max-h-32">
+              {config.postResponseScript}
+            </pre>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function AINudge({ onNavigate }: { onNavigate: (v: string) => void }) {
   const [hasAI, setHasAI] = useState<boolean | null>(null);
 
