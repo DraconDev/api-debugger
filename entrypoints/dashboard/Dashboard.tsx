@@ -1442,6 +1442,37 @@ function CollectionsView({
   );
 }
 
+function AINudge({ onNavigate }: { onNavigate: (v: string) => void }) {
+  const [hasAI, setHasAI] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    chrome.storage.sync.get("sync:ai_settings").then((r) => {
+      setHasAI(!!r["sync:ai_settings"]?.apiKey);
+    });
+  }, []);
+
+  if (hasAI === null || hasAI) return null;
+
+  return (
+    <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg flex items-center gap-3">
+      <span className="text-lg">🤖</span>
+      <div className="flex-1">
+        <p className="text-sm font-medium">Enable AI Assistant</p>
+        <p className="text-xs text-muted-foreground">
+          Add your OpenRouter key to get help debugging requests, explaining
+          responses, and generating tests
+        </p>
+      </div>
+      <button
+        onClick={() => onNavigate("settings")}
+        className="px-3 py-1.5 text-xs bg-primary text-primary-foreground rounded-md hover:bg-primary/90 whitespace-nowrap"
+      >
+        Set up AI
+      </button>
+    </div>
+  );
+}
+
 function OverviewView({
   requests,
   onNavigate,
