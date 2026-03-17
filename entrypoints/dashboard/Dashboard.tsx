@@ -1460,26 +1460,29 @@ function CollectionsView({
                   collectionRequests.map((req) => (
                     <div
                       key={req.id}
-                      className="px-3 py-2 border-b border-border hover:bg-accent/50 cursor-pointer"
+                      onClick={() =>
+                        setSelectedRequestId(
+                          selectedRequestId === req.id ? null : req.id,
+                        )
+                      }
+                      className={`px-3 py-2 border-b border-border cursor-pointer transition-colors ${
+                        selectedRequestId === req.id
+                          ? "bg-accent"
+                          : "hover:bg-accent/50"
+                      }`}
                     >
                       <div className="flex items-center gap-2">
                         <span
-                          className={`font-mono text-xs ${
-                            req.request.method === "GET"
-                              ? "text-success"
-                              : req.request.method === "POST"
-                                ? "text-warning"
-                                : "text-muted-foreground"
-                          }`}
+                          className={`font-mono text-xs font-bold ${getMethodColor(req.requestConfig?.method || req.request.method)}`}
                         >
-                          {req.request.method}
+                          {req.requestConfig?.method || req.request.method}
                         </span>
                         <span className="text-sm text-foreground">
                           {req.name}
                         </span>
                       </div>
-                      <div className="text-xs text-muted-foreground truncate mt-1">
-                        {req.request.url}
+                      <div className="text-xs text-muted-foreground truncate mt-1 font-mono">
+                        {req.requestConfig?.url || req.request.url}
                       </div>
                     </div>
                   ))
