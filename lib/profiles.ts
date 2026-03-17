@@ -71,7 +71,7 @@ function createDefaultProfiles(): Profile[] {
       id: "profile-default",
       name: "Default",
       description: "Empty workspace",
-      icon: "📁",
+      icon: "🏠",
       isBuiltIn: true,
       createdAt: now,
       updatedAt: now,
