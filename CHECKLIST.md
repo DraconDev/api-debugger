@@ -51,6 +51,11 @@
 
 ## UI
 
+- [ ] Click extension icon → dashboard opens directly (no popup)
+- [ ] Overview page shows: stats, capture toggle, quick actions, recent requests
+- [ ] Filter stats by All/Success/Errors
+- [ ] Quick actions: New Request, WebSocket, GraphQL, Test Mode, Settings
+- [ ] Recent requests list clickable → goes to History
+- [ ] Clear All button removes history
 - [ ] Sidebar collapse → icons only → logo not squished → **?** button works
-- [ ] Popup → stats correct → quick actions work
 - [ ] Press `?` → shortcuts modal → Escape closes
