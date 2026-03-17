@@ -1589,6 +1589,9 @@ function OverviewView({
           )}
         </div>
 
+        {/* AI Nudge */}
+        <AINudge onNavigate={onNavigate} />
+
         {/* Recent Requests */}
         <div className="border border-border rounded-lg overflow-hidden">
           <div className="px-4 py-2 bg-muted/30 border-b border-border flex items-center justify-between">
