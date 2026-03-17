@@ -71,17 +71,17 @@ export function UrlEditor({
   const methodColor = (m: string) => {
     switch (m) {
       case "GET":
-        return "bg-success hover:bg-success/80";
+        return "bg-success/15 text-success border border-success/30";
       case "POST":
-        return "bg-warning hover:bg-warning/80";
+        return "bg-primary/15 text-primary border border-primary/30";
       case "PUT":
-        return "bg-primary hover:bg-primary/80";
+        return "bg-warning/15 text-warning border border-warning/30";
       case "PATCH":
-        return "bg-accent hover:bg-accent/80 text-accent-foreground";
+        return "bg-accent text-accent-foreground border border-accent";
       case "DELETE":
-        return "bg-destructive hover:bg-destructive/80";
+        return "bg-destructive/15 text-destructive border border-destructive/30";
       default:
-        return "bg-muted hover:bg-muted/80 text-muted-foreground";
+        return "bg-muted text-muted-foreground border border-border";
     }
   };
 
