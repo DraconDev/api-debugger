@@ -234,7 +234,6 @@ export async function resetProfile(profileId: string): Promise<void> {
   if (!profile || !profile.isBuiltIn) return;
 
   if (profileId === DEMO_PROFILE_ID) {
-    const { createDemoCollections } = await import("@/lib/demoProfile");
     const demo = createDemoCollections();
     await saveProfileData(DEMO_PROFILE_ID, {
       collections: demo.collections,
