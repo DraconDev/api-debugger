@@ -192,11 +192,7 @@ export function DiagnosticsPanel({ request }: DiagnosticsPanelProps) {
     setAiError(null);
 
     try {
-      const client = createAIClient({
-        provider: aiSettings.provider,
-        apiKey: aiSettings.apiKey,
-        model: aiSettings.model,
-      });
+      const client = createAI({ apiKey: aiSettings.apiKey });
 
       const prompt = `Analyze this failed HTTP request and provide a brief, actionable explanation:
 
@@ -213,11 +209,18 @@ Provide:
 
 Keep response under 150 words.`;
 
-      const response = await client.complete(
-        prompt,
-        "You are an API debugging expert. Provide concise, actionable advice.",
+      const result = await client.chat(
+        [
+          {
+            role: "system",
+            content:
+              "You are an API debugging expert. Provide concise, actionable advice.",
+          },
+          { role: "user", content: prompt },
+        ],
+        { model: aiSettings.model, fallbacks: aiSettings.fallbacks || [] },
       );
-      setAiExplanation(response.content);
+      setAiExplanation(result.content);
     } catch (err) {
       setAiError(
         err instanceof Error ? err.message : "Failed to get AI explanation",
