@@ -1406,6 +1406,225 @@ function CollectionsView({
   );
 }
 
+function OverviewView({
+  requests,
+  onNavigate,
+  onClearHistory,
+}: {
+  requests: RequestRecord[];
+  onNavigate: (view: string) => void;
+  onClearHistory: () => void;
+}) {
+  const [captureEnabled, setCaptureEnabled] = useState(true);
+  const [filter, setFilter] = useState<"all" | "success" | "errors">("all");
+
+  useEffect(() => {
+    chrome.storage.local.get("captureEnabled").then((r) => {
+      if (r.captureEnabled !== undefined) setCaptureEnabled(r.captureEnabled);
+    });
+  }, []);
+
+  const toggleCapture = async () => {
+    const next = !captureEnabled;
+    setCaptureEnabled(next);
+    await chrome.storage.local.set({ captureEnabled: next });
+    await chrome.runtime.sendMessage({ type: "SET_CAPTURE", enabled: next });
+  };
+
+  const errorCount = requests.filter((r) => r.statusCode >= 400).length;
+  const successCount = requests.filter(
+    (r) => r.statusCode > 0 && r.statusCode < 400,
+  ).length;
+
+  const filtered = requests.filter((r) => {
+    if (filter === "errors") return r.statusCode >= 400;
+    if (filter === "success") return r.statusCode > 0 && r.statusCode < 400;
+    return true;
+  });
+
+  const recent = filtered.slice(0, 15);
+
+  return (
+    <div className="flex-1 overflow-auto p-6">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Overview</h1>
+            <p className="text-sm text-muted-foreground">
+              {requests.length} requests captured
+            </p>
+          </div>
+          <button
+            onClick={toggleCapture}
+            className={`relative w-12 h-6 rounded-full transition-colors ${
+              captureEnabled ? "bg-success" : "bg-muted"
+            }`}
+            title={captureEnabled ? "Capturing enabled" : "Capturing disabled"}
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                captureEnabled ? "translate-x-6" : ""
+              }`}
+            />
+          </button>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-4">
+          <button
+            onClick={() => setFilter("all")}
+            className={`p-4 rounded-lg border text-left transition-colors ${
+              filter === "all"
+                ? "border-primary bg-primary/5"
+                : "border-border bg-card hover:bg-accent/30"
+            }`}
+          >
+            <div className="text-2xl font-bold">{requests.length}</div>
+            <div className="text-sm text-muted-foreground">Total</div>
+          </button>
+          <button
+            onClick={() => setFilter("success")}
+            className={`p-4 rounded-lg border text-left transition-colors ${
+              filter === "success"
+                ? "border-success bg-success/5"
+                : "border-border bg-card hover:bg-accent/30"
+            }`}
+          >
+            <div className="text-2xl font-bold text-success">
+              {successCount}
+            </div>
+            <div className="text-sm text-muted-foreground">Success</div>
+          </button>
+          <button
+            onClick={() => setFilter("errors")}
+            className={`p-4 rounded-lg border text-left transition-colors ${
+              filter === "errors"
+                ? "border-destructive bg-destructive/5"
+                : "border-border bg-card hover:bg-accent/30"
+            }`}
+          >
+            <div className="text-2xl font-bold text-destructive">
+              {errorCount}
+            </div>
+            <div className="text-sm text-muted-foreground">Errors</div>
+          </button>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => onNavigate("builder")}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90"
+          >
+            + New Request
+          </button>
+          <button
+            onClick={() => onNavigate("websocket")}
+            className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg text-sm hover:bg-secondary/80"
+          >
+            WebSocket
+          </button>
+          <button
+            onClick={() => onNavigate("graphql")}
+            className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg text-sm hover:bg-secondary/80"
+          >
+            GraphQL
+          </button>
+          <button
+            onClick={() => onNavigate("test")}
+            className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg text-sm hover:bg-secondary/80"
+          >
+            Test Mode
+          </button>
+          <button
+            onClick={() => onNavigate("settings")}
+            className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg text-sm hover:bg-secondary/80"
+          >
+            Settings
+          </button>
+          {requests.length > 0 && (
+            <button
+              onClick={onClearHistory}
+              className="px-4 py-2 text-destructive hover:bg-destructive/10 rounded-lg text-sm ml-auto"
+            >
+              Clear All
+            </button>
+          )}
+        </div>
+
+        {/* Recent Requests */}
+        <div className="border border-border rounded-lg overflow-hidden">
+          <div className="px-4 py-2 bg-muted/30 border-b border-border flex items-center justify-between">
+            <span className="text-sm font-medium">
+              {filter === "all"
+                ? "Recent Requests"
+                : `${filter === "success" ? "Success" : "Error"} Requests`}
+            </span>
+            {filtered.length > 15 && (
+              <button
+                onClick={() => onNavigate("history")}
+                className="text-xs text-primary hover:underline"
+              >
+                View all ({filtered.length})
+              </button>
+            )}
+          </div>
+          {recent.length === 0 ? (
+            <div className="py-12 text-center">
+              <p className="text-muted-foreground">
+                {filter === "all"
+                  ? "No requests captured yet"
+                  : `No ${filter} requests`}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Browse the web to capture API requests
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-border">
+              {recent.map((req) => (
+                <div
+                  key={req.id}
+                  className="px-4 py-2 flex items-center gap-3 hover:bg-accent/30 cursor-pointer"
+                  onClick={() => onNavigate("history")}
+                >
+                  <span
+                    className={`text-xs font-mono font-bold w-10 ${
+                      req.statusCode >= 400
+                        ? "text-destructive"
+                        : req.statusCode >= 200
+                          ? "text-success"
+                          : "text-muted-foreground"
+                    }`}
+                  >
+                    {req.statusCode || "---"}
+                  </span>
+                  <span className="text-xs font-mono text-muted-foreground w-12">
+                    {req.method}
+                  </span>
+                  <span className="text-sm truncate flex-1">
+                    {(() => {
+                      try {
+                        return new URL(req.url).pathname;
+                      } catch {
+                        return req.url;
+                      }
+                    })()}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {req.duration ? `${req.duration}ms` : ""}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SettingsView() {
   const [settingsTab, setSettingsTab] = useState<
     "profiles" | "ai" | "environments" | "filters" | "shortcuts"
