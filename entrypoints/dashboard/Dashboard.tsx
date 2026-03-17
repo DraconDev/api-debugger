@@ -1547,9 +1547,11 @@ function CollectionsView({
 function SavedRequestDetail({
   request,
   onClose,
+  onOpenInBuilder,
 }: {
   request: SavedRequest;
   onClose: () => void;
+  onOpenInBuilder: (config: RequestConfig) => void;
 }) {
   const config = request.requestConfig;
   if (!config) return null;
@@ -1563,6 +1565,14 @@ function SavedRequestDetail({
           className="p-1 hover:bg-accent rounded text-muted-foreground"
         >
           ✕
+        </button>
+      </div>
+      <div className="p-2 border-b border-border">
+        <button
+          onClick={() => onOpenInBuilder(config)}
+          className="w-full px-3 py-1.5 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
+        >
+          Open in Builder
         </button>
       </div>
       <div className="flex-1 overflow-y-auto p-3 space-y-4">
