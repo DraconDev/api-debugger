@@ -62,25 +62,15 @@ export async function getProfiles(): Promise<Profile[]> {
 }
 
 /**
- * Create the default set of profiles (Default + Demo)
+ * Create the default profile (pre-loaded with demo data)
  */
 function createDefaultProfiles(): Profile[] {
   const now = Date.now();
   return [
     {
       id: "profile-default",
-      name: "Default",
-      description: "Empty workspace",
+      name: "My Workspace",
       icon: "🏠",
-      isBuiltIn: true,
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: DEMO_PROFILE_ID,
-      name: "Demo Examples",
-      description: "21 pre-loaded requests to explore",
-      icon: "🎯",
       isBuiltIn: true,
       createdAt: now,
       updatedAt: now,
