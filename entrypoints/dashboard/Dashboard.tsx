@@ -1520,7 +1520,7 @@ function CollectionsView({
       {/* Request Detail Panel */}
       {selectedRequest && (
         <div className="w-80 border-l border-border overflow-y-auto">
-          <RequestDetailView
+          <SavedRequestDetail
             request={selectedRequest}
             onClose={() => setSelectedRequestId(null)}
           />
