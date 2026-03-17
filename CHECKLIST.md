@@ -1,61 +1,65 @@
 # Manual Testing Checklist
 
-> Switch to **Demo Examples** profile first (Settings → Profiles → Switch).
+> Switch to **Demo Examples** profile first (sidebar dropdown → Demo Examples).
 > `npm test` covers everything else (366 tests).
+
+## Overview (default view on open)
+
+- [ ] Click extension icon → dashboard opens directly (no popup)
+- [ ] Stats cards: Total / Success / Errors (click to filter)
+- [ ] Capture toggle on/off
+- [ ] Quick actions: + New Request, WebSocket, GraphQL, Test Mode, Settings
+- [ ] Recent requests list → click → goes to History
+- [ ] Clear All removes history
 
 ## Sending
 
 - [ ] **Get Posts** → Send → see JSON response
-- [ ] **Create Post** → Send → verify title in response
 - [ ] **Bearer Token** → Send → see auth echoed back
-- [ ] **Basic Auth** → Send → see `"authenticated": true`
-- [ ] **Toggle Headers Demo** → disable `X-Toggle-Me` → Send → confirm it's gone from response
-- [ ] **Status Code Testing** → Send → see 418 teapot response + passing tests
+- [ ] **Toggle Headers Demo** → disable one → Send → confirm missing
+- [ ] **Status Code Testing** → Send → see 418 + passing tests
+- [ ] Method dropdown: GET=green, POST=blue, PUT=yellow, DELETE=red (readable contrast)
 
 ## Protocols
 
-- [ ] WebSocket → connect `wss://echo.websocket.org` → send "hello" → see echo → events auto-scroll
-- [ ] SSE → connect → see events stream in → auto-scroll works
-- [ ] Socket.IO → connect → emit event → see response
-- [ ] GraphQL → send `{ __typename }` → see response
+- [ ] WebSocket → `wss://echo.websocket.org` → send → echo → auto-scroll
+- [ ] SSE → connect → stream → auto-scroll
+- [ ] Socket.IO → connect → emit → response
+- [ ] GraphQL → `{ __typename }` → response
 
 ## Scripts
 
-- [ ] **Set & Use Variables** → Send → check logs, confirm `userName` extracted
-- [ ] **Test Assertions** → Send → see 3 passing tests
-- [ ] **Script Error Handling** → Send → see graceful 404 handling
+- [ ] **Set & Use Variables** → Send → logs + variables extracted
+- [ ] **Test Assertions** → Send → 3 passing tests
+- [ ] **Script Error Handling** → Send → graceful 404
 
-## Profiles
+## Profiles (sidebar dropdown)
 
-- [ ] Settings → Profiles → **Switch** to Demo → 21 requests appear
-- [ ] **+ New Profile** → create → switch to it → empty
-- [ ] **Duplicate** Demo → copy appears → **Delete** copy
-- [ ] **Reset** Demo → restores all 21 requests
+- [ ] Dropdown shows: Demo Examples + any custom profiles
+- [ ] Switch to Demo → 21 requests load → page reloads
+- [ ] Settings → Profiles → + New Profile → appears in dropdown
+- [ ] Duplicate / Reset / Delete from Settings → Profiles
 
 ## AI
 
-- [ ] Settings → AI → paste OpenRouter key → **Test Key** → see "✓ valid"
-- [ ] Select model, add fallback, reorder with ↑/↓, remove with ✕
-- [ ] Send request → **AI Analysis** tab → see analysis → **Explain** → **Suggest** → **Regenerate**
+- [ ] Settings → AI → OpenRouter key → Test Key → ✓ valid
+- [ ] Select model, add/remove/reorder fallbacks
+- [ ] Send → AI Analysis → Explain → Suggest → Regenerate
 
 ## Environments
 
-- [ ] Switch between Dev/Prod/Testing → variables change
-- [ ] **Get User by ID** → Send → `{{userId}}` resolves from active env
+- [ ] Switch Dev/Prod/Testing → variables change
+- [ ] **Get User by ID** → `{{userId}}` resolves
 
 ## Capture & Sync
 
-- [ ] Browse github.com → requests appear in History
-- [ ] Overview → toggle capture on/off
-- [ ] GitHub Sync → connect → Push → verify file on GitHub → Pull
+- [ ] Browse → requests appear in History
+- [ ] Toggle capture in Overview
+- [ ] GitHub Sync → Push → verify on GitHub → Pull
 
 ## UI
 
-- [ ] Click extension icon → dashboard opens directly (no popup)
-- [ ] Overview page shows: stats, capture toggle, quick actions, recent requests
-- [ ] Filter stats by All/Success/Errors
-- [ ] Quick actions: New Request, WebSocket, GraphQL, Test Mode, Settings
-- [ ] Recent requests list clickable → goes to History
-- [ ] Clear All button removes history
-- [ ] Sidebar collapse → icons only → logo not squished → **?** button works
-- [ ] Press `?` → shortcuts modal → Escape closes
+- [ ] Sidebar collapse → icons only → logo not squished → **?** works
+- [ ] Sidebar scrolls when nav items overflow
+- [ ] Profile switcher dropdown in sidebar (not buried in settings)
+- [ ] Press `?` → shortcuts modal → Escape or X to close (not click-away)
