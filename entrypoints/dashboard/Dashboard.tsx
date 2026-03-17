@@ -238,7 +238,6 @@ export default function Dashboard() {
   const loadData = async () => {
     setState((s) => ({ ...s, isLoading: true }));
     try {
-      // Initialize profiles on first run (migrates old data if needed)
       await initializeProfiles();
 
       const [historyRes, activeId, allProfiles] = await Promise.all([
@@ -252,25 +251,34 @@ export default function Dashboard() {
 
       const profileData = await getProfileData(activeId);
 
-      // Apply profile's environments if they exist
       if (profileData.environments && profileData.environments.length > 0) {
         await chrome.storage.sync.set({
           apiDebugger_environments: profileData.environments,
         });
       }
 
-      // Apply profile's AI settings if they exist
       if (profileData.aiSettings) {
         await chrome.storage.sync.set({
           "sync:ai_settings": profileData.aiSettings,
         });
       }
 
+      const collections = profileData.collections || [];
+      const savedRequests = profileData.savedRequests || [];
+
+      // Auto-select first collection and first request so the builder isn't empty
+      const firstCol = collections[0] || null;
+      const firstReq = firstCol
+        ? savedRequests.find((r) => r.collectionId === firstCol.id) || null
+        : null;
+
       setState((s) => ({
         ...s,
         requests: historyRes.requests || [],
-        collections: profileData.collections || [],
-        savedRequests: profileData.savedRequests || [],
+        collections,
+        savedRequests,
+        selectedCollectionId: firstCol?.id || null,
+        selectedRequestId: firstReq?.id || null,
         isLoading: false,
       }));
     } catch (err) {
@@ -287,11 +295,21 @@ export default function Dashboard() {
       savedRequests: demo.requests,
       environments: demo.environments,
     });
+
+    // Auto-select first collection and first request
+    const firstCol = demo.collections[0];
+    const firstReq = demo.requests.find((r) => r.collectionId === firstCol?.id);
+
     setState((s) => ({
       ...s,
       collections: demo.collections,
       savedRequests: demo.requests,
+      selectedCollectionId: firstCol?.id || null,
+      selectedRequestId: firstReq?.id || null,
     }));
+
+    // Switch to collections view so user sees the demo requests
+    setView("collections");
   };
 
   const filteredRequests = useMemo(() => {
