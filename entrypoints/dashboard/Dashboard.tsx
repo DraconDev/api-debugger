@@ -83,6 +83,15 @@ export default function Dashboard() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [activeProfileId, setActiveProfileIdState] = useState<string>("");
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [builderConfig, setBuilderConfig] = useState<RequestConfig | null>(
+    null,
+  );
+
+  const openInBuilder = (config: RequestConfig) => {
+    setBuilderConfig(config);
+    setView("builder");
+  };
+
   const [state, setState] = useState<DashboardState>({
     requests: [],
     collections: [],
