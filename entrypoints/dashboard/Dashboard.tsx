@@ -251,10 +251,14 @@ export default function Dashboard() {
       // Initialize profiles on first run (migrates old data if needed)
       await initializeProfiles();
 
-      const [historyRes, activeId] = await Promise.all([
+      const [historyRes, activeId, allProfiles] = await Promise.all([
         chrome.runtime.sendMessage({ type: "GET_REQUESTS" }),
         getActiveProfileId(),
+        getProfiles(),
       ]);
+
+      setProfiles(allProfiles);
+      setActiveProfileIdState(activeId);
 
       const profileData = await getProfileData(activeId);
 
