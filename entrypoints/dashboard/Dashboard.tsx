@@ -1555,10 +1555,10 @@ function OverviewView({
             GraphQL
           </button>
           <button
-            onClick={() => onNavigate("test")}
+            onClick={() => onNavigate("collections")}
             className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg text-sm hover:bg-secondary/80"
           >
-            Test Mode
+            Collections
           </button>
           <button
             onClick={() => onNavigate("settings")}
