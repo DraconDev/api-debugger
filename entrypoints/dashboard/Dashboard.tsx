@@ -1563,24 +1563,30 @@ function SavedRequestDetail({
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between p-3 border-b border-border">
-        <h3 className="text-sm font-medium truncate">{request.name}</h3>
+      {/* Header */}
+      <div className="flex items-center gap-3 pb-3 border-b border-border">
         <button
           onClick={onClose}
           className="p-1 hover:bg-accent rounded text-muted-foreground"
+          title="Back to list"
         >
-          ✕
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
         </button>
-      </div>
-      <div className="p-2 border-b border-border">
+        <h3 className="text-base font-medium flex-1 truncate">{request.name}</h3>
         <button
           onClick={() => onOpenInBuilder(config)}
-          className="w-full px-3 py-1.5 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
+          className="px-3 py-1.5 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
         >
           Open in Builder
         </button>
       </div>
-      <div className="flex-1 overflow-y-auto p-3 space-y-4">
+
+      {/* Two column layout */}
+      <div className="flex-1 flex gap-4 overflow-hidden pt-4">
+        {/* Left: Request details */}
+        <div className="flex-1 overflow-y-auto space-y-4">
         {/* Method + URL */}
         <div>
           <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
