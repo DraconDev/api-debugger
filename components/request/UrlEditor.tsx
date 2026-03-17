@@ -71,15 +71,15 @@ export function UrlEditor({
   const methodColor = (m: string) => {
     switch (m) {
       case "GET":
-        return "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20";
+        return "bg-emerald-600 text-white border-emerald-700";
       case "POST":
-        return "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20";
+        return "bg-sky-600 text-white border-sky-700";
       case "PUT":
-        return "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20";
+        return "bg-orange-500 text-white border-orange-600";
       case "PATCH":
-        return "bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20";
+        return "bg-violet-600 text-white border-violet-700";
       case "DELETE":
-        return "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20";
+        return "bg-rose-600 text-white border-rose-700";
       default:
         return "bg-muted text-muted-foreground border-border";
     }
