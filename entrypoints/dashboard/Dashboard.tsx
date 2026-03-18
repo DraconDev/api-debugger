@@ -1555,17 +1555,16 @@ function CollectionsView({
                 const leftReq = collectionRequests.find((r) => r.id === left);
                 const rightReq = collectionRequests.find((r) => r.id === right);
                 if (leftReq?.lastResponse && rightReq?.lastResponse) {
+                  const pretty = (body: string) => {
+                    try {
+                      return JSON.stringify(JSON.parse(body), null, 2);
+                    } catch {
+                      return body;
+                    }
+                  };
                   onCompare(
-                    JSON.stringify(
-                      JSON.parse(leftReq.lastResponse.body),
-                      null,
-                      2,
-                    ),
-                    JSON.stringify(
-                      JSON.parse(rightReq.lastResponse.body),
-                      null,
-                      2,
-                    ),
+                    pretty(leftReq.lastResponse.body),
+                    pretty(rightReq.lastResponse.body),
                   );
                 }
               }}
