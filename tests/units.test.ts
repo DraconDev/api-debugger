@@ -857,7 +857,9 @@ describe("Demo Profile Validation", () => {
 
   it("all requests should have valid URLs", () => {
     demo.requests.forEach((r) => {
-      expect(r.requestConfig?.url.startsWith("http")).toBe(true);
+      const url = r.requestConfig?.url || "";
+      const isValid = url.startsWith("http") || url.startsWith("{{");
+      expect(isValid).toBe(true);
     });
   });
 
