@@ -32,6 +32,16 @@
 
 ## New Demo Requests
 
+- [ ] **GraphQL Query** → Send → see EU countries list
+- [ ] **GraphQL Mutation** → Send → see Japan country data with variables
+- [ ] **OAuth 2.0 Setup** → select Client Credentials flow, enter token URL
+- [ ] **Environment Variables** → uses `{{baseUrl}}` and `{{apiKey}}` from env
+- [ ] **Extract from Response** → runs extraction, sets variables for next request
+- [ ] **Chained (uses extracted)** → uses `{{extractedName}}` from previous
+- [ ] **Dynamic Auth Token** → pre-request script adds Bearer header
+
+## New Demo Requests
+
 - [ ] **Redirect Chain** → follows 302 redirect
 - [ ] **Slow Response (2s delay)** → shows duration > 2000ms
 - [ ] **Compressed Response** → handles gzip
