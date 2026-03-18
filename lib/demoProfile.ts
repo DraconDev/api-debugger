@@ -259,7 +259,7 @@ export function createDemoCollections(): {
     // ─── Scripts Collection ───────────────────────────────────
     req("demo-req-scripts", "Set & Use Variables", colScripts, {
       method: "GET",
-      url: "https://jsonplaceholder.typicode.com/users/{{userId}}",
+      url: "https://jsonplaceholder.typicode.com/users/1",
       headers: [{ name: "Accept", value: "application/json", enabled: true }],
       params: [],
       body: { raw: "" },
