@@ -6,6 +6,7 @@ import {
   executePreRequestScript,
   executePostResponseScript,
 } from "@/lib/scriptExecutor";
+import { detectImportFormat } from "@/lib/importers/types";
 import type { RequestConfig, CapturedResponse } from "@/types";
 
 // ─── AI Client: Fallback Chain Logic ─────────────────────────
