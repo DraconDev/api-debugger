@@ -73,6 +73,7 @@ export function createDemoCollections(): {
   const colScripts = "demo-col-scripts";
   const colAuth = "demo-col-auth";
   const colAdvanced = "demo-col-advanced";
+  const colWorkflows = "demo-col-workflows";
 
   const collections: Collection[] = [
     {
