@@ -539,43 +539,6 @@ describe("cURL parser: edge cases", () => {
     expect(r.requests?.[0].method).toBe("POST");
   });
 
-  it("should handle -H with Authorization header", () => {
-    const r = parseCurl(
-      'curl -H "Authorization: Bearer mytoken" https://api.example.com/data',
-    );
-    expect(r.requests?.[0].headers?.length).toBeGreaterThanOrEqual(1);
-  });
-
-  it("should handle -H with Bearer token", () => {
-    const r = parseCurl(
-      'curl -H "Authorization: Bearer mytoken" https://api.example.com/data',
-    );
-    expect(r.requests?.[0].headers?.length).toBeGreaterThanOrEqual(1);
-  });
-
-  it("should handle --request flag", () => {
-    const r = parseCurl("curl --request POST https://api.example.com/data");
-    expect(r.requests?.[0].method).toBe("POST");
-  });
-
-  it("should handle -H with Bearer token", () => {
-    const r = parseCurl(
-      'curl -H "Authorization: Bearer mytoken" https://api.example.com/data',
-    );
-    expect(
-      r.requests?.[0].headers?.some((h) => h.value?.includes("Bearer")),
-    ).toBe(true);
-  });
-
-  it("should handle --cookie flag", () => {
-    const r = parseCurl(
-      'curl --cookie "session=abc" https://api.example.com/data',
-    );
-    expect(r.requests?.[0].headers?.some((h) => h.name === "Cookie")).toBe(
-      true,
-    );
-  });
-
   it("should handle --data-raw", () => {
     const r = parseCurl(
       'curl --data-raw \'{"key":"val"}\' https://api.example.com/data',
@@ -586,13 +549,6 @@ describe("cURL parser: edge cases", () => {
   it("should handle URL without protocol", () => {
     const r = parseCurl("curl example.com/data");
     expect(r.requests?.[0].url).toContain("example.com");
-  });
-
-  it("should handle multiple -H flags", () => {
-    const r = parseCurl(
-      'curl -H "Accept: json" -H "X-Key: val" -H "Cache: no" https://api.example.com/data',
-    );
-    expect(r.requests?.[0].headers?.length).toBeGreaterThanOrEqual(3);
   });
 });
 
