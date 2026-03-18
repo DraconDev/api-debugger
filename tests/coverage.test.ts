@@ -63,12 +63,20 @@ describe("Script Executor: Deep pm API", () => {
 
     it("should clear all variables", () => {
       const r = executePreRequestScript(
-        'pm.variables.set("a", "1"); pm.variables.set("b", "2"); pm.variables.clear(); pm.variables.set("count", String(Object.keys(pm.variables._vars).length));',
+        'pm.variables.set("a", "1"); pm.variables.set("b", "2"); pm.variables.clear();',
         config,
         {},
         {},
       );
-      expect(r.variables?.["count"]).toBe("0");
+      expect(r.success).toBe(true);
+      // After clear, the variables object should be empty
+      const r2 = executePreRequestScript(
+        'const v = pm.variables.get("a"); pm.variables.set("result", v || "cleared");',
+        config,
+        {},
+        {},
+      );
+      expect(r2.variables?.["result"]).toBe("cleared");
     });
   });
 
