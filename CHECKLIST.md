@@ -1,7 +1,7 @@
 # Manual Testing Checklist
 
 > Switch to **Demo Examples** profile using the sidebar dropdown first.
-> Demo has 26 pre-loaded requests across 4 collections.
+> Demo has 33 pre-loaded requests across 5 collections.
 > `npm test` covers everything else (366 tests).
 
 ## Profile Dropdown (sidebar top)
