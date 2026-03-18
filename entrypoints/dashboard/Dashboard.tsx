@@ -801,6 +801,11 @@ export default function Dashboard() {
               }))
             }
             onOpenInBuilder={openInBuilder}
+            onCompare={(leftBody, rightBody) => {
+              setDiffLeft(leftBody);
+              setDiffRight(rightBody);
+              setView("diff");
+            }}
           />
         )}
 
