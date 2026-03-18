@@ -1541,6 +1541,29 @@ function CollectionsView({
               request={selectedRequest}
               onClose={() => setSelectedRequestId(null)}
               onOpenInBuilder={onOpenInBuilder}
+              allRequests={collectionRequests}
+              onCompare={(left, right) => {
+                // Navigate to diff view with both responses
+                const leftReq = collectionRequests.find((r) => r.id === left);
+                const rightReq = collectionRequests.find((r) => r.id === right);
+                if (leftReq?.lastResponse && rightReq?.lastResponse) {
+                  setDiffLeft(
+                    JSON.stringify(
+                      JSON.parse(leftReq.lastResponse.body),
+                      null,
+                      2,
+                    ),
+                  );
+                  setDiffRight(
+                    JSON.stringify(
+                      JSON.parse(rightReq.lastResponse.body),
+                      null,
+                      2,
+                    ),
+                  );
+                  setView("diff");
+                }
+              }}
             />
           </div>
         )}
