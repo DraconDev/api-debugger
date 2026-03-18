@@ -192,7 +192,7 @@ export function RequestBuilderView({
 
       <div className="flex-1 flex overflow-hidden">
         {/* Request Panel */}
-        <div className="w-1/2 flex flex-col border-r border-border">
+        <div className="w-1/2 flex flex-col border-r border-border overflow-hidden">
           {/* Request Tabs */}
           <div className="flex border-b border-border bg-muted/30">
             {(
@@ -445,7 +445,7 @@ export function RequestBuilderView({
         </div>
 
         {/* Response Panel */}
-        <div className="w-1/2 flex flex-col">
+        <div className="w-1/2 flex flex-col min-h-0">
           {/* Response Status */}
           {response && (
             <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/30">
