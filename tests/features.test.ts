@@ -130,8 +130,8 @@ describe("Profile System", () => {
 describe("Demo Profile", () => {
   const demo = createDemoCollections();
 
-  it("should have 4 collections", () => {
-    expect(demo.collections).toHaveLength(4);
+  it("should have 5 collections", () => {
+    expect(demo.collections).toHaveLength(5);
   });
 
   it("should have collections with correct names", () => {
