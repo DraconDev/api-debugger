@@ -619,7 +619,6 @@ export function createDemoCollections(): {
       extractions: [
         {
           id: "ext-name",
-          name: "User Name",
           enabled: true,
           source: "body",
           path: "name",
@@ -627,7 +626,6 @@ export function createDemoCollections(): {
         },
         {
           id: "ext-email",
-          name: "User Email",
           enabled: true,
           source: "body",
           path: "email",
