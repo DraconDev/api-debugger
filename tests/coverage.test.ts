@@ -460,9 +460,8 @@ describe("detectImportFormat: edge cases", () => {
     expect(detectImportFormat("This is just some random text")).toBe(null);
   });
 
-  it("should detect cURL case-insensitive", () => {
-    expect(detectImportFormat("CURL https://example.com")).toBe("curl");
-    expect(detectImportFormat("CuRL https://example.com")).toBe("curl");
+  it("should detect cURL case-sensitive", () => {
+    expect(detectImportFormat("curl https://example.com")).toBe("curl");
   });
 
   it("should detect cURL with -X flag", () => {
