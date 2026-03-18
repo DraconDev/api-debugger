@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   UrlEditor,
   HeadersEditor,
@@ -58,6 +58,14 @@ export function RequestBuilderView({
 
   const { variables, extractFromResponse, clearVariables, setVariables } =
     useRuntimeVariables();
+
+  // Listen for Ctrl+Enter shortcut from Dashboard
+  useEffect(() => {
+    const handler = () => sendRequest();
+    document.addEventListener("api-debugger:send-request", handler);
+    return () =>
+      document.removeEventListener("api-debugger:send-request", handler);
+  }, [config]);
 
   const sendRequest = async () => {
     if (!config.url) return;
