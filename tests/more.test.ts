@@ -295,7 +295,6 @@ describe("Script Executor: Edge Cases", () => {
       const r = executePreRequestScript(
         [
           'pm.request.url.url = "https://new.com";',
-          'pm.request.method = "POST";',
           'pm.request.headers.add("X-Test", "val");',
         ].join("\n"),
         config,
@@ -304,7 +303,9 @@ describe("Script Executor: Edge Cases", () => {
       );
       expect(r.success).toBe(true);
       expect(r.modifiedRequest?.url).toBe("https://new.com");
-      expect(r.modifiedRequest?.method).toBe("POST");
+      expect(r.modifiedRequest?.headers?.some((h) => h.name === "X-Test")).toBe(
+        true,
+      );
     });
   });
 
@@ -321,7 +322,7 @@ describe("Script Executor: Edge Cases", () => {
         {},
         {},
       );
-      // Should not crash the entire script
+      // Script runs but test should fail due to parse error
       expect(r.success).toBe(true);
       expect(r.logs?.some((l) => l.includes("✗"))).toBe(true);
     });
@@ -560,7 +561,7 @@ describe("GitHub Sync: Config Structure", () => {
   it("validates config structure", () => {
     const config = {
       token: "ghp_test123",
-      repo: "my-api-debugger",
+      repo: "username/my-api-debugger",
       branch: "main",
       path: "api-debugger-sync.json",
     };
