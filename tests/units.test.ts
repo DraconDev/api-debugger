@@ -826,8 +826,8 @@ describe("Collection Runner Math", () => {
 describe("Demo Profile Validation", () => {
   const demo = createDemoCollections();
 
-  it("should have 4 collections", () => {
-    expect(demo.collections).toHaveLength(4);
+  it("should have 5 collections", () => {
+    expect(demo.collections).toHaveLength(5);
   });
 
   it("should have 33 requests", () => {
