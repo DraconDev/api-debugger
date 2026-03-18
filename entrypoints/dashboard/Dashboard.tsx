@@ -777,7 +777,21 @@ export default function Dashboard() {
             {/* Request Detail */}
             <div className="flex-1 flex flex-col">
               {selectedRequest ? (
-                <RequestDetailView request={selectedRequest} />
+                <RequestDetailView
+                  request={selectedRequest}
+                  onOpenInBuilder={(url, method) => {
+                    setBuilderConfig({
+                      method: method as any,
+                      url,
+                      headers: [],
+                      params: [],
+                      body: { raw: "" },
+                      bodyType: "none",
+                      auth: { type: "none" },
+                    });
+                    setView("builder");
+                  }}
+                />
               ) : (
                 <div className="flex-1 flex items-center justify-center text-muted-foreground">
                   <div className="text-center">
