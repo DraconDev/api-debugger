@@ -77,6 +77,20 @@
 - [ ] Browse web → requests appear in History
 - [ ] GitHub Sync → connect → Push → Pull
 
+## Mock Server
+
+- [ ] Mocks → create server → add endpoint (GET /api/test, 200, JSON body)
+- [ ] "Generate Script" → downloads `mock-server.js`
+- [ ] Run `node mock-server.js 3100` → server starts
+- [ ] Hit `http://localhost:3100/api/test` → returns mock response
+- [ ] Export as JSON → re-import later
+
+## API Documentation
+
+- [ ] Docs → select collection → choose format (Markdown/OpenAPI/HTML)
+- [ ] "Generate Documentation" → preview appears
+- [ ] "Export" → file downloads | "Copy" → clipboard
+
 ## UI
 
 - [ ] Sidebar collapse → icons only → ? button works
