@@ -378,6 +378,12 @@ server.listen(port, () => {
               >
                 Export
               </button>
+              <button
+                onClick={() => generateServerScript(selectedServer)}
+                className="px-2 py-1 text-xs bg-primary hover:bg-primary/90 rounded text-primary-foreground"
+              >
+                Generate Script
+              </button>
             </div>
 
             <div className="flex-1 overflow-auto">
