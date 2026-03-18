@@ -43,7 +43,9 @@ export interface AuthConfig {
     addTo: "header" | "query";
   };
   oauth2?: {
+    flow?: "client_credentials" | "authorization_code";
     accessTokenUrl: string;
+    authorizationUrl?: string;
     clientId: string;
     clientSecret: string;
     scope: string;
