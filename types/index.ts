@@ -18,7 +18,13 @@ export interface FormDataField {
   enabled?: boolean;
 }
 
-export type BodyType = "none" | "json" | "form-data" | "x-www-form-urlencoded" | "raw" | "binary";
+export type BodyType =
+  | "none"
+  | "json"
+  | "form-data"
+  | "x-www-form-urlencoded"
+  | "raw"
+  | "binary";
 
 export type AuthType = "none" | "bearer" | "basic" | "api-key" | "oauth2";
 
@@ -104,6 +110,16 @@ export interface Collection {
   variables?: Variable[];
 }
 
+export interface SavedResponse {
+  status: number;
+  statusText: string;
+  headers: [string, string][];
+  body: string;
+  duration: number;
+  size: number;
+  timestamp: number;
+}
+
 export interface SavedRequest {
   id: string;
   collectionId: string;
@@ -112,6 +128,7 @@ export interface SavedRequest {
   description?: string;
   request: RequestRecord;
   requestConfig?: RequestConfig;
+  lastResponse?: SavedResponse;
   tags: string[];
   createdAt: number;
 }
