@@ -59,6 +59,30 @@
 - [ ] Send request → AI tab → ask "what's wrong with this?"
 - [ ] Quick actions: "What's wrong?", "Explain response", "Fix it", "cURL", "Test script"
 
+## OAuth 2.0
+
+- [ ] Auth tab → select "OAuth 2.0" → choose "Client Credentials" flow
+- [ ] Enter Token URL, Client ID, Secret, Scope → "Get Access Token"
+- [ ] Token appears in "Access Token" field
+- [ ] Select "Authorization Code + PKCE" flow → enter Authorization URL
+- [ ] Click "Get Access Token" → browser opens for login → token received
+- [ ] Token auto-applies to request headers
+
+## Compare Responses
+
+- [ ] Open request detail → see "Last Response" status + timestamp
+- [ ] "Compare with" dropdown shows other requests with saved responses
+- [ ] Select one → opens Diff view with both responses side-by-side
+- [ ] Diff view highlights differences between the two responses
+
+## Batch Testing
+
+- [ ] Collections → select collection → click "Run"
+- [ ] See pass/fail table with status, timing, size per request
+- [ ] Runtime variables extracted and shown
+- [ ] Delay between requests configurable
+- [ ] Stop button halts execution
+
 ## Environments
 
 - [ ] Switch Dev/Prod/Testing → variables change
