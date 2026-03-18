@@ -143,8 +143,8 @@ describe("Demo Profile", () => {
     expect(names.some((n: string) => n.includes("Advanced"))).toBe(true);
   });
 
-  it("should have 26 saved requests", () => {
-    expect(demo.requests).toHaveLength(26);
+  it("should have 33 saved requests", () => {
+    expect(demo.requests).toHaveLength(33);
   });
 
   it("should have requests in each collection", () => {
