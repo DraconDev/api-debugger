@@ -187,9 +187,9 @@ export function createDemoCollections(): {
       bodyType: "none",
       auth: { type: "none" },
     }),
-    req("demo-req-user", "Get User by ID", colRest, {
+    req("demo-req-user", "Get Single User", colRest, {
       method: "GET",
-      url: "https://jsonplaceholder.typicode.com/users/{{userId}}",
+      url: "https://jsonplaceholder.typicode.com/users/1",
       headers: [{ name: "Accept", value: "application/json", enabled: true }],
       params: [],
       body: { raw: "" },
