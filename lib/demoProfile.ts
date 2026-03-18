@@ -107,6 +107,14 @@ export function createDemoCollections(): {
       updatedAt: Date.now(),
       requestCount: 12,
     },
+    {
+      id: colWorkflows,
+      name: "🔗 Workflows & Chaining",
+      description: "Variables, extractions, and request chaining",
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      requestCount: 4,
+    },
   ];
 
   const requests: SavedRequest[] = [
