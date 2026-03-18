@@ -1761,6 +1761,32 @@ function SavedRequestDetail({
               <div className="mt-1 text-xs">{config.bodyType}</div>
             </div>
           )}
+          {request.lastResponse && (
+            <div className="pt-2 border-t border-border">
+              <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                Last Response
+              </label>
+              <div className="mt-1">
+                <span
+                  className={`text-sm font-mono font-bold ${
+                    request.lastResponse.status < 300
+                      ? "text-success"
+                      : request.lastResponse.status < 400
+                        ? "text-warning"
+                        : "text-destructive"
+                  }`}
+                >
+                  {request.lastResponse.status}
+                </span>
+                <span className="text-xs text-muted-foreground ml-2">
+                  {request.lastResponse.duration}ms
+                </span>
+              </div>
+              <div className="text-[10px] text-muted-foreground mt-1">
+                {new Date(request.lastResponse.timestamp).toLocaleString()}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
