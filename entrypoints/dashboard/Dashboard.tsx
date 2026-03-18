@@ -643,7 +643,7 @@ export default function Dashboard() {
 
         {view === "graphql" && <GraphQLClient />}
 
-        {view === "diff" && <DiffViewer left="" right="" />}
+        {view === "diff" && <DiffViewer left={diffLeft} right={diffRight} />}
 
         {view === "certs" && <CertificateViewer />}
 
