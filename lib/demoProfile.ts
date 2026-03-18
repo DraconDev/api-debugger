@@ -3,7 +3,7 @@
  *
  * Loaded on first launch so the extension never feels empty.
  * Uses only public APIs - no keys required.
- * 26 requests across 4 collections demonstrating every feature.
+ * 33 requests across 5 collections demonstrating every feature.
  */
 
 import type {
