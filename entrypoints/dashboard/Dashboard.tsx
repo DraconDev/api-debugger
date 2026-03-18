@@ -87,6 +87,8 @@ export default function Dashboard() {
   const [builderConfig, setBuilderConfig] = useState<RequestConfig | null>(
     null,
   );
+  const [diffLeft, setDiffLeft] = useState("");
+  const [diffRight, setDiffRight] = useState("");
 
   const openInBuilder = (config: RequestConfig) => {
     setBuilderConfig(config);
