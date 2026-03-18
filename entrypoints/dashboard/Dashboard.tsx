@@ -1553,10 +1553,14 @@ function SavedRequestDetail({
   request,
   onClose,
   onOpenInBuilder,
+  allRequests,
+  onCompare,
 }: {
   request: SavedRequest;
   onClose: () => void;
   onOpenInBuilder: (config: RequestConfig) => void;
+  allRequests: SavedRequest[];
+  onCompare: (left: string, right: string) => void;
 }) {
   const config = request.requestConfig;
   if (!config) return null;
