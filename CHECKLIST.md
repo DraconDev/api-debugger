@@ -129,5 +129,8 @@
 
 - [ ] Sidebar collapse → icons only → ? button works
 - [ ] Sidebar scrolls when nav overflows
+- [ ] Profile switcher in sidebar dropdown
 - [ ] `?` → shortcuts modal → Escape or X to close (not click-away)
 - [ ] Press `?` anywhere opens shortcuts
+- [ ] Ctrl+Enter sends request from builder view
+- [ ] History → click request → "Open in Builder" button loads it
