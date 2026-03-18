@@ -574,8 +574,6 @@ describe("GitHub Sync: Config Structure", () => {
 // ─── Import Format: More Edge Cases ──────────────────────────
 
 describe("Import Format: Additional Edge Cases", () => {
-  const { detectImportFormat } = await import("@/lib/importers/types");
-
   it("returns null for numeric input", () => {
     expect(detectImportFormat("12345")).toBe(null);
   });
