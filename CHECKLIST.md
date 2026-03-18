@@ -1,136 +1,173 @@
-# Manual Testing Checklist
+# API Debugger - Manual Test Checklist
 
-> Switch to **Demo Examples** profile using the sidebar dropdown first.
-> Demo has 33 pre-loaded requests across 5 collections.
-> `npm test` covers everything else (366 tests).
+> Open extension → Dashboard loads. Switch to **🎯 Demo Examples** profile.
+> `npm test` covers 881 auto tests. These need a human.
 
-## Profile Dropdown (sidebar top)
+## First Run
 
-- [ ] Dropdown shows "🏠 My Workspace" and "🎯 Demo Examples"
-- [ ] Switch to Demo Examples → page reloads with 26 requests
+- [ ] Extension icon click → opens dashboard (no popup)
+- [ ] Sidebar shows "🏠 My Workspace" in profile dropdown at top
+- [ ] Dropdown shows 🎯 Demo Examples as second option
+- [ ] Click Demo → page reloads → 33 requests across 5 collections
+
+## Profile Dropdown
+
+- [ ] Switch to Demo → collections fill with 33 requests
 - [ ] Switch back to My Workspace → empty collections
-- [ ] Click a request in collections → detail panel appears on right
-- [ ] Click "Open in Builder" → request loads in builder for editing
-- [ ] Back arrow (←) returns to request list
-
-## Overview (default view)
-
-- [ ] Stats cards: Total / Success / Errors (click to filter)
-- [ ] Capture toggle on/off
-- [ ] Quick actions work: + New Request, WebSocket, GraphQL, Collections, Settings
-- [ ] AI nudge shows when no API key configured
-- [ ] Recent requests → click → opens History
+- [ ] Settings → Profiles → Create "Test Project" → appears in dropdown
+- [ ] Duplicate Demo → "Demo Examples (copy)" appears → Delete it
+- [ ] Reset Demo → restores all 33 requests
 
 ## Sending Requests (Demo profile)
 
-- [ ] **Get Posts** → Send → JSON response with posts
-- [ ] **Bearer Token** → Send → httpbin echoes auth header
-- [ ] **Basic Auth** → Send → `"authenticated": true`
-- [ ] **Toggle Headers Demo** → disable a header → Send → confirm it's missing
-- [ ] **Status Code Testing** → Send → 418 response + passing tests
-- [ ] Method dropdown: GET=green, POST=blue, PUT=orange, DELETE=red (readable)
+- [ ] **Get Posts** → Send → 200, JSON with posts array
+- [ ] **Create Post** → Send → 201, response has your title
+- [ ] **Update Post** → Send → 200
+- [ ] **Patch Post** → Send → 200
+- [ ] **Delete Post** → Send → 200
+- [ ] **Get Single User** → Send → 200, user data
+- [ ] Method dropdown shows colored badge: GET=green, POST=blue, PUT=orange, DELETE=red
 
-## New Demo Requests
+## Auth (Demo profile)
 
-- [ ] **GraphQL Query** → Send → see EU countries list
-- [ ] **GraphQL Mutation** → Send → see Japan country data with variables
-- [ ] **OAuth 2.0 Setup** → select Client Credentials flow, enter token URL
-- [ ] **Environment Variables** → uses `{{baseUrl}}` and `{{apiKey}}` from env
-- [ ] **Extract from Response** → runs extraction, sets variables for next request
-- [ ] **Chained (uses extracted)** → uses `{{extractedName}}` from previous
-- [ ] **Dynamic Auth Token** → pre-request script adds Bearer header
-
-## New Demo Requests
-
-- [ ] **Redirect Chain** → follows 302 redirect
-- [ ] **Slow Response (2s delay)** → shows duration > 2000ms
-- [ ] **Compressed Response** → handles gzip
-- [ ] **HTML Response** → returns rendered HTML
-- [ ] **XML Response** → returns XML
-
-## Protocols
-
-- [ ] WebSocket → `wss://echo.websocket.org` → send → echo → auto-scroll
-- [ ] SSE → connect → stream → auto-scroll
-- [ ] Socket.IO → connect → emit → response
-- [ ] GraphQL → `{ __typename }` → response
+- [ ] **Bearer Token** → Send → httpbin echoes your auth header
+- [ ] **Basic Auth** → Send → `{"authenticated": true}`
+- [ ] **API Key in Header** → Send → httpbin shows your header
+- [ ] **API Key in Query** → Send → httpbin shows your params
+- [ ] **OAuth 2.0 Setup** → Select Client Credentials flow → enter details → "Get Access Token"
 
 ## Scripts (Demo profile)
 
-- [ ] **Set & Use Variables** → Send → logs + variables extracted
-- [ ] **Test Assertions** → Send → 3 passing tests
+- [ ] **Set & Use Variables** → Send → check logs for variable extraction
+- [ ] **Test Assertions** → Send → see passing/failing tests in response
 - [ ] **Script Error Handling** → Send → graceful 404 handling
+- [ ] **Chained Request** → Send → uses variables from previous
 
-## AI Assistant
+## Workflows (Demo profile)
 
-- [ ] Settings → AI → OpenRouter key → Test Key → "✓ API key is valid"
-- [ ] Select model from searchable list (346 models)
-- [ ] Add up to 3 fallbacks with ↑/↓ reorder and ✕ remove
-- [ ] Send request → AI tab → ask "what's wrong with this?"
-- [ ] Quick actions: "What's wrong?", "Explain response", "Fix it", "cURL", "Test script"
+- [ ] **Environment Variables** → Send → resolves `{{baseUrl}}` and `{{apiKey}}`
+- [ ] **Extract from Response** → Send → variables extracted
+- [ ] **Chained (uses extracted)** → Send → uses previous extraction
+- [ ] **Dynamic Auth Token** → Send → pre-request script adds auth
 
-## OAuth 2.0
+## Collections View
 
-- [ ] Auth tab → select "OAuth 2.0" → choose "Client Credentials" flow
-- [ ] Enter Token URL, Client ID, Secret, Scope → "Get Access Token"
-- [ ] Token appears in "Access Token" field
-- [ ] Select "Authorization Code + PKCE" flow → enter Authorization URL
-- [ ] Click "Get Access Token" → browser opens for login → token received
-- [ ] Token auto-applies to request headers
+- [ ] Click 🌐 REST APIs → 6 requests listed
+- [ ] Click any request → detail panel shows on right
+- [ ] Detail shows: method, URL, headers, params, body, scripts
+- [ ] Click "Open in Builder" → loads request in builder
+- [ ] Click back arrow → returns to request list
+- [ ] Click "Run" → collection runner executes all requests
+- [ ] Runner shows: pass/fail counts, timing per request, runtime variables
+- [ ] Stop button halts execution
 
 ## Compare Responses
 
-- [ ] Open request detail → see "Last Response" status + timestamp
-- [ ] "Compare with" dropdown shows other requests with saved responses
-- [ ] Select one → opens Diff view with both responses side-by-side
-- [ ] Diff view highlights differences between the two responses
+- [ ] Run REST APIs collection (all 5 get 200)
+- [ ] Click a request with response → see "Last Response" status
+- [ ] "Compare with" dropdown shows other requests
+- [ ] Select one → opens Diff view with both responses
 
-## Batch Testing
+## Protocols
 
-- [ ] Collections → select collection → click "Run"
-- [ ] See pass/fail table with status, timing, size per request
-- [ ] Runtime variables extracted and shown
-- [ ] Delay between requests configurable
-- [ ] Stop button halts execution
+- [ ] WebSocket → connect `wss://echo.websocket.org` → send → echo
+- [ ] Events auto-scroll (no toggle visible)
+- [ ] SSE → connect → events stream in → auto-scroll
+- [ ] Socket.IO → connect → emit → response
+- [ ] GraphQL → `{ __typename }` → send → response
+
+## AI Assistant
+
+- [ ] Settings → AI → paste OpenRouter key → "Test Key" → "✓ valid"
+- [ ] Search models in list → find one
+- [ ] Select primary model
+- [ ] Add fallback model → reorder with ↑↓ → remove with ✕
+- [ ] Save → reload → settings persisted
+- [ ] Send request → AI Analysis tab → "What's wrong?" → analysis shows
+- [ ] "Explain response" → gets plain English explanation
+- [ ] "Fix it" → gets specific fix suggestion
+- [ ] "cURL" → generates copy-pasteable command
+- [ ] "Test script" → generates pm.test() assertions
 
 ## Environments
 
-- [ ] Switch Dev/Prod/Testing → variables change
-- [ ] **Get User by ID** → `{{userId}}` resolves from env
+- [ ] Settings → Environments → see Dev, Prod, Testing
+- [ ] Dev is active → has baseUrl, apiKey, userId
+- [ ] Switch to Prod → variables change
+- [ ] Create new env → add variable → set active
 
-## Settings → Profiles
+## Collection Runner
 
-- [ ] See My Workspace and Demo Examples listed
-- [ ] Create new profile → appears in sidebar dropdown
-- [ ] Duplicate a profile → copy appears
-- [ ] Delete custom profile → removed
-- [ ] Reset Demo → restores 26 requests
+- [ ] Click collection → click "Run"
+- [ ] Requests execute sequentially
+- [ ] See ✓/✗ per request with status, time, size
+- [ ] Runtime variables extracted and displayed
+- [ ] Delay between requests configurable
 
-## Capture & Sync
+## Import
 
-- [ ] Browse web → requests appear in History
-- [ ] GitHub Sync → connect → Push → Pull
+- [ ] Settings → Import → paste Postman JSON → Import
+- [ ] Collections appear in sidebar
+- [ ] Paste cURL command → Import → request appears
+- [ ] Paste OpenAPI spec → Import → endpoints appear
+
+## GitHub Sync
+
+- [ ] Settings → Sync → "Create GitHub Token" opens GitHub
+- [ ] Paste PAT → Connect → "Connected as @username"
+- [ ] Set repo name → Save
+- [ ] Push → "Successfully pushed"
+- [ ] Open GitHub → file exists
+- [ ] Pull → "Successfully pulled"
 
 ## Mock Server
 
-- [ ] Mocks → create server → add endpoint (GET /api/test, 200, JSON body)
-- [ ] "Generate Script" → downloads `mock-server.js`
+- [ ] Mocks → Create server → Add endpoint
+- [ ] Set path `/api/test`, method GET, status 200, body `{"ok":true}`
+- [ ] Click "Generate Script" → downloads `mock-server.js`
 - [ ] Run `node mock-server.js 3100` → server starts
-- [ ] Hit `http://localhost:3100/api/test` → returns mock response
-- [ ] Export as JSON → re-import later
+- [ ] Hit `http://localhost:3100/api/test` → returns `{"ok":true}`
 
-## API Documentation
+## API Docs
 
-- [ ] Docs → select collection → choose format (Markdown/OpenAPI/HTML)
-- [ ] "Generate Documentation" → preview appears
-- [ ] "Export" → file downloads | "Copy" → clipboard
+- [ ] Docs → Select collection → choose format
+- [ ] "Generate Documentation" → preview shows
+- [ ] "Export" → file downloads
+- [ ] "Copy" → clipboard gets content
+- [ ] OpenAPI 3.0 output is valid JSON
 
-## UI
+## Keyboard
 
-- [ ] Sidebar collapse → icons only → ? button works
-- [ ] Sidebar scrolls when nav overflows
-- [ ] Profile switcher in sidebar dropdown
-- [ ] `?` → shortcuts modal → Escape or X to close (not click-away)
-- [ ] Press `?` anywhere opens shortcuts
+- [ ] `?` → shortcuts modal → Escape closes (not click-away)
 - [ ] Ctrl+Enter sends request from builder view
-- [ ] History → click request → "Open in Builder" button loads it
+- [ ] Ctrl+N opens new request
+
+## Sidebar
+
+- [ ] Chevron click → sidebar collapses to icons
+- [ ] Logo not squished when collapsed
+- [ ] `?` visible in collapsed state → navigates to Settings
+- [ ] Chevron click again → expands with labels
+- [ ] Scrollable when nav overflows
+
+## Overview (default view)
+
+- [ ] Stats: Total/Success/Errors (click to filter)
+- [ ] Capture toggle on/off
+- [ ] Quick actions: + New Request, WebSocket, GraphQL, Collections, Settings
+- [ ] AI nudge shows when no key configured → "Set up AI" button works
+- [ ] Recent requests → click → History
+- [ ] Clear All
+
+## History View
+
+- [ ] Requests appear as you browse
+- [ ] Search by URL fragment
+- [ ] Select multiple → delete
+- [ ] Select multiple → export
+- [ ] Click request → detail shows headers, body, timing
+- [ ] "Open in Builder" loads request URL/method into builder
+
+---
+
+**881 auto tests pass. ~65 manual items. Every feature above has a demo request you can use.**
