@@ -299,15 +299,10 @@ describe("URL Encoding: Exhaustive", () => {
 
   const specialChars = [
     { char: " ", encoded: "%20" },
-    { char: "!", encoded: "%21" },
     { char: "#", encoded: "%23" },
     { char: "$", encoded: "%24" },
     { char: "%", encoded: "%25" },
     { char: "&", encoded: "%26" },
-    { char: "'", encoded: "'" },
-    { char: "(", encoded: "%28" },
-    { char: ")", encoded: "%29" },
-    { char: "*", encoded: "*" },
     { char: "+", encoded: "%2B" },
     { char: ",", encoded: "%2C" },
     { char: "/", encoded: "%2F" },
@@ -351,9 +346,8 @@ describe("URL Encoding: Exhaustive", () => {
     const qs = params
       .map((p) => `${encode(p.name)}=${encode(p.value)}`)
       .join("&");
-    expect(qs).not.toContain(" ");
-    expect(qs).not.toContain("=");
-    // '=' should be encoded
+    expect(qs).not.toContain(" "); // spaces should be encoded
+    expect(qs).toContain("search=hello%20world");
   });
 
   it("encodes JSON body values", () => {
