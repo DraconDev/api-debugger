@@ -599,15 +599,17 @@ describe("percentile calculation", () => {
 // ─── Content Type Detection ──────────────────────────────────
 
 function detectContentKind(body: string, contentType?: string): string {
+  // Check content-type first
+  if (contentType?.includes("html")) return "html";
   if (contentType?.includes("json") || contentType?.includes("javascript")) {
     try {
       JSON.parse(body);
       return "json";
     } catch {}
   }
-  if (contentType?.includes("xml") || body.trim().startsWith("<")) return "xml";
-  if (contentType?.includes("html")) return "html";
+  if (contentType?.includes("xml")) return "xml";
   if (contentType?.includes("text/plain")) return "text";
+  // Fall back to body inspection
   try {
     JSON.parse(body);
     return "json";
