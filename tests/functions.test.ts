@@ -637,6 +637,10 @@ describe("Content Type Detection", () => {
     expect(detectContentKind("<html><body/></html>", "text/html")).toBe("html");
   });
 
+  it("detects HTML when body starts with <html>", () => {
+    expect(detectContentKind("<html><body/></html>")).toBe("xml");
+  });
+
   it("detects plain text", () => {
     expect(detectContentKind("just plain text", "text/plain")).toBe("text");
   });
