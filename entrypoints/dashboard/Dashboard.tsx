@@ -1300,12 +1300,14 @@ function CollectionsView({
   selectedCollectionId,
   onSelectCollection,
   onOpenInBuilder,
+  onCompare,
 }: {
   collections: Collection[];
   savedRequests: SavedRequest[];
   selectedCollectionId: string | null;
   onSelectCollection: (id: string | null) => void;
   onOpenInBuilder: (config: RequestConfig) => void;
+  onCompare: (leftBody: string, rightBody: string) => void;
 }) {
   const [isRunning, setIsRunning] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(
