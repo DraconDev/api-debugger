@@ -1137,7 +1137,13 @@ function RequestListItem({
   );
 }
 
-function RequestDetailView({ request }: { request: RequestRecord }) {
+function RequestDetailView({
+  request,
+  onOpenInBuilder,
+}: {
+  request: RequestRecord;
+  onOpenInBuilder?: (url: string, method: string) => void;
+}) {
   const [activeTab, setActiveTab] = useState<
     "headers" | "body" | "response" | "timing"
   >("headers");
@@ -1183,6 +1189,14 @@ function RequestDetailView({ request }: { request: RequestRecord }) {
           {new Date(request.timeStamp).toLocaleString()} ·{" "}
           {request.duration.toFixed(0)}ms
         </div>
+        {onOpenInBuilder && (
+          <button
+            onClick={() => onOpenInBuilder(request.url, request.method)}
+            className="mt-2 px-3 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
+          >
+            Open in Builder
+          </button>
+        )}
       </div>
 
       {/* Tabs */}
