@@ -1050,39 +1050,38 @@ describe("Keyboard Shortcuts: All Entries", () => {
       expect(s.action.length).toBeGreaterThan(0);
     });
   });
-  });
+});
 
-  it("all shortcuts can be formatted", () => {
-    KEYBOARD_SHORTCUTS.forEach((s) => {
-      const formatted = formatShortcut(s);
-      expect(typeof formatted).toBe("string");
-      expect(formatted.length).toBeGreaterThan(0);
-      expect(formatted).not.toBe("");
-    });
+it("all shortcuts can be formatted", () => {
+  KEYBOARD_SHORTCUTS.forEach((s) => {
+    const formatted = formatShortcut(s);
+    expect(typeof formatted).toBe("string");
+    expect(formatted.length).toBeGreaterThan(0);
+    expect(formatted).not.toBe("");
   });
+});
 
-  it("has shortcuts in all categories", () => {
-    const categories = new Set(KEYBOARD_SHORTCUTS.map((s) => s.category));
-    expect(categories.has("request")).toBe(true);
-    expect(categories.has("navigation")).toBe(true);
-    expect(categories.has("editing")).toBe(true);
-    expect(categories.has("global")).toBe(true);
+it("has shortcuts in all categories", () => {
+  const categories = new Set(KEYBOARD_SHORTCUTS.map((s) => s.category));
+  expect(categories.has("request")).toBe(true);
+  expect(categories.has("navigation")).toBe(true);
+  expect(categories.has("editing")).toBe(true);
+  expect(categories.has("global")).toBe(true);
+});
+
+it("Ctrl shortcuts have ctrl flag", () => {
+  const ctrlShortcuts = KEYBOARD_SHORTCUTS.filter((s) => s.ctrl);
+  expect(ctrlShortcuts.length).toBeGreaterThan(0);
+  ctrlShortcuts.forEach((s) => {
+    expect(s.ctrl).toBe(true);
   });
+});
 
-  it("Ctrl shortcuts have ctrl flag", () => {
-    const ctrlShortcuts = KEYBOARD_SHORTCUTS.filter((s) => s.ctrl);
-    expect(ctrlShortcuts.length).toBeGreaterThan(0);
-    ctrlShortcuts.forEach((s) => {
-      expect(s.ctrl).toBe(true);
-    });
-  });
-
-  it("Shift shortcuts have shift flag", () => {
-    const shiftShortcuts = KEYBOARD_SHORTCUTS.filter((s) => s.shift);
-    expect(shiftShortcuts.length).toBeGreaterThan(0);
-    shiftShortcuts.forEach((s) => {
-      expect(s.shift).toBe(true);
-    });
+it("Shift shortcuts have shift flag", () => {
+  const shiftShortcuts = KEYBOARD_SHORTCUTS.filter((s) => s.shift);
+  expect(shiftShortcuts.length).toBeGreaterThan(0);
+  shiftShortcuts.forEach((s) => {
+    expect(s.shift).toBe(true);
   });
 });
 
