@@ -408,19 +408,22 @@ describe("matchesShortcut logic", () => {
     }
   });
 
-  it("should not match wrong key", () => {
+  it("should not match wrong key combination", () => {
+    // Ctrl+Enter shortcut should NOT match plain Enter
     const ctrlEnter = KEYBOARD_SHORTCUTS.find(
       (s) => s.key === "Enter" && s.ctrl,
     );
     if (ctrlEnter) {
-      const event = {
-        key: "Escape",
-        ctrlKey: true,
+      // plain Enter without ctrl
+      const plainEnter = {
+        key: "Enter",
+        ctrlKey: false,
         shiftKey: false,
         altKey: false,
         metaKey: false,
       };
-      expect(matches(event, ctrlEnter)).toBe(false);
+      // Should not match because ctrl is required
+      expect(matches(plainEnter, ctrlEnter)).toBe(false);
     }
   });
 
