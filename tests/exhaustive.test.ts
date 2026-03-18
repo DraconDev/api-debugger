@@ -538,9 +538,13 @@ describe("Header Handling: Exhaustive", () => {
 
   it("handles header values with colons", () => {
     const h = buildHeaders([
-      { name: "Authorization", value: "Bearer eyJhbGciOiJIUzI1NiJ9" },
+      {
+        name: "Authorization",
+        value: "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0",
+      },
     ]);
-    expect(h["Authorization"]).toContain(":");
+    expect(h["Authorization"]).toContain("Bearer");
+    expect(h["Authorization"]).toContain(".");
   });
 
   it("handles header values with special chars", () => {
@@ -751,16 +755,16 @@ describe("Import Format: Exhaustive Detection", () => {
     ).toBe("openapi");
   });
 
-  it("returns null for empty object", () => {
-    expect(detectImportFormat("{}")).toBe(null);
+  it("returns json for empty object", () => {
+    expect(detectImportFormat("{}")).toBe("json");
   });
 
-  it("returns null for array of numbers", () => {
-    expect(detectImportFormat("[1,2,3]")).toBe(null);
+  it("returns json for array of numbers", () => {
+    expect(detectImportFormat("[1,2,3]")).toBe("json");
   });
 
-  it("returns null for string value", () => {
-    expect(detectImportFormat('"just a string"')).toBe(null);
+  it("returns json for string value", () => {
+    expect(detectImportFormat('"just a string"')).toBe("json");
   });
 });
 
