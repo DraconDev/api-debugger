@@ -1817,6 +1817,33 @@ function SavedRequestDetail({
               <div className="text-[10px] text-muted-foreground mt-1">
                 {new Date(request.lastResponse.timestamp).toLocaleString()}
               </div>
+              {/* Compare with another response */}
+              {allRequests.filter((r) => r.id !== request.id && r.lastResponse)
+                .length > 0 && (
+                <div className="mt-2 space-y-1">
+                  <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                    Compare with
+                  </label>
+                  <select
+                    value=""
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        onCompare(request.id, e.target.value);
+                      }
+                    }}
+                    className="w-full px-2 py-1 text-xs bg-input border border-border rounded"
+                  >
+                    <option value="">Select request...</option>
+                    {allRequests
+                      .filter((r) => r.id !== request.id && r.lastResponse)
+                      .map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.name} ({r.lastResponse?.status})
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
             </div>
           )}
         </div>
