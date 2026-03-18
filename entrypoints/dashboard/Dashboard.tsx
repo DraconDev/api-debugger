@@ -109,7 +109,11 @@ export default function Dashboard() {
   useKeyboardShortcuts({
     onNewRequest: () => setView("builder"),
     onShowShortcuts: () => setShowShortcuts(true),
-    onSendRequest: () => {},
+    onSendRequest: () => {
+      if (view === "builder") {
+        document.dispatchEvent(new CustomEvent("api-debugger:send-request"));
+      }
+    },
   });
 
   const handleImport = useCallback(
