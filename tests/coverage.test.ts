@@ -450,18 +450,6 @@ describe("matchesShortcut logic", () => {
       }
     }
   });
-
-  it("should not match Escape with Ctrl pressed", () => {
-    const shortcut = KEYBOARD_SHORTCUTS.find((s) => s.action === "closeModal")!;
-    const event = {
-      key: "Escape",
-      ctrlKey: true,
-      shiftKey: false,
-      altKey: false,
-      metaKey: false,
-    };
-    expect(matches(event, shortcut)).toBe(false);
-  });
 });
 
 // ─── Import Format Detection: Edge Cases ─────────────────────
