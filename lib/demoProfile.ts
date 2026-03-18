@@ -510,6 +510,155 @@ export function createDemoCollections(): {
       bodyType: "none",
       auth: { type: "none" },
     }),
+
+    // ─── OAuth2 Collection ──────────────────────────────────
+    req("demo-req-oauth2", "OAuth 2.0 Setup", colAuth, {
+      method: "GET",
+      url: "https://httpbin.org/bearer",
+      headers: [],
+      params: [],
+      body: { raw: "" },
+      bodyType: "none",
+      auth: {
+        type: "oauth2",
+        oauth2: {
+          flow: "client_credentials",
+          accessTokenUrl: "https://oauth.example.com/token",
+          clientId: "your-client-id",
+          clientSecret: "",
+          scope: "read write",
+          accessToken: "",
+        },
+      },
+    }),
+
+    // ─── GraphQL Collection ─────────────────────────────────
+    req("demo-req-graphql-query", "GraphQL Query", colAdvanced, {
+      method: "POST",
+      url: "https://countries.trevorblades.com/graphql",
+      headers: [
+        { name: "Content-Type", value: "application/json", enabled: true },
+      ],
+      params: [],
+      body: {
+        raw: JSON.stringify(
+          {
+            query: `query {
+  countries(filter: { continent: { eq: "EU" } }) {
+    code
+    name
+    capital
+    currency
+  }
+}`,
+          },
+          null,
+          2,
+        ),
+      },
+      bodyType: "json",
+      auth: { type: "none" },
+    }),
+    req("demo-req-graphql-mutation", "GraphQL Mutation", colAdvanced, {
+      method: "POST",
+      url: "https://countries.trevorblades.com/graphql",
+      headers: [
+        { name: "Content-Type", value: "application/json", enabled: true },
+      ],
+      params: [],
+      body: {
+        raw: JSON.stringify(
+          {
+            query: `query GetCountry($code: ID!) {
+  country(code: $code) {
+    name
+    native
+    emoji
+    languages { name }
+  }
+}`,
+            variables: { code: "JP" },
+          },
+          null,
+          2,
+        ),
+      },
+      bodyType: "json",
+      auth: { type: "none" },
+    }),
+
+    // ─── Workflows Collection ────────────────────────────────
+    req("demo-req-env-vars", "Environment Variables", colWorkflows, {
+      method: "GET",
+      url: "{{baseUrl}}/posts/1",
+      headers: [
+        { name: "Accept", value: "application/json", enabled: true },
+        { name: "X-API-Key", value: "{{apiKey}}", enabled: true },
+      ],
+      params: [],
+      body: { raw: "" },
+      bodyType: "none",
+      auth: { type: "none" },
+    }),
+    req("demo-req-extract", "Extract from Response", colWorkflows, {
+      method: "GET",
+      url: "https://jsonplaceholder.typicode.com/users/1",
+      headers: [{ name: "Accept", value: "application/json", enabled: true }],
+      params: [],
+      body: { raw: "" },
+      bodyType: "none",
+      auth: { type: "none" },
+      postResponseScript: [
+        "// Extract values from response for use in next request",
+        "const user = pm.response.json();",
+        'pm.variables.set("extractedName", user.name);',
+        'pm.variables.set("extractedEmail", user.email);',
+        'pm.variables.set("extractedCity", user.address.city);',
+        'console.log("Extracted:", user.name, user.email, user.address.city);',
+      ].join("\n"),
+      extractions: [
+        {
+          id: "ext-name",
+          name: "User Name",
+          enabled: true,
+          source: "body",
+          path: "name",
+          variableName: "userName",
+        },
+        {
+          id: "ext-email",
+          name: "User Email",
+          enabled: true,
+          source: "body",
+          path: "email",
+          variableName: "userEmail",
+        },
+      ],
+    }),
+    req("demo-req-chained-extract", "Chained (uses extracted)", colWorkflows, {
+      method: "GET",
+      url: "https://jsonplaceholder.typicode.com/posts?userId={{extractedName}}",
+      headers: [],
+      params: [],
+      body: { raw: "" },
+      bodyType: "none",
+      auth: { type: "none" },
+    }),
+    req("demo-req-pre-auth", "Dynamic Auth Token", colWorkflows, {
+      method: "GET",
+      url: "https://httpbin.org/bearer",
+      headers: [],
+      params: [],
+      body: { raw: "" },
+      bodyType: "none",
+      auth: { type: "none" },
+      preRequestScript: [
+        "// Add auth token dynamically via pre-request script",
+        'const token = pm.environment.get("apiKey") || "demo-token";',
+        'pm.request.headers.add("Authorization", `Bearer ${token}`);',
+        'console.log("Added auth header dynamically");',
+      ].join("\n"),
+    }),
   ];
 
   const environments: Environment[] = [
