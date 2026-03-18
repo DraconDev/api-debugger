@@ -575,8 +575,8 @@ describe("GitHub Sync: Config Structure", () => {
 // ─── Import Format: More Edge Cases ──────────────────────────
 
 describe("Import Format: Additional Edge Cases", () => {
-  it("returns null for numeric input", () => {
-    expect(detectImportFormat("12345")).toBe(null);
+  it("returns null for pure alphabetic text", () => {
+    expect(detectImportFormat("hello world this is plain text")).toBe(null);
   });
 
   it("returns null for single word", () => {
