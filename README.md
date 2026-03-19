@@ -4,7 +4,6 @@
 
 A Chrome extension that sees every HTTP request your browser makes. No login. No cloud. No "verify your email to continue."
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Tests](https://img.shields.io/badge/tests-956%20passing-green)]()
 [![CI](https://github.com/DraconDev/api-debugger/actions/workflows/ci.yml/badge.svg)](https://github.com/DraconDev/api-debugger/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue)]()

@@ -77,4 +77,4 @@ npm run zip           # Create distributable ZIP
 
 ## License
 
-By contributing, you agree your code will be MIT licensed.
+Contributions are welcome. All rights reserved - see source code for details.
