@@ -11,6 +11,7 @@ export default defineConfig({
     description:
       "Inspect every HTTP request your browser makes. Capture, replay, build, and debug APIs. No account. No tracking.",
     version: "1.0.0",
+    homepage_url: "https://YOURSITE.COM",
     default_locale: "en",
     permissions: [
       "webRequest",

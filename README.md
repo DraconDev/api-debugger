@@ -8,7 +8,7 @@ A Chrome extension that sees every HTTP request your browser makes. No login. No
 [![CI](https://github.com/DraconDev/api-debugger/actions/workflows/ci.yml/badge.svg)](https://github.com/DraconDev/api-debugger/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue)]()
 
-[Install from Chrome Web Store](https://chrome.google.com/webstore/) · [Firefox Add-on](https://addons.mozilla.org/) · [Source Code](https://github.com/DraconDev/api-debugger)
+[Install from Chrome Web Store](https://chrome.google.com/webstore/) · [Firefox Add-on](https://addons.mozilla.org/) · [Source Code](https://github.com/DraconDev/api-debugger) · [Yoursite.com](https://YOURSITE.COM)
 
 ---
 
