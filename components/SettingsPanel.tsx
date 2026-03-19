@@ -15,11 +15,8 @@ interface AISettings {
 
 const DEFAULT_SETTINGS: AISettings = {
   apiKey: "",
-  model: "openrouter/auto",
-  fallbacks: [
-    "meta-llama/llama-4-scout:free",
-    "google/gemini-2.0-flash-001:free",
-  ],
+  model: "openrouter/free",
+  fallbacks: [],
 };
 
 const STORAGE_KEY = "sync:ai_settings";
