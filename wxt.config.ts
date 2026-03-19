@@ -10,7 +10,7 @@ export default defineConfig({
         : "API Debugger",
     description:
       "Inspect every HTTP request your browser makes. Capture, replay, build, and debug APIs. No account. No cloud. No spying.",
-    version: "0.1.0",
+    version: "1.0.0",
     default_locale: "en",
     permissions: [
       "webRequest",
