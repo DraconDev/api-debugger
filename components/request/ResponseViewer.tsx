@@ -146,7 +146,10 @@ export function ResponseViewer({ body, contentType, statusCode, headers }: Respo
                 className="max-w-full max-h-full object-contain"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
-                  e.currentTarget.parentElement!.innerHTML = '<span class="text-destructive text-sm">Failed to load image</span>';
+                  const errorSpan = document.createElement('span');
+                  errorSpan.className = 'text-destructive text-sm';
+                  errorSpan.textContent = 'Failed to load image';
+                  e.currentTarget.parentElement!.appendChild(errorSpan);
                 }}
               />
             ) : (
