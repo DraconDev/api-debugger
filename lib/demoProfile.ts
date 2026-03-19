@@ -514,7 +514,7 @@ export function createDemoCollections(): {
     // ─── OAuth2 Collection ──────────────────────────────────
     req("demo-req-oauth2", "OAuth 2.0 Setup", colAuth, {
       method: "GET",
-      url: "https://httpbin.org/bearer",
+      url: "https://httpbin.org/get",
       headers: [],
       params: [],
       body: { raw: "" },
