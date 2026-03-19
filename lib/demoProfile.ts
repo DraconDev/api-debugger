@@ -657,7 +657,7 @@ export function createDemoCollections(): {
     }),
     req("demo-req-pre-auth", "Dynamic Auth Token", colWorkflows, {
       method: "GET",
-      url: "https://httpbin.org/bearer",
+      url: "https://httpbin.org/get",
       headers: [],
       params: [],
       body: { raw: "" },
@@ -665,9 +665,9 @@ export function createDemoCollections(): {
       auth: { type: "none" },
       preRequestScript: [
         "// Add auth token dynamically via pre-request script",
-        'const token = pm.environment.get("apiKey") || "demo-token";',
+        "const token = pm.environment.get('apiKey') || 'demo-token';",
         'pm.request.headers.add("Authorization", `Bearer ${token}`);',
-        'console.log("Added auth header dynamically");',
+        'console.log("Added auth header dynamically:", token);',
       ].join("\n"),
     }),
   ];
