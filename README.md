@@ -4,25 +4,28 @@
 
 A Chrome extension for debugging REST, WebSocket, GraphQL, SSE, and Socket.IO APIs. No account required. Your data stays on your device.
 
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/PLACEHOLDER.svg)](https://chrome.google.com/webstore/)
+[![Firefox Add-ons](https://img.shields.io/amo/v/PLACEHOLDER.svg)](https://addons.mozilla.org/)
+
 ## Why API Debugger?
 
-| Feature | API Debugger | Postman | Insomnia |
-|---------|:-----------:|:-------:|:--------:|
-| **No Account Required** | ✅ | ❌ | ✅ |
-| **Request Capture** | ✅ Auto | ❌ | ❌ |
-| **GitHub Sync** | ✅ Free | ❌ Paid | ✅ Git |
-| **AI Features** | ✅ BYOK | ✅ Paid | ✅ BYOK |
-| **Full Privacy** | ✅ | ❌ Logs | ? |
-| **Browser Extension** | ✅ | ❌ Desktop | ❌ Desktop |
-| **WebSocket** | ✅ | ❌ | ✅ |
-| **GraphQL** | ✅ | ❌ | ✅ |
-| **SSE** | ✅ | ❌ | ❌ |
-| **Socket.IO** | ✅ | ❌ | ✅ |
-| **Mock Servers** | ✅ | ✅ | ✅ |
-| **Collection Runner** | ✅ | ✅ | ✅ |
-| **Pre-request Scripts** | ✅ | ✅ | ✅ |
-| **API Doc Generator** | ✅ | ✅ | ✅ |
-| **Free** | ✅ | Freemium | ✅ |
+| Feature                 | API Debugger |  Postman   |  Insomnia  |
+| ----------------------- | :----------: | :--------: | :--------: |
+| **No Account Required** |      ✅      |     ❌     |     ✅     |
+| **Request Capture**     |   ✅ Auto    |     ❌     |     ❌     |
+| **GitHub Sync**         |   ✅ Free    |  ❌ Paid   |   ✅ Git   |
+| **AI Features**         |   ✅ BYOK    |  ✅ Paid   |  ✅ BYOK   |
+| **Full Privacy**        |      ✅      |  ❌ Logs   |     ?      |
+| **Browser Extension**   |      ✅      | ❌ Desktop | ❌ Desktop |
+| **WebSocket**           |      ✅      |     ❌     |     ✅     |
+| **GraphQL**             |      ✅      |     ❌     |     ✅     |
+| **SSE**                 |      ✅      |     ❌     |     ❌     |
+| **Socket.IO**           |      ✅      |     ❌     |     ✅     |
+| **Mock Servers**        |      ✅      |     ✅     |     ✅     |
+| **Collection Runner**   |      ✅      |     ✅     |     ✅     |
+| **Pre-request Scripts** |      ✅      |     ✅     |     ✅     |
+| **API Doc Generator**   |      ✅      |     ✅     |     ✅     |
+| **Free**                |      ✅      |  Freemium  |     ✅     |
 
 ## Philosophy
 
@@ -37,17 +40,20 @@ A Chrome extension for debugging REST, WebSocket, GraphQL, SSE, and Socket.IO AP
 ## Features
 
 ### Request Builder
+
 - Full HTTP request editor (method, URL, headers, body, auth)
 - Support for JSON, form-data, x-www-form-urlencoded, raw, binary
 - Authentication: Bearer, Basic, API Key, OAuth 2.0
 - Code generation (cURL, fetch, axios, Python, Go, Java, PHP, Rust)
 
 ### Request Capture
+
 - Automatically captures all browser HTTP requests
 - Filter by method, URL patterns, domain
 - View request/response details including timing breakdown
 
 ### Protocols
+
 - **REST** - Full HTTP client
 - **WebSocket** - Connect, send/receive messages
 - **GraphQL** - Query editor with variables and history
@@ -55,34 +61,40 @@ A Chrome extension for debugging REST, WebSocket, GraphQL, SSE, and Socket.IO AP
 - **Socket.IO** - Full Socket.IO support with namespaces and auth
 
 ### Collections & Environments
+
 - Organize requests into collections
 - Environment variables with `{{variable}}` syntax
 - Collection runner for batch execution
 - Variable extraction from responses
 
 ### Testing & Scripts
+
 - Pre-request scripts (Postman-compatible `pm` API)
 - Post-response scripts for assertions and extraction
 - Test runner with pass/fail reporting
 
 ### Mock Servers
+
 - Create mock endpoints
 - Configure status codes, headers, body, delays
 - Intercept requests for local testing
 
 ### AI Integration (BYOK)
+
 - Bring your own API keys (OpenAI, Anthropic, Gemini)
 - Request analysis and error explanation
 - Suggestions for improvements
 - We never see your AI calls
 
 ### GitHub Sync
+
 - Push/pull collections, environments, settings
 - Free backup and version control
 - Share with team via repo access
 - Cross-device sync without accounts
 
 ### API Documentation
+
 - Generate docs from saved requests
 - Export as Markdown, OpenAPI 3.0, or HTML
 - Share with your team
@@ -123,15 +135,15 @@ npm run zip
 
 ## Storage
 
-| Data | Storage | Syncs Across Devices |
-|------|---------|:--------------------:|
-| Collections | `chrome.storage.sync` | ✅ |
-| Environments | `chrome.storage.sync` | ✅ |
-| Saved Requests | `chrome.storage.sync` | ✅ |
-| Settings | `chrome.storage.sync` | ✅ |
-| AI Keys | `chrome.storage.sync` | ✅ |
-| Request History | `chrome.storage.local` | ❌ |
-| Mock Servers | `chrome.storage.local` | ❌ |
+| Data            | Storage                | Syncs Across Devices |
+| --------------- | ---------------------- | :------------------: |
+| Collections     | `chrome.storage.sync`  |          ✅          |
+| Environments    | `chrome.storage.sync`  |          ✅          |
+| Saved Requests  | `chrome.storage.sync`  |          ✅          |
+| Settings        | `chrome.storage.sync`  |          ✅          |
+| AI Keys         | `chrome.storage.sync`  |          ✅          |
+| Request History | `chrome.storage.local` |          ❌          |
+| Mock Servers    | `chrome.storage.local` |          ❌          |
 
 ## What We're Not
 
@@ -161,4 +173,4 @@ MIT
 
 ---
 
-*The API debugger that respects your privacy. Your data stays on your device, your AI keys stay yours, your collections sync to your GitHub.*
+_The API debugger that respects your privacy. Your data stays on your device, your AI keys stay yours, your collections sync to your GitHub._

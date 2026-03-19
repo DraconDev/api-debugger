@@ -7,9 +7,9 @@ export default defineConfig({
     name:
       process.env.NODE_ENV === "development"
         ? "API Debugger (Dev)"
-        : "API Debugger",
+        : "API Debugger - Capture & Debug HTTP Requests",
     description:
-      "Inspect every HTTP request your browser makes. Capture, replay, build, and debug APIs. No account. No cloud. No spying.",
+      "Inspect every HTTP request your browser makes. Capture, replay, build, and debug APIs. No account. No tracking.",
     version: "1.0.0",
     default_locale: "en",
     permissions: [
