@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   getProfiles,
   getActiveProfileId,
@@ -61,10 +61,9 @@ describe("Profile System: CRUD Operations", () => {
   beforeEach(() => {
     Object.keys(storage).forEach((key) => delete storage[key]);
     setCalls.length = 0;
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
+    mockStorageSync.get.mockClear();
+    mockStorageSync.set.mockClear();
+    mockStorageSync.remove.mockClear();
   });
 
   describe("getProfiles", () => {
