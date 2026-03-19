@@ -1,0 +1,72 @@
+🔒 API DEBUGGER - PRIVACY POLICY 🔒
+
+Last updated: March 2024
+
+═══════════════════════════════════════════
+
+👉 WHAT WE DON'T DO (Important)
+
+❌ We don't see your data
+   This extension runs entirely in your browser.
+   Your API calls never touch our servers.
+
+❌ We don't collect your requests
+   All data stays on YOUR device.
+
+❌ We don't track you
+   No analytics. No telemetry. No crashes reports.
+   Nothing.
+
+❌ We don't see your API keys
+   If you add an AI key, it goes DIRECTLY to the
+   AI provider. We never touch it.
+
+❌ We don't know what APIs you debug
+   We have ZERO visibility into your usage.
+
+═══════════════════════════════════════════
+
+📦 DATA STORAGE
+
+Your data is stored ONLY in your browser:
+
+• Collections, requests, environments → chrome.storage.sync
+  (Your browser, YOUR Google account if synced)
+
+• Request history → chrome.storage.local
+  (Stays on your device, never leaves)
+
+• Settings → chrome.storage.sync
+
+═══════════════════════════════════════════
+
+🤖 AI FEATURES
+
+If you use AI:
+
+• You bring YOUR OWN API key (e.g., OpenRouter)
+• Requests go DIRECTLY from your browser to AI provider
+• We have ZERO access to your key or AI conversations
+• Your AI provider's privacy policy applies
+
+═══════════════════════════════════════════
+
+🔗 GITHUB SYNC
+
+If you enable GitHub sync:
+
+• YOU provide your GitHub personal access token
+• Token stays in YOUR browser
+• We NEVER see your token
+• Data goes to YOUR GitHub repository
+
+═══════════════════════════════════════════
+
+❓ QUESTIONS?
+
+GitHub: github.com/DraconDev/api-debugger/issues
+Web: dracon.uk
+
+═══════════════════════════════════════════
+
+Built with privacy in mind. Your data is yours.
