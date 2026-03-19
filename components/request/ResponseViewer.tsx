@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { JsonViewerWithSearch } from "@/components/response/JsonViewer";
+import DOMPurify from "dompurify";
 
 interface XmlViewerProps {
   xml: string;
@@ -7,13 +8,14 @@ interface XmlViewerProps {
 
 function XmlViewer({ xml }: XmlViewerProps) {
   const highlighted = useMemo(() => {
-    return xml
+    const escaped = xml
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/(&lt;\/?)([\w:-]+)/g, '$1<span class="text-primary">$2</span>')
       .replace(/([\w:-]+)(=)/g, '<span class="text-warning">$1</span>$2')
       .replace(/"([^"]*)"/g, '"<span class="text-success">$1</span>"');
+    return DOMPurify.sanitize(escaped, { USE_PROFILES: { html: false } });
   }, [xml]);
 
   return (

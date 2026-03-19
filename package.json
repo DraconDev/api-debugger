@@ -2,7 +2,7 @@
   "name": "@dracon/api-debugger",
   "description": "API Debugger - Browser-first API debugging tool",
   "private": true,
-  "version": "1.0.5",
+  "version": "1.0.6",
   "type": "module",
   "scripts": {
     "dev": "wxt",
@@ -24,6 +24,7 @@
     "@radix-ui/themes": "^3.1.6",
     "@types/webextension-polyfill": "^0.12.4",
     "clsx": "^2.1.1",
+    "dompurify": "^3.3.3",
     "lucide-react": "^0.460.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -34,6 +35,7 @@
   },
   "devDependencies": {
     "@types/chrome": "^0.0.280",
+    "@types/dompurify": "^3.0.5",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
     "@typescript-eslint/eslint-plugin": "^8.48.0",
