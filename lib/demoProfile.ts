@@ -590,15 +590,21 @@ export function createDemoCollections(): {
     // ─── Workflows Collection ────────────────────────────────
     req("demo-req-env-vars", "Environment Variables", colWorkflows, {
       method: "GET",
-      url: "{{baseUrl}}/posts/1",
-      headers: [
-        { name: "Accept", value: "application/json", enabled: true },
-        { name: "X-API-Key", value: "{{apiKey}}", enabled: true },
-      ],
+      url: "https://jsonplaceholder.typicode.com/posts/1",
+      headers: [{ name: "Accept", value: "application/json", enabled: true }],
       params: [],
       body: { raw: "" },
       bodyType: "none",
       auth: { type: "none" },
+      preRequestScript: [
+        "// Demonstrate environment variable usage",
+        "const baseUrl = pm.environment.get('baseUrl') || 'https://jsonplaceholder.typicode.com';",
+        "const apiKey = pm.environment.get('apiKey') || 'demo-key';",
+        'pm.variables.set("resolvedUrl", baseUrl + "/posts/1");',
+        'pm.variables.set("resolvedApiKey", apiKey);',
+        'console.log("Environment baseUrl:", baseUrl);',
+        'console.log("Environment apiKey:", apiKey);',
+      ].join("\n"),
     }),
     req("demo-req-extract", "Extract from Response", colWorkflows, {
       method: "GET",
@@ -635,12 +641,19 @@ export function createDemoCollections(): {
     }),
     req("demo-req-chained-extract", "Chained (uses extracted)", colWorkflows, {
       method: "GET",
-      url: "https://jsonplaceholder.typicode.com/posts?userId={{extractedName}}",
+      url: "https://jsonplaceholder.typicode.com/posts/1/comments",
       headers: [],
       params: [],
       body: { raw: "" },
       bodyType: "none",
       auth: { type: "none" },
+      preRequestScript: [
+        "// This runs AFTER the previous extraction request",
+        'const name = pm.variables.get("extractedName");',
+        'const email = pm.variables.get("extractedEmail");',
+        'console.log("Chained request using extracted name:", name);',
+        'console.log("Chained request using extracted email:", email);',
+      ].join("\n"),
     }),
     req("demo-req-pre-auth", "Dynamic Auth Token", colWorkflows, {
       method: "GET",
