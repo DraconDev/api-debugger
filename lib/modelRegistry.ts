@@ -103,7 +103,6 @@ export async function fetchModelRegistry(): Promise<ModelInfo[]> {
     const models: OpenRouterModel[] = data.data || [];
 
     return models
-      .filter((m) => !m.id.includes(":free"))
       .map((m) => ({
         id: m.id,
         name: m.name,

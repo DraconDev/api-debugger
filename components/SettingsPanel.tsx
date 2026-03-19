@@ -15,8 +15,11 @@ interface AISettings {
 
 const DEFAULT_SETTINGS: AISettings = {
   apiKey: "",
-  model: "openai/gpt-4.1-mini",
-  fallbacks: [],
+  model: "openrouter/auto",
+  fallbacks: [
+    "meta-llama/llama-4-scout:free",
+    "google/gemini-2.0-flash-001:free",
+  ],
 };
 
 const STORAGE_KEY = "sync:ai_settings";
