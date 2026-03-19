@@ -1,0 +1,75 @@
+🚀 API DEBUGGER - VERSION 1.0.0 🚀
+Release Date: March 2024
+
+═══════════════════════════════════════════
+
+✨ NEW IN THIS VERSION
+
+🔍 REQUEST CAPTURE
+• Automatically captures ALL HTTP requests
+• View headers, body, status, timing
+• Filter by domain, method, status
+• Works on every website
+
+🔨 REQUEST BUILDER
+• REST, WebSocket, GraphQL, SSE, Socket.IO
+• Headers, params, body, auth
+• Pre-request scripts (Postman-compatible)
+• Collections, environments, variables
+
+📥 IMPORT / 📤 EXPORT
+• Import from: Postman, Insomnia, OpenAPI, HAR, cURL
+• Export to: Postman, OpenAPI, cURL
+• No lock-in
+
+🤖 AI INTEGRATION
+• Bring YOUR OWN API key
+• Uses OpenRouter (300+ models)
+• Default model is FREE
+• Your keys NEVER touch our servers
+
+🔐 PRIVACY FIRST
+• NO account required
+• NO telemetry, NO tracking
+• Data stored LOCALLY in your browser
+• GitHub sync uses YOUR token only
+
+🌐 BROWSER SUPPORT
+• Chrome (Manifest V3) ✅
+• Firefox (Manifest V2) ✅
+• Edge (Chromium) ✅
+
+═══════════════════════════════════════════
+
+PREVIOUS VERSIONS
+
+0.1.x - Initial development, feature refinement
+See GitHub history for full commit log
+
+═══════════════════════════════════════════
+
+📋 WHAT'S THE STORY?
+
+I was debugging an API at 11pm.
+Postman wanted to verify my email. Again.
+
+So I built a Chrome extension that captures
+every request my browser makes.
+
+No account. No login. No "sorry, free tier
+requires email verification."
+
+═══════════════════════════════════════════
+
+🔗 LINKS
+
+Chrome: [Pending store approval]
+Firefox: [Pending store approval]
+Source: github.com/DraconDev/api-debugger
+Support: github.com/DraconDev/api-debugger/issues
+Web: dracon.uk
+
+═══════════════════════════════════════════
+
+Built with 🔒 privacy in mind.
+Your data stays on your device.

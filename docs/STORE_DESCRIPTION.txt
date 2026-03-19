@@ -1,0 +1,90 @@
+API DEBUGGER - STORE LISTING
+Copy and paste this into the store description field
+
+═══════════════════════════════════════════
+
+TITLE:
+API Debugger - Capture & Debug HTTP Requests
+
+SHORT DESCRIPTION (95 chars):
+Inspect every HTTP request. Capture, replay, and debug APIs. No account needed.
+
+═══════════════════════════════════════════
+
+FULL DESCRIPTION:
+
+Inspect every HTTP request your browser makes. Capture, replay, build, and debug APIs with full privacy.
+
+━━━ WHAT YOU GET ━━━
+
+🔍 AUTO-CAPTURE
+Every HTTP request your browser makes, captured automatically. No setup, no configuration. Just browse and everything shows up.
+
+🔨 REQUEST BUILDER
+• REST, WebSocket, GraphQL, SSE, Socket.IO
+• Headers, query params, body (JSON, form, raw)
+• Bearer tokens, Basic auth, API keys, OAuth 2.0
+• Pre-request scripts (Postman-compatible)
+• Code generation: cURL, fetch, Python, Go, Java, PHP, Rust
+
+📦 ORGANIZE
+• Collections to group related requests
+• Environment variables with {{variable}} syntax
+• Collection runner for batch execution
+• Variable extraction from responses
+
+📥 IMPORT / 📤 EXPORT
+• Import: Postman, Insomnia, OpenAPI, HAR, cURL
+• Export: Postman, OpenAPI, cURL
+• No lock-in, take your data anywhere
+
+🤖 AI FEATURES (OPTIONAL)
+• Bring YOUR OWN API key
+• Uses OpenRouter - access 300+ models
+• Default model is FREE
+• Your keys NEVER touch our servers
+
+━━━ PRIVACY ━━━
+
+🔒 NO ACCOUNT REQUIRED
+Just install and go. No email, no signup, no "verify your email to continue."
+
+🔒 NO TRACKING
+Zero analytics. Zero telemetry. Zero crash reports. We don't see anything.
+
+🔒 YOUR DATA STAYS YOURS
+All data stored locally in your browser. Nothing on our servers.
+
+🔒 AI KEYS STAY PRIVATE
+Your API key goes DIRECTLY to your AI provider. We never see it.
+
+🔒 GITHUB SYNC = YOUR TOKEN
+GitHub backup uses YOUR personal access token stored in YOUR browser. We never see it.
+
+━━━ THE FRUSTRATION THIS SOLVES ━━━
+
+I was debugging an API at 11pm.
+Postman wanted to verify my email. Again.
+
+So I built a Chrome extension that captures every request my browser makes. No account. No login. No "sorry, free tier requires email verification."
+
+It's just a Chrome extension. Open it. Done.
+
+━━━ INSTALLATION ━━━
+
+Chrome:
+1. Download from Chrome Web Store
+2. Click the extension icon
+3. Start debugging
+
+Firefox:
+1. Download from Firefox Add-ons
+2. Click the extension icon
+3. Start debugging
+
+━━━ NEED HELP? ━━━
+
+Support: github.com/DraconDev/api-debugger/issues
+Website: dracon.uk
+
+═══════════════════════════════════════════
