@@ -209,7 +209,7 @@ export function createDemoCollections(): {
     // ─── Authentication Collection ────────────────────────────
     req("demo-req-bearer", "Bearer Token", colAuth, {
       method: "GET",
-      url: "https://httpbin.org/bearer",
+      url: "https://httpbin.org/get",
       headers: [
         {
           name: "Authorization",
