@@ -19,6 +19,21 @@ const DEFAULT_SETTINGS: AISettings = {
   fallbacks: [],
 };
 
+const ROUTING_MODELS = [
+  {
+    id: "openrouter/auto",
+    name: "Auto-Select (Best Available)",
+    provider: "OpenRouter",
+    contextLength: 0,
+  },
+  {
+    id: "openrouter/free",
+    name: "Free Tier (Best Free Model)",
+    provider: "OpenRouter",
+    contextLength: 0,
+  },
+];
+
 const STORAGE_KEY = "sync:ai_settings";
 
 export function SettingsPanel() {
@@ -226,15 +241,39 @@ export function SettingsPanel() {
             >
               {isLoadingModels ? (
                 <option disabled>Loading models...</option>
-              ) : filteredModels.length === 0 ? (
-                <option disabled>No models found</option>
-              ) : (
-                filteredModels.map((m: ModelInfo) => (
-                  <option key={m.id} value={m.id}>
-                    {m.provider} / {m.name} (
-                    {(m.contextLength / 1000).toFixed(0)}k)
+              ) : filteredModels.length === 0 && modelSearch === "" ? (
+                <>
+                  <option disabled>
+                    -- Routing Models (No key required) --
                   </option>
-                ))
+                  {ROUTING_MODELS.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.provider} / {m.name}
+                    </option>
+                  ))}
+                  <option disabled>-- All Models --</option>
+                  <option disabled>Loading...</option>
+                </>
+              ) : (
+                <>
+                  {!modelSearch && (
+                    <>
+                      <option disabled>-- Routing Models --</option>
+                      {ROUTING_MODELS.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.provider} / {m.name}
+                        </option>
+                      ))}
+                      <option disabled>-- All Models --</option>
+                    </>
+                  )}
+                  {filteredModels.map((m: ModelInfo) => (
+                    <option key={m.id} value={m.id}>
+                      {m.provider} / {m.name} (
+                      {(m.contextLength / 1000).toFixed(0)}k)
+                    </option>
+                  ))}
+                </>
               )}
             </select>
           </div>
