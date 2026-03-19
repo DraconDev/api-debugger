@@ -99,10 +99,4 @@ React 19 · TypeScript · Tailwind CSS · WXT · Vitest
 
 ---
 
-## License
-
-MIT
-
----
-
 _Stop creating accounts to debug your own API traffic._
