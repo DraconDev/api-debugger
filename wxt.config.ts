@@ -12,6 +12,11 @@ export default defineConfig({
       "Inspect every HTTP request your browser makes. Capture, replay, build, and debug APIs. No account. No tracking.",
     version: "1.0.0",
     homepage_url: "https://dracon.uk",
+    browser_specific_settings: {
+      gecko: {
+        id: "api-debugger@dracon.uk",
+      },
+    },
     default_locale: "en",
     permissions: [
       "webRequest",

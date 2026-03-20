@@ -9,7 +9,7 @@
     "dev:firefox": "wxt -b firefox",
     "build": "wxt build",
     "build:dev": "wxt build --mode development",
-    "build:firefox": "wxt build -b firefox",
+    "build:firefox": "wxt build -b firefox && node scripts/fix-firefox-manifest.js",
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
