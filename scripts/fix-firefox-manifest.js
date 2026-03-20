@@ -39,7 +39,7 @@ if (!manifest.browser_specific_settings.gecko) {
   manifest.browser_specific_settings.gecko = {};
 }
 manifest.browser_specific_settings.gecko.data_collection_permissions = {
-  required: ["telemetry"],
+  required: ["none"],
 };
 
 zip.updateFile("manifest.json", Buffer.from(JSON.stringify(manifest, null, 2)));
