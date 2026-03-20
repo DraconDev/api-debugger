@@ -1,0 +1,72 @@
+═══════════════════════════════════════════════════════════════
+CHROME WEB STORE - JUSTIFICATION ANSWERS
+═══════════════════════════════════════════════════════════════
+
+Copy these into the corresponding fields in the Chrome Developer Dashboard.
+
+───────────────────────────────────────────────────────────────
+SINGLE PURPOSE (0/1000 characters)
+───────────────────────────────────────────────────────────────
+
+API Debugger captures and inspects HTTP requests made by the browser to help developers debug APIs. It provides request building, replay, organization into collections, environment variables, and AI-powered analysis. Single purpose: Browser-based API debugging and inspection tool.
+
+───────────────────────────────────────────────────────────────
+PERMISSION JUSTIFICATIONS (0/1000 characters each)
+───────────────────────────────────────────────────────────────
+
+--- webRequest ---
+Required to capture all HTTP requests the browser makes. This is the core function of the extension - without this permission, we cannot see the API traffic the user wants to debug. The extension only observes requests; it does not modify or block them.
+
+--- webRequestAuthProvider ---
+Required to capture requests that involve authentication headers. Many APIs use Bearer tokens or Basic auth - capturing these headers is essential for debugging authenticated requests. Without this, we would see the request but miss the auth context.
+
+--- storage ---
+Required to save the user's collections, saved requests, environments, and settings locally in their browser. Also stores AI API keys (if user chooses to add one) and GitHub sync token. Data stays in chrome.storage and never leaves the user's device.
+
+--- activeTab ---
+Required to open the extension dashboard when the user clicks the extension icon. Standard permission for all browser extensions that need to display a popup or dashboard UI.
+
+--- tabs ---
+Required to create a new tab when the user clicks the extension icon to open the full dashboard. Standard permission for extension popup/dashboard functionality.
+
+--- cookies ---
+Required for Socket.IO protocol support and OAuth 2.0 authentication flows. Socket.IO uses cookies for session handling, and some OAuth flows may involve cookie-based authentication. This is essential for debugging Socket.IO connections and OAuth-secured APIs.
+
+--- Host Permission (<all_urls>) ---
+Required because the extension captures requests from ANY website the user visits. API requests can happen on any domain - there's no way to predict which domains the user needs to debug. The extension only reads/observes traffic; it does not modify, block, or inject anything into pages.
+
+───────────────────────────────────────────────────────────────
+REMOTE CODE (Yes/No)
+───────────────────────────────────────────────────────────────
+
+NO - We are NOT using remote code. All JavaScript and WebAssembly in this extension is bundled in the extension package. There are no external script references, no eval() with external strings, and no module imports pointing to external files.
+
+───────────────────────────────────────────────────────────────
+DATA USE DISCLOSURES
+───────────────────────────────────────────────────────────────
+
+Checkboxes to CHECK (all that apply):
+
+☑ I do not sell or transfer user data to third parties, outside of the approved use cases
+☑ I do not use or transfer user data for purposes that are unrelated to my item's single purpose  
+☑ I do not use or transfer user data to determine creditworthiness or for lending purposes
+
+Personal communications: NO
+Location: NO
+Web history: NO
+User activity: NO (we capture HTTP requests for debugging, not "user activity" like clicks/scrolls)
+Website content: NO
+Health information: NO
+Financial and payment information: NO
+Authentication information: NO (API keys stay on user's device)
+Personally identifiable information: NO
+
+═══════════════════════════════════════════════════════════════
+PRIVACY POLICY URL
+═══════════════════════════════════════════════════════════════
+
+https://dracondev.github.io/privacy-policy/
+
+[Same for all Dracon extensions - standardize this URL]
+
+═══════════════════════════════════════════════════════════════
