@@ -113,10 +113,13 @@ export async function saveProfiles(profiles: Profile[]): Promise<void> {
 /**
  * Get data for a specific profile.
  * Default profile auto-creates demo data on first access.
+ * Demo profile uses chrome.storage.local (no quota limit) since demo data is large.
  */
 export async function getProfileData(profileId: string): Promise<ProfileData> {
   const key = `apiDebugger_pd_${profileId}`;
-  const result = await chrome.storage.sync.get(key);
+  const storage =
+    profileId === DEMO_PROFILE_ID ? chrome.storage.local : chrome.storage.sync;
+  const result = await storage.get(key);
   const data = result[key] as ProfileData | undefined;
 
   if (data) return data;
@@ -130,11 +133,7 @@ export async function getProfileData(profileId: string): Promise<ProfileData> {
       savedRequests: demo.requests,
       environments: demo.environments,
     };
-    try {
-      await chrome.storage.sync.set({ [key]: demoData });
-    } catch (e) {
-      console.warn("[Profiles] Failed to save demo data:", e);
-    }
+    await chrome.storage.local.set({ [key]: demoData });
     return demoData;
   }
 
@@ -142,14 +141,17 @@ export async function getProfileData(profileId: string): Promise<ProfileData> {
 }
 
 /**
- * Save data for a specific profile
+ * Save data for a specific profile.
+ * Demo profile uses chrome.storage.local (no quota limit).
  */
 export async function saveProfileData(
   profileId: string,
   data: ProfileData,
 ): Promise<void> {
   const key = `apiDebugger_pd_${profileId}`;
-  await chrome.storage.sync.set({ [key]: data });
+  const storage =
+    profileId === DEMO_PROFILE_ID ? chrome.storage.local : chrome.storage.sync;
+  await storage.set({ [key]: data });
 }
 
 /**
@@ -194,7 +196,9 @@ export async function deleteProfile(profileId: string): Promise<void> {
 
   // Clean up profile data
   const key = `apiDebugger_pd_${profileId}`;
-  await chrome.storage.sync.remove(key);
+  const storage =
+    profileId === DEMO_PROFILE_ID ? chrome.storage.local : chrome.storage.sync;
+  await storage.remove(key);
 
   // If we deleted the active profile, switch to demo
   const activeId = await getActiveProfileId();

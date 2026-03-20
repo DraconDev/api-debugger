@@ -20,8 +20,9 @@ import {
 // Track storage operations
 const storage: Record<string, unknown> = {};
 const setCalls: Array<[Record<string, unknown>]> = [];
+const localSetCalls: Array<[Record<string, unknown>]> = [];
 
-// Mock chrome.storage.sync
+// Mock chrome.storage.sync and chrome.storage.local
 const mockStorageSync = {
   get: vi.fn((key?: string | string[]) => {
     if (!key) return Promise.resolve({});
@@ -49,10 +50,37 @@ const mockStorageSync = {
   }),
 };
 
+const mockStorageLocal = {
+  get: vi.fn((key?: string | string[]) => {
+    if (!key) return Promise.resolve({});
+    if (Array.isArray(key)) {
+      const result: Record<string, unknown> = {};
+      for (const k of key) {
+        if (storage[k] !== undefined) result[k] = storage[k];
+      }
+      return Promise.resolve(result);
+    }
+    return Promise.resolve({ [key]: storage[key] });
+  }),
+  set: vi.fn((items: Record<string, unknown>) => {
+    localSetCalls.push([{ ...items }]);
+    Object.assign(storage, items);
+    return Promise.resolve();
+  }),
+  remove: vi.fn((keys: string | string[]) => {
+    if (Array.isArray(keys)) {
+      for (const key of keys) delete storage[key];
+    } else {
+      delete storage[keys];
+    }
+    return Promise.resolve();
+  }),
+};
+
 vi.stubGlobal("chrome", {
   storage: {
     sync: mockStorageSync,
-    local: { get: vi.fn(), set: vi.fn() },
+    local: mockStorageLocal,
     session: { get: vi.fn(), set: vi.fn() },
   },
 });
@@ -595,7 +623,7 @@ describe("Profile System: CRUD Operations", () => {
 
       await resetProfile(DEMO_PROFILE_ID);
 
-      const resetCall = setCalls.find(
+      const resetCall = localSetCalls.find(
         ([call]) => call["apiDebugger_pd_" + DEMO_PROFILE_ID] !== undefined,
       );
       expect(resetCall).toBeDefined();
