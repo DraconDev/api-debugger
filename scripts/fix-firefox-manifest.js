@@ -38,7 +38,7 @@ if (!manifest.browser_specific_settings) {
 if (!manifest.browser_specific_settings.gecko) {
   manifest.browser_specific_settings.gecko = {};
 }
-manifest.browser_specific_settings.gecko.data_collection_permissions = false;
+manifest.browser_specific_settings.gecko.data_collection_permissions = {};
 
 zip.updateFile("manifest.json", Buffer.from(JSON.stringify(manifest, null, 2)));
 zip.writeZip(firefoxZip);
