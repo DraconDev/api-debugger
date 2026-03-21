@@ -175,18 +175,17 @@ describe("AI Client", () => {
     });
 
     it("should call OpenRouter API correctly", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            choices: [{ message: { content: "Hello!" } }],
-            model: "deepseek/deepseek-r1",
-            usage: {
-              prompt_tokens: 10,
-              completion_tokens: 5,
-              total_tokens: 15,
-            },
-          }),
+      const { chatCompletion } = await import("@dracon/wxt-shared/byok");
+      const mockChatCompletion = chatCompletion as ReturnType<typeof vi.fn>;
+
+      mockChatCompletion.mockResolvedValueOnce({
+        content: "Hello!",
+        model: "deepseek/deepseek-r1",
+        usage: {
+          prompt_tokens: 10,
+          completion_tokens: 5,
+          total_tokens: 15,
+        },
       });
 
       const client = createAIClient({
@@ -197,13 +196,12 @@ describe("AI Client", () => {
 
       const response = await client.chat([{ role: "user", content: "Hi" }]);
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        "https://openrouter.ai/api/v1/chat/completions",
+      expect(mockChatCompletion).toHaveBeenCalledWith(
+        [{ role: "user", content: "Hi" }],
+        "test-key",
         expect.objectContaining({
-          method: "POST",
-          headers: expect.objectContaining({
-            Authorization: "Bearer test-key",
-          }),
+          model: "deepseek/deepseek-r1",
+          max_tokens: 4096,
         }),
       );
       expect(response.content).toBe("Hello!");
