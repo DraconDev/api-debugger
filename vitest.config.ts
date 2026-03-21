@@ -9,6 +9,7 @@ export default defineConfig({
     coverage: {
       reporter: ["text", "json", "html"],
     },
+    setupFiles: [resolve(__dirname, "tests/vitest-setup.ts")],
   },
   resolve: {
     alias: {
