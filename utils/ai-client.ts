@@ -4,9 +4,13 @@
  * Models are fetched from OpenRouter (free, no key needed).
  * User provides API key for their chosen provider.
  * We route to the correct API based on model ID.
+ *
+ * OpenRouter calls use @dracon/wxt-shared/byok for robust error handling,
+ * timeout, and retry logic.
  */
 
 import { getApiProviderForModel } from "@/lib/modelRegistry";
+import { chatCompletion } from "@dracon/wxt-shared/byok";
 
 export type AIProvider = "openai" | "anthropic" | "gemini" | "openrouter";
 
@@ -38,8 +42,8 @@ export interface AIResponse {
  * - Model "openai/gpt-4.1" + provider "openai" → direct OpenAI API
  * - Model "anthropic/claude-sonnet-4" + provider "anthropic" → direct Anthropic API
  * - Model "google/gemini-2.0-flash" + provider "gemini" → direct Gemini API
- * - Any model + provider "openrouter" → OpenRouter API
- * - Model "deepseek/deepseek-r1" + provider "openrouter" → OpenRouter API
+ * - Any model + provider "openrouter" → OpenRouter API (via wxt-shared)
+ * - Model "deepseek/deepseek-r1" + provider "openrouter" → OpenRouter API (via wxt-shared)
  */
 export function createAIClient(config: AIConfig) {
   const { provider, apiKey, model } = config;
@@ -213,38 +217,24 @@ async function openrouterChat(
   model: string,
   messages: AIMessage[],
 ): Promise<AIResponse> {
-  const response = await fetch(
-    "https://openrouter.ai/api/v1/chat/completions",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-        "HTTP-Referer": "https://github.com/dracon/api-debugger",
-        "X-Title": "API Debugger",
-      },
-      body: JSON.stringify({ model, messages, max_tokens: 4096 }),
-    },
+  // Use wxt-shared BYOK for robust OpenRouter handling:
+  // - 30 second timeout
+  // - 1 automatic retry
+  // - JSON parsing fallback
+  const response = await chatCompletion(
+    messages as any,
+    apiKey,
+    { model, max_tokens: 4096 }
   );
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(
-      error.error?.message || `OpenRouter error: ${response.status}`,
-    );
-  }
-
-  const data = await response.json();
   return {
-    content: data.choices[0]?.message?.content || "",
-    usage: data.usage
-      ? {
-          promptTokens: data.usage.prompt_tokens,
-          completionTokens: data.usage.completion_tokens,
-          totalTokens: data.usage.total_tokens,
-        }
-      : undefined,
-    model: data.model,
+    content: response.content,
+    usage: response.usage ? {
+      promptTokens: response.usage.prompt_tokens,
+      completionTokens: response.usage.completion_tokens,
+      totalTokens: response.usage.total_tokens,
+    } : undefined,
+    model: response.model,
   };
 }
 
