@@ -42,12 +42,6 @@ export default defineConfig({
         "128": "icon/128.png",
       },
     },
-    web_accessible_resources: [
-      {
-        resources: ["injected.js"],
-        matches: ["<all_urls>"],
-      },
-    ],
     content_security_policy: {
       extension_pages: "script-src 'self'; object-src 'none'",
     },
