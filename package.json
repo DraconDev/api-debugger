@@ -2,7 +2,7 @@
   "name": "@dracon/api-debugger",
   "description": "API Debugger - Browser-first API debugging tool",
   "private": true,
-  "version": "2.3.0",
+  "version": "2.4.0",
   "type": "module",
   "scripts": {
     "dev": "wxt",
@@ -53,7 +53,7 @@
     "sharp": "^0.34.5",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.6.3",
-    "vitest": "^4.0.16",
+    "vitest": "^4.1.0",
     "wxt": "^0.20.13"
   },
   "engines": {
