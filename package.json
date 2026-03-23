@@ -2,7 +2,7 @@
   "name": "@dracon/api-debugger",
   "description": "API Debugger - Browser-first API debugging tool",
   "private": true,
-  "version": "2.4.0",
+  "version": "2.5.0",
   "type": "module",
   "scripts": {
     "dev": "wxt",
@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@radix-ui/themes": "^3.1.6",
+    "@dracon/wxt-shared": "file:../wxt-shared",
     "@types/webextension-polyfill": "^0.12.4",
     "clsx": "^2.1.1",
     "dompurify": "^3.3.3",
