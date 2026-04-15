@@ -4,6 +4,6 @@
 Updated .gitignore to properly exclude build artifacts while maintaining dracon-sync compatibility
 
 ## Completed
-- [x] Added exclusion for `.output/` directory (previously excluded but commented out)
-- [x] Maintained dracon-sync managed block structure
+- [x] Added `.output/` to top-level ignore rules
+- [x] Removed duplicate `.output/` exclusion from dracon-managed block
 ```
