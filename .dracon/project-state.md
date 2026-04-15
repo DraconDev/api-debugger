@@ -1,9 +1,9 @@
 # Project State
 
 ## Current Focus
-Added NixOS owner public key and updated gitignore to exclude build artifacts
+Updated .gitignore to properly exclude build artifacts while maintaining dracon-sync compatibility
 
 ## Completed
-- [x] Added NixOS owner public key for secure deployment
-- [x] Updated gitignore to exclude build artifacts (.output/) to prevent accidental commits
+- [x] Added exclusion for `.output/` directory (previously excluded but commented out)
+- [x] Maintained dracon-sync managed block structure
 ```
