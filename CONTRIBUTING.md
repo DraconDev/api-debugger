@@ -1,80 +1,36 @@
-# Contributing to API Debugger
+# Contributing to Dracon Projects
 
-🎉 Thanks for your interest in contributing!
-
-## Quick Start
-
-```bash
-git clone https://github.com/DraconDev/api-debugger.git
-cd api-debugger
-npm install
-npm run dev
-```
-
-Open Chrome at `chrome://extensions/`, enable Developer mode, click "Load unpacked", select the `dev` folder that appears.
-
-## Project Structure
-
-```
-api-debugger/
-├── components/       # React UI components
-│   ├── request/      # Request builder components
-│   ├── protocol/     # WebSocket, GraphQL, SSE, Socket.IO
-│   └── testing/      # Script editor, test runner
-├── lib/              # Core logic
-│   ├── ai-client.ts  # OpenRouter AI
-│   ├── importers/    # Postman, OpenAPI, etc.
-│   ├── oauth2.ts     # OAuth 2.0 flows
-│   └── scriptExecutor.ts  # Pre/post scripts
-├── hooks/            # React hooks
-├── entrypoints/      # Extension entry points
-│   ├── background.ts # Service worker
-│   └── dashboard/    # Main UI
-├── tests/            # Vitest tests (956 passing!)
-└── docs/             # Documentation
-```
-
-## Scripts
-
-```bash
-npm run dev          # Start dev server with hot reload
-npm run build         # Build for Chrome
-npm run build:firefox # Build for Firefox
-npm run test          # Run all tests
-npm run compile       # TypeScript check
-npm run zip           # Create distributable ZIP
-```
-
-## Making Changes
-
-1. **Fork** the repo
-2. **Clone** your fork
-3. **Create a branch** for your feature (`git checkout -b feat/amazing-thing`)
-4. **Make your changes** - we're pretty chill about code style
-5. **Add tests** if adding logic (we have 956 tests, keep it that way)
-6. **Run `npm test`** - all 956 must pass
-7. **Submit a PR**
-
-## Code Style
-
-- TypeScript strict mode
-- Functional React components preferred
-- No inline styles - use Tailwind classes
-- No `any` unless absolutely necessary
-
-## Reporting Issues
-
-- Bug reports welcome!
-- Search existing issues first
-- Include Chrome version, OS, steps to reproduce
-- Screenshots help
-
-## Ideas Welcome
-
-- Feature proposals? Open an issue
-- Think something could be better? PR welcome
-- Don't like our code? Fork it
+Thank you for your interest in contributing to Dracon projects.
 
 ## License
 
-Contributions are welcome. All rights reserved - see source code for details.
+All contributions are subject to the terms of the [AGPLv3 license](./LICENSE) and the [Contributor License Agreement (CLA)](./CLA.md).
+
+**By submitting a Contribution (including via pull request, issue, comment, or any other method), you agree to be bound by both the AGPLv3 license and the CLA.**
+
+## Before You Submit a Pull Request
+
+1. **Read the CLA** — Make sure you understand and agree to the [Contributor License Agreement](./CLA.md) before submitting any Contribution.
+2. **Fork and branch** — Create a feature branch from `main` for your changes.
+3. **Write clean, idiomatic code** — Follow the existing style and conventions of the project.
+4. **Test your changes** — Ensure all existing and new tests pass before opening a PR.
+5. **Describe your changes** — Include a clear PR description explaining *what* changed and *why*.
+6. **Keep scope small** — One PR per logical change. Don't bundle unrelated fixes.
+
+## Code of Conduct
+
+All contributors are expected to behave professionally and respectfully. We do not tolerate harassment, discrimination, or hostile behavior in any form.
+
+## Getting Help
+
+If you have questions or need guidance, open an issue or reach out to the maintainers directly.
+
+## Legal Notes
+
+- You must have the right to submit the work you are contributing.
+- All contributions will be licensed under AGPLv3.
+- By contributing, you grant the Project Owner the rights described in the CLA, including the right to relicense your contributions under commercial terms where applicable.
+
+---
+
+*For details on commercial licensing, see [COMMERCIAL-LICENSE.md](./COMMERCIAL-LICENSE.md).*
